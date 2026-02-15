@@ -111,24 +111,7 @@
 # --- STYLIX CONFIGURATION ---
   stylix.enable = true;
   stylix.image = ./config/wallpaper.jpg; # Ensure this file exists!
-  stylix.base16Scheme = {
-    base00 = "32302f";
-    base01 = "5a5551";
-    base02 = "5f3837";
-    base03 = "7f7770";
-    base04 = "817663";
-    base05 = "f2e2d2";
-    base06 = "eadccc";
-    base07 = "f6e9da";
-    base08 = "e56461";
-    base09 = "f29c6b";
-    base0A = "f2c14e";
-    base0B = "e56461";
-    base0C = "87b699";
-    base0D = "86adb3";
-    base0E = "d787b8";
-    base0F = "da8f7c";
-};
+  stylix.base16Scheme = ./themes/pau-theme.yaml;
 
   stylix.polarity = "dark";
   stylix.fonts = {
