@@ -110,7 +110,7 @@
 
 # --- STYLIX CONFIGURATION ---
   stylix.enable = true;
-  stylix.image = ./config/wallpaper.jpg; # Ensure this file exists!
+  stylix.image = ./config/wallpaper.jpg;
   stylix.base16Scheme = ./themes/pau-theme.yaml;
 
   stylix.polarity = "dark";

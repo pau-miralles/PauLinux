@@ -41,6 +41,7 @@
     python3
     
     cliphist # Clipboard backend
+    posy-cursors
   ];
 
 
