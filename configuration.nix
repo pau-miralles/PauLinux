@@ -108,22 +108,22 @@
   services.printing.drivers = [ pkgs.gutenprint pkgs.hplip ];
   
 
-# --- STYLIX CONFIGURATION ---
-  stylix.enable = true;
-  stylix.image = ./config/wallpaper.jpg;
-  stylix.base16Scheme = ./themes/pau-theme.yaml;
-
-  stylix.polarity = "dark";
-  stylix.fonts = {
-    sizes = {
-      terminal = 15; 
-      applications = 12;
-    };
-    monospace = {
-      package = pkgs.nerd-fonts.ubuntu-mono;
-      name = "UbuntuMono Nerd Font";
-    };
-  };
+# # --- STYLIX CONFIGURATION ---
+#   stylix.enable = true;
+#   stylix.image = ./config/wallpaper.jpg;
+#   stylix.base16Scheme = ./themes/pau-theme.yaml;
+#
+#   stylix.polarity = "dark";
+#   stylix.fonts = {
+#     sizes = {
+#       terminal = 15; 
+#       applications = 12;
+#     };
+#     monospace = {
+#       package = pkgs.nerd-fonts.ubuntu-mono;
+#       name = "UbuntuMono Nerd Font";
+#     };
+#   };
   # stylix.cursor.package = pkgs.posy-cursors;
   # stylix.cursor.name = "Posy-Cursor";
 

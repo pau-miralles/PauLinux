@@ -10,7 +10,7 @@
 
   home.packages = with pkgs; [
     # GUI Apps
-    firefox
+    # firefox
     audacity
     thunar
     handbrake
@@ -146,6 +146,96 @@
     enable = true;
     enableBashIntegration = true;
   };
+
+  programs.firefox = {
+  enable = true;
+
+  profiles.default = {
+    id = 0;
+    name = "default";
+
+    userChrome = ''
+    /* --- Global & Fonts --- */
+    :root {
+      scrollbar-width: none;
+    }
+    * {
+      font-family: "Ubuntu Mono", monospace !important;
+    }
+    
+    /* --- Layout: One-Liner (Tabs + URL Bar) --- */
+    #navigator-toolbox {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      align-items: center;
+    }
+    
+    /* Tabs Area: Takes up remaining space on the left */
+    #titlebar {
+      flex-grow: 1;
+      width: 0;
+      overflow: hidden;
+    }
+    #TabsToolbar {
+      display: flex !important;
+      align-items: center;
+      padding-left: 0 !important;
+    }
+    .tabbrowser-tab {
+      min-height: 30px !important;
+    }
+    
+    /* Navigation Area: Sits on the right */
+    #nav-bar {
+      background: none !important;
+      width: auto !important;
+      padding: 0 !important;
+    }
+    
+    /* --- URL Bar Styling --- */
+    #urlbar-container {
+      width: 200px !important;     /* Collapsed width */
+      transition: width 0.2s;
+      margin-left: auto !important; /* Pushes URL bar to the right */
+    }
+    
+    /* Expand URL bar on hover or focus */
+    #urlbar-container:focus-within,
+    #urlbar-container:hover {
+      width: 400px !important;
+    }
+    
+    /* Clean up URL bar internals */
+    #urlbar {
+      min-height: 30px !important;
+      top: 0 !important;
+    }
+    #urlbar[breakout][breakout-extend] {
+      top: 0 !important;
+      left: auto !important;
+      width: 100% !important;
+      max-width: 400px !important; /* Matches expanded width */
+    }
+    
+    /* --- Hiding Elements (The Cleanup) --- */
+    /* Hide: Window Controls, Back/Fwd, Menu, Springs, Tab Close, URL Dropdown */
+    .titlebar-buttonbox-container,
+    #back-button, #forward-button,
+    #toolbar-menubar[inactive],
+    toolbarspring,
+    .tab-close-button,
+    .titlebar-spacer,
+    #alltabs-button,
+    .urlbarView,
+    #identity-box,
+    #tracking-protection-icon-container {
+    display: none !important;
+}
+    '';
+  };
+};
+
 
   xdg.configFile."sway/config".text = ''
     # --- Variables ---
