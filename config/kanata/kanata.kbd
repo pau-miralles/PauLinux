@@ -1,0 +1,143 @@
+;; systemctl --user restart kanata.service
+(defcfg
+  linux-dev "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+  process-unmapped-keys yes
+  log-layer-changes no
+)
+
+(defsrc
+  ;; Changed '\' to 'bksl' (US Backslash key) to be safe.
+  esc  tab  q    w    e    r    t    y    u    i    o    p    [    ]    bksl
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rctl
+)
+
+;; ---------------------------------------------------------------------------
+;; BASE CHORDS
+;; ---------------------------------------------------------------------------
+(defchords base-chords 20
+  (u) u
+  (i) i
+  (o) o
+  (p) p
+  (j) j
+  (k) k
+  (l) l
+  (n) n
+  (m) m
+  (c) c
+  (x) x
+  (;) '  
+
+  (lsft) lsft
+  (rsft) rsft
+
+  (i o)    -
+  (o p)    S-2
+  (j k l)  (multi lctl c)
+  (n m)    ;
+  (c x)    \
+  (l k)    S-3
+  (u i)    S-'
+  (u i o)  C-S-v
+  (lsft rsft) caps
+  
+  ;; NEW: l + ; (physical keys) -> sends [ (Spanish ` accent)
+  (l ;)    [
+)
+
+;; ---------------------------------------------------------------------------
+;; SYMBOL CHORDS
+;; ---------------------------------------------------------------------------
+(defchords symbol-chords 20
+  (d) S-8
+  (f) S-9
+  (d f) left
+)
+
+(defalias
+  ;; --- Chords ---
+  ch_u (chord base-chords u)
+  ch_i (chord base-chords i)
+  ch_o (chord base-chords o)
+  ch_p (chord base-chords p)
+  ch_j (chord base-chords j)
+  ch_k (chord base-chords k)
+  ch_l (chord base-chords l)
+  ch_n (chord base-chords n)
+  ch_m (chord base-chords m)
+  ch_c (chord base-chords c)
+  ch_x (chord base-chords x)
+  ch_scl (chord base-chords ;)
+  
+  ch_ls (chord base-chords lsft)
+  ch_rs (chord base-chords rsft)
+
+  sym_d (chord symbol-chords d)
+  sym_f (chord symbol-chords f)
+
+  ;; --- Modifiers ---
+  cec (tap-hold 150 150 esc lctl)
+  altbck (tap-hold-press 150 150 bspc lalt)
+  spn (tap-hold-release 200 200 spc (layer-toggle navigation))
+  sym (layer-toggle symbols)
+  less lsgt
+  
+  ;; --- New Symbols (LCTL/RCTL) ---
+  ;; Spanish \ is AltGr + º (º is usually the `grv` key in Kanata)
+  bksl (multi ralt grv)
+  ;; Spanish ª is Shift + º
+  ord  S-grv
+
+  ;; --- Navigation ---
+  mh_l (multi lctl lalt lsft left)
+  cm_l (multi lctl lmet left)
+  cm_r (multi lctl lmet rght)
+  mh_r (multi lctl lalt lsft rght)
+
+  ;; --- Symbol Macros ---
+  at   (multi ralt 2)
+  hash (multi ralt 3)
+  eu   (multi ralt e)
+  til  (multi ralt 4)
+  pipe (multi ralt 1)
+  lbra (multi ralt [)
+  rbra (multi ralt ])
+  lcur (multi ralt ')
+  rcur (multi ralt \)
+
+  ;; --- Layers ---
+  game (layer-switch normal) 
+  base (layer-switch base)
+)
+
+(deflayer base
+  ;; Changed the key after @ch_p (physical [) to 'del'
+  caps tab  _    _    _    _    _    _    @ch_u @ch_i @ch_o @ch_p    del  _    /
+  @cec _    _    _    _    _    _    @ch_j @ch_k @ch_l @ch_scl  ret    _
+  @ch_ls _  @ch_x @ch_c v    b    @ch_n @ch_m ,    .    S-7  @ch_rs
+  _    _    @altbck              @spn           @sym @less
+)
+
+(deflayer navigation
+  _    f1   f2    f3    f4   f5  f6    home pgdn pgup end  _    _    _    _
+  f7   f8   f9    f10   f11  f12 left  down up   rght _    _    @game
+  _    _    brdn  brup  vold volu @mh_l @cm_l @cm_r @mh_r _    _
+  _    _    _              _              _    _
+)
+
+(deflayer symbols
+  S-=  S-=  S--  @at    @lcur  @rcur  @pipe        S-0  4    5    6    ]    kp*  _    _
+  =    S-1  S-4  @sym_d @sym_f @hash               0    1    2    3    /    S-7  @base
+  @eu  @til S-6  @lbra  @rbra  S-5                 .    7    8    9    S-[  `  
+  @bksl lsgt    S-lsgt              S-/              _    @ord
+)
+
+(deflayer normal
+  ;; Changed the key after @ch_p (physical [) to 'del'
+  caps tab  _    _    _    _    _    _    @ch_u @ch_i @ch_o @ch_p    del  _    /
+  @cec _    _    _    _    _    _    @ch_j @ch_k @ch_l @ch_scl  '    _
+  @ch_ls _  @ch_x @ch_c v    b    @ch_n @ch_m ,    .    S-7  @ch_rs
+  _    _    @altbck              spc            @sym @less
+)

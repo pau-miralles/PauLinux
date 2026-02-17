@@ -1,0 +1,40 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "modules": [
+    "title",
+    "separator",
+    "uptime",
+    "separator",
+    "os",
+    "host",
+    "kernel",
+    "separator",
+    "packages",
+    "de",
+    "wm",
+    {
+      "type": "terminal",
+      "format": "{pretty-name} {version} {#37}█{#97}█ {#36}█{#96}█ {#35}█{#95}█ {#34}█{#94}█ {#33}█{#93}█ {#32}█{#92}█ {#31}█{#91}█ {#30}█{#90}█"
+    },
+    "separator",
+    "cpu",
+    "gpu",
+    {
+      "type": "memory",
+      "key": "RAM"
+    },
+    {
+      "type": "disk",
+      "key": "Disk",
+      "folders": "/"
+    },
+    "battery",
+    {
+      "type": "cpu",
+      "key": "Temperature",
+      "temp": true,
+      "format": "{temperature}"
+    },
+    "localip",
+  ]
+}

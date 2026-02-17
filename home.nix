@@ -10,9 +10,8 @@
 
   home.packages = with pkgs; [
     # GUI Apps
-    # firefox
     audacity
-    thunar
+    kdePackages.dolphin
     handbrake
     libreoffice-fresh
     kdePackages.kdenlive
@@ -41,12 +40,28 @@
     python3
     
     cliphist # Clipboard backend
+    udiskie # Automatic USB drives
+    gammastep # Night Light
+    pavucontrol # GUI Audio Panel
+    wiremix # TUI Pipewire Audio Panel
+    impala # TUI Wifi Panel
+    bluetui # TUI Bluetooth Panel
     posy-cursors
   ];
+
+  services.cliphist.enable = true;
+  services.udiskie.enable = true;
+  services.gammastep = {
+    enable = true;
+    provider = "manual";
+    latitude = 39.5; # Palma coordinates
+    longitude = 2.6;
+  };
 
 
   xdg.configFile = {
   # "waybar".source = ./config/waybar;
+  "fastfetch".source = ./config/fastfetch;
   # "wofi".source = ./config/wofi;
   # "sway".source = ./config/sway;
   "nvim".source = ./config/nvim;
@@ -61,7 +76,7 @@
       hide_window_decorations = "yes";
       window_padding_width = 5;
       window_border_width = 2;
-      background_opacity = lib.mkForce "0.65";
+      background_opacity = lib.mkForce "0.75";
       dynamic_background_opacity = "yes";
       background_blur = 1;
       active_opacity = lib.mkForce "0.8";
@@ -148,93 +163,41 @@
   };
 
   programs.firefox = {
-  enable = true;
+    enable = true;
+    profiles.default = {
+      id = 0;
+      name = "default";
+      userChrome = builtins.readFile ./config/firefox/userChrome.css;
+      settings = {
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        "browser.compactmode.show" = true;
+        "browser.uidensity" = 1; # 1 = Compact
+        "apz.overscroll.enabled" = false; # Disable overscroll "rubberbanding"
+        "browser.gesture.swipe.left" = ""; # Disable swipe to go back
+        "browser.gesture.swipe.right" = ""; # Disable swipe to go forward
+        "full-screen-api.transition-duration.enter" = "0 0";
+        "full-screen-api.transition-duration.leave" = "0 0";
+        "full-screen-api.warning.delay" = 0;
+        "full-screen-api.warning.timeout" = 0;
+      };
 
-  profiles.default = {
-    id = 0;
-    name = "default";
-
-    userChrome = ''
-    /* --- Global & Fonts --- */
-    :root {
-      scrollbar-width: none;
-    }
-    * {
-      font-family: "Ubuntu Mono", monospace !important;
-    }
-    
-    /* --- Layout: One-Liner (Tabs + URL Bar) --- */
-    #navigator-toolbox {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      align-items: center;
-    }
-    
-    /* Tabs Area: Takes up remaining space on the left */
-    #titlebar {
-      flex-grow: 1;
-      width: 0;
-      overflow: hidden;
-    }
-    #TabsToolbar {
-      display: flex !important;
-      align-items: center;
-      padding-left: 0 !important;
-    }
-    .tabbrowser-tab {
-      min-height: 30px !important;
-    }
-    
-    /* Navigation Area: Sits on the right */
-    #nav-bar {
-      background: none !important;
-      width: auto !important;
-      padding: 0 !important;
-    }
-    
-    /* --- URL Bar Styling --- */
-    #urlbar-container {
-      width: 200px !important;     /* Collapsed width */
-      transition: width 0.2s;
-      margin-left: auto !important; /* Pushes URL bar to the right */
-    }
-    
-    /* Expand URL bar on hover or focus */
-    #urlbar-container:focus-within,
-    #urlbar-container:hover {
-      width: 400px !important;
-    }
-    
-    /* Clean up URL bar internals */
-    #urlbar {
-      min-height: 30px !important;
-      top: 0 !important;
-    }
-    #urlbar[breakout][breakout-extend] {
-      top: 0 !important;
-      left: auto !important;
-      width: 100% !important;
-      max-width: 400px !important; /* Matches expanded width */
-    }
-    
-    /* --- Hiding Elements (The Cleanup) --- */
-    /* Hide: Window Controls, Back/Fwd, Menu, Springs, Tab Close, URL Dropdown */
-    .titlebar-buttonbox-container,
-    #back-button, #forward-button,
-    #toolbar-menubar[inactive],
-    toolbarspring,
-    .tab-close-button,
-    .titlebar-spacer,
-    #alltabs-button,
-    .urlbarView,
-    #identity-box,
-    #tracking-protection-icon-container {
-    display: none !important;
-}
-    '';
+      search = {
+        force = true;
+        default = "Brave";
+        engines = {
+          "Brave" = {
+            urls = [{
+              template = "https://search.brave.com/search";
+              params = [
+                { name = "q"; value = "{searchTerms}"; }
+              ];
+            }];
+          };
+        };
+      };
+    };
   };
-};
+  stylix.targets.firefox.profileNames = [ "default" ];
 
 
   xdg.configFile."sway/config".text = ''
@@ -276,23 +239,30 @@
     for_window [app_id="imv"] opacity 1
 
     # 3. Rounded Corners
-    corner_radius 6
+    corner_radius 4
 
     # 4. Shadows
-    shadows enable
+    shadows disable
 
     # 5. Gaps & Borders
-    default_border pixel 1
+    default_border pixel 2
     default_floating_border pixel 1
-    gaps inner 10
+    gaps inner 5
     gaps outer 0
-    smart_gaps off
+    smart_gaps on
+    smart_borders on
+    hide_edge_borders --i3 none
 
     # 6. Layer Shell Effects
     layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 6
     layer_effects "panel" blur enable
 
     # --- Output & Input ---
+    output eDP-1 {
+      mode 2256x1504@59.999Hz
+      scale 1.5
+    }
+
     output * bg /etc/nixos/config/wallpaper.jpg fill
 
     input * {
@@ -307,7 +277,7 @@
     }
 
     # --- Key bindings ---
-    bindsym $mod+e exec thunar
+    bindsym $mod+e exec dolphin
     bindsym $mod+w exec firefox
     
     # -- Basics --
@@ -412,12 +382,18 @@
       modifier none
       status_command while date +'%Y-%m-%d %X'; do sleep 1; done
     }
+
+    client.focused          #888888  #888888  #ffffff  #888888  #888888
+    client.focused_inactive #444444  #444444  #cccccc  #444444  #444444
+    client.unfocused        #333333  #333333  #aaaaaa  #333333  #333333
+    client.urgent           #666666  #666666  #ffffff  #666666  #666666
+    client.placeholder      #222222  #222222  #888888  #222222  #222222
   '';
 
 
-  # Configure some of the CLI tools to be "official" (This enables better integration like aliases)
-  programs.git.enable = true;
-
-
-  services.cliphist.enable = true;
+  programs.git = {
+    enable = true;
+    userName = "pau-miralles";
+    userEmail = "pmms0808@gmail.com";
+  };
 }

@@ -4,16 +4,19 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./sway.nix
+./sway.nix
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
-  boot.loader.grub.useOSProber = true;
+  # boot.loader.grub.enable = true;
+  # boot.loader.grub.device = "/dev/vda";
+  # boot.loader.grub.useOSProber = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "framework"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless.iwd.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -21,12 +24,13 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.backend = "iwd";
 
   # Set your time zone.
   time.timeZone = "Europe/Madrid";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "es_ES.UTF-8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "es_ES.UTF-8";
@@ -106,24 +110,30 @@
   services.printing.enable = true;
   # specific drivers for most common printers
   services.printing.drivers = [ pkgs.gutenprint pkgs.hplip ];
-  
 
-# # --- STYLIX CONFIGURATION ---
-#   stylix.enable = true;
-#   stylix.image = ./config/wallpaper.jpg;
-#   stylix.base16Scheme = ./themes/pau-theme.yaml;
-#
-#   stylix.polarity = "dark";
-#   stylix.fonts = {
-#     sizes = {
-#       terminal = 15; 
-#       applications = 12;
-#     };
-#     monospace = {
-#       package = pkgs.nerd-fonts.ubuntu-mono;
-#       name = "UbuntuMono Nerd Font";
-#     };
-#   };
+  # Enable Power Profiles Daemon
+  services.power-profiles-daemon.enable = true;
+
+
+# --- STYLIX CONFIGURATION ---
+  stylix.enable = true;
+  stylix.image = ./config/wallpaper.jpg;
+  # stylix.base16Scheme = ./themes/pau-theme.yaml;
+
+  stylix.polarity = "dark";
+  stylix.fonts = {
+    sizes = {
+      terminal = 18;
+      applications = 12;
+    };
+    monospace = {
+      package = pkgs.nerd-fonts.ubuntu-mono;
+      name = "UbuntuMono Nerd Font";
+    };
+    serif = config.stylix.fonts.monospace;
+    sansSerif = config.stylix.fonts.monospace;
+    emoji = config.stylix.fonts.monospace;
+  };
   # stylix.cursor.package = pkgs.posy-cursors;
   # stylix.cursor.name = "Posy-Cursor";
 
