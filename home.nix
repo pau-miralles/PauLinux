@@ -11,7 +11,6 @@
   home.packages = with pkgs; [
     # GUI Apps
     audacity
-    kdePackages.dolphin
     handbrake
     libreoffice-fresh
     kdePackages.kdenlive
@@ -47,6 +46,9 @@
     impala # TUI Wifi Panel
     bluetui # TUI Bluetooth Panel
     posy-cursors
+    ffmpegthumbnailer # Video thumbnails
+    libgsf # ODF (LibreOffice) thumbnails
+    mpv
   ];
 
   services.cliphist.enable = true;
@@ -67,7 +69,6 @@
   "nvim".source = ./config/nvim;
   # "yazi".source = ./config/yazi;
   };
-  
 
   programs.kitty = {
     enable = true;
@@ -167,7 +168,9 @@
     profiles.default = {
       id = 0;
       name = "default";
+      extensions.force = true;
       userChrome = builtins.readFile ./config/firefox/userChrome.css;
+      userContent = builtins.readFile ./config/firefox/userContent.css;
       settings = {
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         "browser.compactmode.show" = true;
@@ -197,7 +200,10 @@
       };
     };
   };
-  stylix.targets.firefox.profileNames = [ "default" ];
+  # stylix.targets.firefox = {
+  #   profileNames = [ "default" ];
+  #   colorTheme.enable = true; 
+  # };
 
 
   xdg.configFile."sway/config".text = ''
@@ -235,8 +241,6 @@
     for_window [app_id="org.kde.kdenlive"] opacity 1
     for_window [class="Gimp"] opacity 1
     for_window [app_id="gimp-2.10"] opacity 1
-    # Image viewers usually look better opaque
-    for_window [app_id="imv"] opacity 1
 
     # 3. Rounded Corners
     corner_radius 4
@@ -254,7 +258,7 @@
     hide_edge_borders --i3 none
 
     # 6. Layer Shell Effects
-    layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 6
+    layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 4
     layer_effects "panel" blur enable
 
     # --- Output & Input ---
@@ -277,7 +281,7 @@
     }
 
     # --- Key bindings ---
-    bindsym $mod+e exec dolphin
+    bindsym $mod+e exec thunar
     bindsym $mod+w exec firefox
     
     # -- Basics --
@@ -395,5 +399,10 @@
     enable = true;
     userName = "pau-miralles";
     userEmail = "pmms0808@gmail.com";
+  };
+
+  home.sessionVariables = {
+    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_SIZE = "64";
   };
 }

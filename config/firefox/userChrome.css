@@ -462,3 +462,13 @@ body {
 .titlebar-buttonbox-container {
 	display: none !important;
 }
+
+/* Force 4px radius everywhere in Firefox UI */
+* {
+  border-radius: 4px !important;
+}
+
+.tabbrowser-tab,
+.tab-background {
+  border-radius: 4px !important;
+}

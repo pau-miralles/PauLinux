@@ -89,7 +89,6 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-
   # --- SOUND (Pipewire) ---
   # Remove sound.enable or pulse.enable if they exist!
   security.rtkit.enable = true;
@@ -116,26 +115,34 @@
 
 
 # --- STYLIX CONFIGURATION ---
-  stylix.enable = true;
-  stylix.image = ./config/wallpaper.jpg;
-  # stylix.base16Scheme = ./themes/pau-theme.yaml;
+  stylix = {
+    enable = true;
+    targets.gtk.enable = true;
+    image = ./config/wallpaper.jpg;
+    # base16Scheme = ./themes/pau-theme.yaml;
 
-  stylix.polarity = "dark";
-  stylix.fonts = {
-    sizes = {
-      terminal = 18;
-      applications = 12;
+    polarity = "dark";
+    fonts = {
+      sizes = {
+        terminal = 18;
+        applications = 12;
+      };
+      monospace = {
+        package = pkgs.nerd-fonts.ubuntu-mono;
+        name = "UbuntuMono Nerd Font";
+      };
+      serif = config.stylix.fonts.monospace;
+      sansSerif = config.stylix.fonts.monospace;
+      emoji = config.stylix.fonts.monospace;
     };
-    monospace = {
-      package = pkgs.nerd-fonts.ubuntu-mono;
-      name = "UbuntuMono Nerd Font";
+    cursor.package = pkgs.posy-cursors;
+    cursor.name = "Posy_Cursor";
+    cursor.size = 64;
+    opacity = {
+      desktop = 0.8;
+      popups = 0.8;
     };
-    serif = config.stylix.fonts.monospace;
-    sansSerif = config.stylix.fonts.monospace;
-    emoji = config.stylix.fonts.monospace;
   };
-  # stylix.cursor.package = pkgs.posy-cursors;
-  # stylix.cursor.name = "Posy-Cursor";
 
 
   # Open ports in the firewall.
@@ -152,4 +159,29 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
 
+  programs.thunar = {
+    enable = true;
+    plugins = with pkgs.xfce; [
+      thunar-archive-plugin
+      thunar-volman
+    ];
+  };
+  services.gvfs.enable = true;    # Mount, trash, and other functionalities
+  services.tumbler.enable = true; # Thumbnail support for images
+  programs.xfconf.enable = true;  # Required to save Thunar settings
+
+  environment.sessionVariables = {
+    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_SIZE = "64";
+  };
+  environment.variables = {
+    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_SIZE = "64";
+  };
+
+  services.displayManager.sddm.enable = true;
+  services.displayManager.environment = {
+    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_SIZE = "64";
+  };
 }
