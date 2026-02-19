@@ -17,14 +17,14 @@ exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CU
 
 # 1. Window Blur
 blur enable
-blur_passes 2
-blur_radius 5
-blur_noise 0.01
+blur_passes 3
+blur_radius 6
+blur_noise 0.04
 
 # 2. Transparency Rules
 # Base rule: Everything is translucent (0.85)
-for_window [app_id=".*"] opacity 0.85
-for_window [class=".*"] opacity 0.85
+for_window [app_id=".*"] opacity 0.9
+for_window [class=".*"] opacity 0.9
 
 # Exceptions: Production/Video apps stay 100% opaque
 for_window [app_id="firefox"] opacity 1
@@ -49,7 +49,7 @@ smart_borders on
 hide_edge_borders --i3 none
 
 # 6. Layer Shell Effects
-layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 4
+layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 6
 layer_effects "panel" blur enable
 
 # --- Output & Input ---

@@ -77,11 +77,7 @@
       hide_window_decorations = "yes";
       window_padding_width = 5;
       window_border_width = 2;
-      background_opacity = lib.mkForce "0.75";
-      dynamic_background_opacity = "yes";
-      background_blur = 1;
-      active_opacity = lib.mkForce "0.8";
-      inactive_opacity = lib.mkForce "0.7";
+      background_opacity = lib.mkForce "0.8";
       tab_title_template = "{title}";
       active_tab_font_style = "normal";
       inactive_tab_font_style = "normal";
