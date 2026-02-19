@@ -58,7 +58,7 @@
   users.users.pau = {
     isNormalUser = true;
     description = "pau";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "uinput" ];
     packages = with pkgs; [];
   };
 
@@ -160,14 +160,25 @@
 
   programs.thunar = {
     enable = true;
-    plugins = with pkgs.xfce; [
-      thunar-archive-plugin
-      thunar-volman
+    plugins = [
+      pkgs.thunar-archive-plugin
+      pkgs.thunar-volman
     ];
   };
   services.gvfs.enable = true;    # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
   programs.xfconf.enable = true;  # Required to save Thunar settings
+
+  services.kanata = {
+    enable = true;
+    keyboards = {
+      internal = {
+        configFile = ./config/kanata/kanata.kbd; 
+        # devices = [ "/dev/input/by-path/..." ]; 
+      };
+    };
+  };
+
 
   environment.sessionVariables = {
     XCURSOR_THEME = "Posy_Cursor_125_175";
@@ -179,7 +190,7 @@
   };
 
   services.displayManager.sddm.enable = true;
-  services.displayManager.environment = {
+  services.displayManager.generic.environment = {
     XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";
   };

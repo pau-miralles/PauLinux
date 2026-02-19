@@ -199,15 +199,17 @@
       };
     };
   };
-  # stylix.targets.firefox = {
-  #   profileNames = [ "default" ];
-  #   colorTheme.enable = true; 
-  # };
+  stylix.targets.firefox = {
+    profileNames = [ "default" ];
+    # colorTheme.enable = true; 
+  };
 
   programs.git = {
     enable = true;
-    userName = "pau-miralles";
-    userEmail = "pmms0808@gmail.com";
+    settings.user = {
+      name = "pau-miralles";
+      email = "pmms0808@gmail.com";
+    };
   };
 
   home.sessionVariables = {
