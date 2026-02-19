@@ -65,7 +65,7 @@
   # "waybar".source = ./config/waybar;
   "fastfetch".source = ./config/fastfetch;
   # "wofi".source = ./config/wofi;
-  # "sway".source = ./config/sway;
+  "sway".source = ./config/sway;
   "nvim".source = ./config/nvim;
   # "yazi".source = ./config/yazi;
   };
@@ -116,7 +116,6 @@
 
     shellAliases = {
       q = "exit";
-      c = "clear";
       ff = "fastfetch --logo small";
       ls = "eza --icons --hyperlink";
       ll = "eza -l --header --icons --hyperlink";
@@ -205,196 +204,6 @@
   #   colorTheme.enable = true; 
   # };
 
-
-  xdg.configFile."sway/config".text = ''
-    # --- Variables ---
-    set $mod Mod4
-    set $term kitty
-    set $menu wmenu-run
-
-    # Direction keys
-    set $left h
-    set $down j
-    set $up k
-    set $right l
-
-    # exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-    exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-    exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-
-    # --- SwayFX Settings ---
-    
-    # 1. Window Blur
-    blur enable
-    blur_passes 2
-    blur_radius 5
-    blur_noise 0.01
-
-    # 2. Transparency Rules
-    # Base rule: Everything is translucent (0.85)
-    for_window [app_id=".*"] opacity 0.85
-    for_window [class=".*"] opacity 0.85
-    
-    # Exceptions: Production/Video apps stay 100% opaque
-    for_window [app_id="firefox"] opacity 1
-    for_window [app_id="vlc"] opacity 1
-    for_window [app_id="org.kde.kdenlive"] opacity 1
-    for_window [class="Gimp"] opacity 1
-    for_window [app_id="gimp-2.10"] opacity 1
-
-    # 3. Rounded Corners
-    corner_radius 4
-
-    # 4. Shadows
-    shadows disable
-
-    # 5. Gaps & Borders
-    default_border pixel 2
-    default_floating_border pixel 1
-    gaps inner 5
-    gaps outer 0
-    smart_gaps on
-    smart_borders on
-    hide_edge_borders --i3 none
-
-    # 6. Layer Shell Effects
-    layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 4
-    layer_effects "panel" blur enable
-
-    # --- Output & Input ---
-    output eDP-1 {
-      mode 2256x1504@59.999Hz
-      scale 1.5
-    }
-
-    output * bg /etc/nixos/config/wallpaper.jpg fill
-
-    input * {
-      xkb_layout es
-    }
-
-    input type:touchpad {
-      dwt enabled
-      tap enabled
-      natural_scroll enabled
-      middle_emulation enabled
-    }
-
-    # --- Key bindings ---
-    bindsym $mod+e exec thunar
-    bindsym $mod+w exec firefox
-    
-    # -- Basics --
-    bindsym $mod+Return exec $term
-    bindsym $mod+Shift+q kill
-    bindsym $mod+d exec $menu
-    bindsym $mod+Shift+c reload
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes, exit sway' 'swaymsg exit'
-    
-    # Custom
-    bindsym $mod+v exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
-    bindsym $mod+Shift+f floating toggle
-    bindsym $mod+Shift+space floating toggle
-    bindsym $mod+space focus mode_toggle
-
-    # -- Navigation --
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
-    bindsym $mod+Right focus right
-
-    # -- Moving Windows --
-    bindsym $mod+Shift+$left move left
-    bindsym $mod+Shift+$down move down
-    bindsym $mod+Shift+$up move up
-    bindsym $mod+Shift+$right move right
-    bindsym $mod+Shift+Left move left
-    bindsym $mod+Shift+Down move down
-    bindsym $mod+Shift+Up move up
-    bindsym $mod+Shift+Right move right
-
-    # -- Workspaces --
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
-    bindsym $mod+8 workspace number 8
-    bindsym $mod+9 workspace number 9
-    bindsym $mod+0 workspace number 10
-
-    bindsym $mod+Shift+1 move container to workspace number 1
-    bindsym $mod+Shift+2 move container to workspace number 2
-    bindsym $mod+Shift+3 move container to workspace number 3
-    bindsym $mod+Shift+4 move container to workspace number 4
-    bindsym $mod+Shift+5 move container to workspace number 5
-    bindsym $mod+Shift+6 move container to workspace number 6
-    bindsym $mod+Shift+7 move container to workspace number 7
-    bindsym $mod+Shift+8 move container to workspace number 8
-    bindsym $mod+Shift+9 move container to workspace number 9
-    bindsym $mod+Shift+0 move container to workspace number 10
-
-    # -- Layout --
-    bindsym $mod+t layout tabbed
-    bindsym $mod+s layout toggle split
-    bindsym $mod+f fullscreen
-    bindsym $mod+a focus parent
-
-    # -- Resize Mode --
-    mode "resize" {
-        bindsym $left resize shrink width 10px
-        bindsym $down resize grow height 10px
-        bindsym $up resize shrink height 10px
-        bindsym $right resize grow width 10px
-        bindsym Left resize shrink width 10px
-        bindsym Down resize grow height 10px
-        bindsym Up resize shrink height 10px
-        bindsym Right resize grow width 10px
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-    }
-    bindsym $mod+r mode "resize"
-
-    # -- Utilities --
-    bindsym Print exec grim
-    bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-    bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-    bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-    bindsym --locked XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
-    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
-    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
-
-    # --- Services ---
-    exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
-    exec_always autotiling
-
-    exec swayidle -w \
-         timeout 300 'swaylock -f -c 000000' \
-         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-         before-sleep 'swaylock -f -c 000000'
-
-    # --- Status Bar ---
-    bar {
-      position bottom
-      mode dock
-      modifier none
-      status_command while date +'%Y-%m-%d %X'; do sleep 1; done
-    }
-
-    client.focused          #888888  #888888  #ffffff  #888888  #888888
-    client.focused_inactive #444444  #444444  #cccccc  #444444  #444444
-    client.unfocused        #333333  #333333  #aaaaaa  #333333  #333333
-    client.urgent           #666666  #666666  #ffffff  #666666  #666666
-    client.placeholder      #222222  #222222  #888888  #222222  #222222
-  '';
-
-
   programs.git = {
     enable = true;
     userName = "pau-miralles";
@@ -402,7 +211,7 @@
   };
 
   home.sessionVariables = {
-    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";
   };
 }

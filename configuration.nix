@@ -119,7 +119,6 @@
     enable = true;
     targets.gtk.enable = true;
     image = ./config/wallpaper.jpg;
-    # base16Scheme = ./themes/pau-theme.yaml;
 
     polarity = "dark";
     fonts = {
@@ -136,7 +135,7 @@
       emoji = config.stylix.fonts.monospace;
     };
     cursor.package = pkgs.posy-cursors;
-    cursor.name = "Posy_Cursor";
+    cursor.name = "Posy_Cursor_125_175";
     cursor.size = 64;
     opacity = {
       desktop = 0.8;
@@ -171,17 +170,17 @@
   programs.xfconf.enable = true;  # Required to save Thunar settings
 
   environment.sessionVariables = {
-    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";
   };
   environment.variables = {
-    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";
   };
 
   services.displayManager.sddm.enable = true;
   services.displayManager.environment = {
-    XCURSOR_THEME = "Posy_Cursor";
+    XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";
   };
 }
