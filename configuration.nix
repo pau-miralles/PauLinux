@@ -189,7 +189,14 @@
     XCURSOR_SIZE = "64";
   };
 
-  services.displayManager.sddm.enable = true;
+  services.displayManager.ly = {
+    enable = true;
+    settings = {
+      bigclock = true;
+      blank_password = true;
+    };
+  };
+
   services.displayManager.generic.environment = {
     XCURSOR_THEME = "Posy_Cursor_125_175";
     XCURSOR_SIZE = "64";

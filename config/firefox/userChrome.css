@@ -1,17 +1,11 @@
-*:not(#TabsToolbar):not(#TabsToolbar *)
-{
-	border-radius: 4px !important;
-}
-
-*:not(#titlebar):not(#titlebar *)
-{
-	border-radius: 4px !important;
-}
-
+#TabsToolbar,
+#TabsToolbar *,
+#titlebar,
+#titlebar *,
 toolbar,
 #nav-bar,
-#PersonalToolbar,
-.browserContainer,
+/* #PersonalToolbar, */
+/* .browserContainer, */
 .panel-subview-body {
 	border-radius: 4px !important;
 }
@@ -71,6 +65,7 @@ border-inline: none !important;
 	min-height: calc(var(--tab-min-height) - 2px) !important;
 	transition: none !important;
 }
+
 .tab-background {
 	border-radius: var(--user-radius) !important;
 	margin-block: var(--tab-block-margin) !important;
@@ -88,7 +83,8 @@ border-inline: none !important;
 
 /* --- SINGLE TAB BEHAVIOR --- */
 .tabbrowser-tab:only-of-type {
-	max-width: none !important; /* Removes the 225px limit so it expands */
+	max-width: none !important;
+	/* Removes the 225px limit so it expands */
 }
 
 .tabbrowser-tab:only-of-type .tab-background {
@@ -131,7 +127,8 @@ background-color: var(--toolbar-field-background-color, inherit);
 /* --- SEARCH BAR POSITION --- */
 #urlbar[breakout][breakout-extend] {
 width: 100% !important;
-max-width: 800px !important; /* Adjusted max-width for better look */
+max-width: 800px !important;
+/* Adjusted max-width for better look */
 position: fixed !important;
 /* This puts it at the very top */
 top: 4px !important;
@@ -139,7 +136,7 @@ left: 50% !important;
 transform: translateX(-50%) !important;
 z-index: 9999 !important;
 /* Add a shadow so it stands out over the tabs */
-box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* --- AUTO-HIDE ICONS & TEXT SPACING --- */
@@ -162,13 +159,17 @@ padding-right: 5px !important;
 }
 
 /* --- HIDING ELEMENTS --- */
-#back-button, #forward-button, #stop-reload-button { display: none !important; }
+#back-button,
+#forward-button,
+#stop-reload-button {
+display: none !important;
+}
 
 toolbarspring,
 [id^="wrapper-customizableui-special-spring"],
 .titlebar-spacer,
 .titlebar-buttonbox-container {
-display: none !important;
+	display: none !important;
 }
 
 .tab-close-button {

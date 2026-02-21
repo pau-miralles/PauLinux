@@ -3,9 +3,6 @@
   # OpenGL (required for Wayland)
   hardware.graphics.enable = true;
 
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-
   programs.sway = {
     enable = true;
     package = pkgs.swayfx; # Use SwayFX instead of standard Sway

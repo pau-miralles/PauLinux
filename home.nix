@@ -13,13 +13,12 @@
     audacity
     handbrake
     libreoffice-fresh
-    kdePackages.kdenlive
     obs-studio
     obsidian
     gimp
     vlc
     syncthing
-    
+
     # CLI Tools
     neovim
     yazi
@@ -37,7 +36,7 @@
     tealdeer
     speedtest-cli
     python3
-    
+
     cliphist # Clipboard backend
     udiskie # Automatic USB drives
     gammastep # Night Light
@@ -197,7 +196,7 @@
   };
   stylix.targets.firefox = {
     profileNames = [ "default" ];
-    # colorTheme.enable = true; 
+    colorTheme.enable = true; 
   };
 
   programs.git = {
