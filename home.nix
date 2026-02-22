@@ -121,7 +121,7 @@
 
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
-      
+
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
@@ -226,24 +226,89 @@
       mainBar = {
         layer = "top";
         position = "bottom";
-        height = 24;
-
-        modules-left = [ "sway/workspaces" ];
+        height = 20;
+        modules-left = [ "battery" "power-profiles-daemon" "temperature" "sway/workspaces" ];
         modules-center = [ "sway/window" ];
-        modules-right = [ "battery" "clock" ];
+        modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
 
-        # Note: Keys with slashes MUST be quoted in Nix
+        "sway/workspaces" = {
+          all-outputs = true;
+        };
         "sway/window" = {
           max-length = 50;
         };
-
         "battery" = {
-          format = "{capacity}% {icon}";
+          interval = 60;
+          format = "{capacity}% ({time}) {icon}";
+          format-charging = "{capacity}% ({time}) "; 
           format-icons = [ "" "" "" "" "" ];
         };
-
+        "temperature" = {
+          critical-threshold = 80;
+          format-critical = "⚠{temperatureC}°C";
+          format = "{temperatureC}°C";
+        };
+        "network" = {
+          format-wifi = "{essid} ({signalStrength}%) ";
+          format-ethernet = "{ipaddr}/{cidr} 󰊗";
+          tooltip-format = "{ifname} via {gwaddr} 󰊗";
+          format-linked = "{ifname} (No IP) ";
+          format-disconnected = "Disconnected ⚠";
+          on-click = "/etc/profiles/per-user/pau/bin/impala";
+        };
+        "backlight" = {
+          format = "{percent}% {icon}";
+          format-icons = ["" ""];
+        };
+        "pulseaudio" = {
+          format = "{volume}% {icon}";
+          format-bluetooth = "{volume}% {icon}";
+          format-muted = "Muted ";
+          format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = ["" ""];
+          };
+          scroll-step = 1;
+          on-click = "/etc/profiles/per-user/pau/bin/pavucontrol";
+        };
+        "power-profiles-daemon" = {
+          format = "{icon}";
+          tooltip-format = "Power profile: {profile}\nDriver: {driver}";
+          tooltip = true;
+          format-icons = {
+            default = "";
+            performance = "";
+            balanced = "";
+            power-saver = "";
+          };
+        };
         "clock" = {
-          format-alt = "{:%a, %d. %b  %H:%M}";
+          interval = 1;
+          format = "{:%H:%M:%S %d/%m/%y}";
+          tooltip-format = "<tt><small>{calendar}</small></tt>";
+          calendar = {
+            mode = "year";
+            mode-mon-col = 3;
+            weeks-pos = "right";
+            on-scroll = 1;
+            format = {
+              months = "<span color='#ffead3'><b>{}</b></span>";
+              days = "<span color='#ecc6d9'><b>{}</b></span>";
+              weeks = "<span color='#99ffdd'><b>W{}</b></span>";
+              weekdays = "<span color='#ffcc66'><b>{}</b></span>";
+              today = "<span color='#ff6699'><b><u>{}</u></b></span>";
+            };
+          };
+          actions = {
+            on-click-right = "mode";
+            on-scroll-up = "shift_up";
+            on-scroll-down = "shift_down";
+          };
         };
       };
     };
@@ -255,24 +320,25 @@
         font-family: inherit;
         min-height: 0;
       }
-
       #workspaces button {
         padding: 0 5px;
         background: transparent;
         color: white;
         border-bottom: 3px solid transparent;
       }
-
       #workspaces button.focused {
         border-bottom: 3px solid white;
       }
-
-      /* Reduce padding for all modules to keep the bar slim */
       #battery,
       #clock,
       #workspaces,
       #mode,
-      #window {
+      #window,
+      #temperature,
+      #network,
+      #pulseaudio,
+      #backlight,
+      #power-profiles-daemon {
         padding: 0 10px;
       }
     '';

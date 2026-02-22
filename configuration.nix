@@ -93,7 +93,7 @@
   nix.gc = {
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 5d";
+    options = "--delete-generations +5";
   };
 
   # --- SOUND (Pipewire) ---

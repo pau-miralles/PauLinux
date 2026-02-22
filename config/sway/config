@@ -45,9 +45,10 @@ hide_edge_borders --i3 none
 # Layer Shell Effects
 layer_effects "waybar" {
     blur enable;
-    corner_radius 4;
-    shadows disable;
+    blur_xray enable;
     blur_ignore_transparent enable;
+    shadows disable;
+    corner_radius 0;
 }
 layer_effects "panel" {
     blur enable;
