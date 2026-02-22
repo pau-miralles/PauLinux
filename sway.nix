@@ -11,7 +11,6 @@
 
   environment.systemPackages = with pkgs; [
     waybar       # Status bar
-    wofi         # App launcher
     kitty        # Terminal
     mako         # Notification daemon
     libnotify    # To send notifications

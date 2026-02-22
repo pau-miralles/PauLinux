@@ -89,6 +89,13 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  nix.settings.auto-optimise-store = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 5d";
+  };
+
   # --- SOUND (Pipewire) ---
   # Remove sound.enable or pulse.enable if they exist!
   security.rtkit.enable = true;
@@ -135,8 +142,8 @@
       emoji = config.stylix.fonts.monospace;
     };
     cursor.package = pkgs.posy-cursors;
-    cursor.name = "Posy_Cursor_125_175";
-    cursor.size = 64;
+    cursor.name = "Posy_Cursor";
+    cursor.size = 32;
     opacity = {
       desktop = 0.8;
       popups = 0.8;
@@ -180,25 +187,11 @@
   };
 
 
-  environment.sessionVariables = {
-    XCURSOR_THEME = "Posy_Cursor_125_175";
-    XCURSOR_SIZE = "64";
-  };
-  environment.variables = {
-    XCURSOR_THEME = "Posy_Cursor_125_175";
-    XCURSOR_SIZE = "64";
-  };
-
   services.displayManager.ly = {
     enable = true;
     settings = {
       bigclock = true;
       blank_password = true;
     };
-  };
-
-  services.displayManager.generic.environment = {
-    XCURSOR_THEME = "Posy_Cursor_125_175";
-    XCURSOR_SIZE = "64";
   };
 }

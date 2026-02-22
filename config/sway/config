@@ -8,7 +8,7 @@ set $right l
 # Your preferred terminal emulator
 set $term kitty
 # Your preferred application launcher
-set $menu wmenu-run
+set $menu rofi -show drun
 
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -43,8 +43,31 @@ smart_borders on
 hide_edge_borders --i3 none
 
 # Layer Shell Effects
-layer_effects "wmenu" blur enable; layer_effects "wmenu" corner_radius 6
-layer_effects "panel" blur enable
+layer_effects "waybar" {
+    blur enable;
+    corner_radius 4;
+    shadows disable;
+    blur_ignore_transparent enable;
+}
+layer_effects "panel" {
+    blur enable;
+    corner_radius 4;
+    shadows disable;
+    blur_ignore_transparent enable;
+}
+layer_effects "rofi" {
+    blur enable;
+    corner_radius 4;
+    shadows disable;
+    blur_ignore_transparent enable;
+}
+}
+layer_effects "gtk-layer-shell" {
+    blur enable;
+    corner_radius 4;
+    shadows disable;
+    blur_ignore_transparent enable;
+}
 
 ### Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -66,13 +89,15 @@ input * {
     accel_profile flat
 }
 input type:touchpad {
-    dwt enabled
+    dwt disabled
     tap enabled
     natural_scroll enabled
     middle_emulation enabled
     pointer_accel 0.3
-    scroll_factor 0.35
+    scroll_factor 0.2
 }
+seat seat0 hide_cursor 30000
+seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
     bindsym $mod+Return exec $term
@@ -80,11 +105,19 @@ input type:touchpad {
     bindsym $mod+w exec firefox
     bindsym $mod+q kill
     bindsym $mod+d exec $menu
+    bindsym $mod+c exec rofi -show calc -modi calc -no-show-match -no-sort
+    bindsym $mod+period exec rofi -show emoji
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
     bindsym $mod+v exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
+
+    # Rotate Display with Ctrl+Alt+Arrows
+    bindsym Control+Mod1+Up    output eDP-1 transform normal
+    bindsym Control+Mod1+Right output eDP-1 transform 90
+    bindsym Control+Mod1+Down  output eDP-1 transform 180
+    bindsym Control+Mod1+Left  output eDP-1 transform 270
 
 # Moving around:
     # Move your focus around
@@ -128,10 +161,10 @@ input type:touchpad {
     bindsym $mod+minus scratchpad show
 
 # Resizing containers:
-bindsym Mod4+Control+$left resize grow width 10px
-bindsym Mod4+Control+$down resize shrink height 10px
-bindsym Mod4+Control+$up resize grow height 10px
-bindsym Mod4+Control+$right resize shrink width 10px
+bindsym Mod4+Control+$left resize grow width 60px
+bindsym Mod4+Control+$down resize shrink height 60px
+bindsym Mod4+Control+$up resize grow height 60px
+bindsym Mod4+Control+$right resize shrink width 60px
 
 # Utilities:
     # Special keys to adjust volume via PulseAudio
@@ -152,22 +185,10 @@ bindsym Mod4+Control+$right resize shrink width 10px
     bindsym Print exec grim
     bindsym $mod+Shift+s exec grim
 
-# Autotiling
-    exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
-    exec_always autotiling
+exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
+exec_always autotiling
 
-# Status Bar:
-bar {
-    position bottom
-    status_command while date +'%Y-%m-%d %X'; do sleep 1; done
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
-}
-
-
+exec_always systemctl --user restart waybar
 
 client.focused          #888888  #888888  #ffffff  #888888  #888888
 client.focused_inactive #444444  #444444  #cccccc  #444444  #444444

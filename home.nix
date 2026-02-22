@@ -61,25 +61,20 @@
 
 
   xdg.configFile = {
-  # "waybar".source = ./config/waybar;
   "fastfetch".source = ./config/fastfetch;
-  # "wofi".source = ./config/wofi;
   "sway".source = ./config/sway;
   "nvim".source = ./config/nvim;
-  # "yazi".source = ./config/yazi;
   };
 
   programs.kitty = {
     enable = true;
-    
+
   settings = {
       hide_window_decorations = "yes";
       window_padding_width = 5;
       window_border_width = 2;
       background_opacity = lib.mkForce "0.8";
       tab_title_template = "{title}";
-      active_tab_font_style = "normal";
-      inactive_tab_font_style = "normal";
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
       close_on_child_death = "yes";
@@ -118,6 +113,7 @@
       lt = "eza -T --level=2 --icons --hyperlink";
       v = "nvim";
       cat = "bat";
+      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
       f = "fzf";
       wttr = "curl wttr.in/Palma";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
@@ -199,16 +195,94 @@
     colorTheme.enable = true; 
   };
 
+
+  programs.rofi = {
+    enable = true;
+    package = pkgs.rofi; 
+
+    plugins = [
+      pkgs.rofi-calc
+      pkgs.rofi-emoji
+    ];
+
+    extraConfig = {
+      modi = "drun,calc,window,emoji";
+      show-icons = true;
+      drun-display-format = "{icon} {name}";
+      display-drun = "   Apps ";
+      display-calc = "   Calc ";
+      display-window = " 󰕰  Window";
+      display-emoji = "   Emoji ";
+      # Enable the sidebar to switch modes with Shift+Left/Right
+      sidebar-mode = true;
+    };
+  };
+
+
+  programs.waybar = {
+    enable = true;
+    systemd.enable = true;
+    settings = {
+      mainBar = {
+        layer = "top";
+        position = "bottom";
+        height = 24;
+
+        modules-left = [ "sway/workspaces" ];
+        modules-center = [ "sway/window" ];
+        modules-right = [ "battery" "clock" ];
+
+        # Note: Keys with slashes MUST be quoted in Nix
+        "sway/window" = {
+          max-length = 50;
+        };
+
+        "battery" = {
+          format = "{capacity}% {icon}";
+          format-icons = [ "" "" "" "" "" ];
+        };
+
+        "clock" = {
+          format-alt = "{:%a, %d. %b  %H:%M}";
+        };
+      };
+    };
+
+    style = ''
+      * {
+        border: none;
+        border-radius: 0;
+        font-family: inherit;
+        min-height: 0;
+      }
+
+      #workspaces button {
+        padding: 0 5px;
+        background: transparent;
+        color: white;
+        border-bottom: 3px solid transparent;
+      }
+
+      #workspaces button.focused {
+        border-bottom: 3px solid white;
+      }
+
+      /* Reduce padding for all modules to keep the bar slim */
+      #battery,
+      #clock,
+      #workspaces,
+      #mode,
+      #window {
+        padding: 0 10px;
+      }
+    '';
+  };
+
   programs.git = {
     enable = true;
     settings.user = {
       name = "pau-miralles";
       email = "pmms0808@gmail.com";
     };
-  };
-
-  home.sessionVariables = {
-    XCURSOR_THEME = "Posy_Cursor_125_175";
-    XCURSOR_SIZE = "64";
   };
 }

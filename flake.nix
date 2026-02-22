@@ -23,6 +23,7 @@ outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs: {
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
+	  inputs.nixos-hardware.nixosModules.framework-13-7040-amd
 	  stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager
           {
