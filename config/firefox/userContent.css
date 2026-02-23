@@ -1,3 +1,13 @@
 * {
   border-radius: 4px !important;
 }
+@-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
+    body {
+        background-color: transparent !important;
+        /* If using a dark theme, you might need to force text color */
+        color: white !important; 
+    }
+    .top-site-outer .tile {
+        background-color: rgba(255,255,255,0.1) !important;
+    }
+}

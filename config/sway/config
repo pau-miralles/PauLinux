@@ -20,7 +20,7 @@ exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CU
 blur enable
 blur_passes 3
 blur_radius 6
-blur_noise 0.04
+blur_noise 0.03
 # Transparency
 for_window [app_id=".*"] opacity 0.9
 for_window [class=".*"] opacity 0.9
@@ -105,14 +105,14 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+e exec thunar
     bindsym $mod+w exec firefox
     bindsym $mod+q kill
-    bindsym $mod+d exec $menu
-    bindsym $mod+c exec rofi -show calc -modi calc -no-show-match -no-sort
+    bindsym --no-repeat --release Super_L exec pkill rofi || $menu
     bindsym $mod+period exec rofi -show emoji
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
     bindsym $mod+v exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
+    bindsym $mod+b exec ~/.nixos-config/config/cycle_power.sh
 
     # Rotate Display with Ctrl+Alt+Arrows
     bindsym Control+Mod1+Up    output eDP-1 transform normal

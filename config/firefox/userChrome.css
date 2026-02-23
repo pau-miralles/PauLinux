@@ -175,3 +175,60 @@ toolbarspring,
 .tab-close-button {
 	display: none !important;
 }
+
+/* :root#main-window { */
+/*     background-color: transparent !important; */
+/* } */
+/* #navigator-toolbox { */
+/*     background-color: rgba(28, 28, 30, 0.5) !important; */
+/*     border-bottom: none !important; */
+/* } */
+:root,
+#main-window,
+body {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+#navigator-toolbox,
+#browser,
+#appcontent,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
+.browserContainer,
+.browserContainer > stack {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+#nav-bar,
+#TabsToolbar,
+#PersonalToolbar,
+#titlebar {
+    background-color: transparent !important;
+    appearance: none !important;
+    background-image: none !important;
+}
+#urlbar-background {
+    background-color: rgba(25, 25, 25, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+}
+findbar {
+    background-color: transparent !important;
+    border-top: none !important;
+}
+.findbar-textbox {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    color: white !important;
+    border: none !important;
+}
+#sidebar-box, 
+#sidebar-header,
+#sidebar-search-container {
+    background-color: transparent !important;
+}
+menupopup,
+panel {
+    --panel-background: rgba(30, 30, 30, 0.8) !important;
+    --panel-border-color: rgba(255, 255, 255, 0.7) !important;
+}

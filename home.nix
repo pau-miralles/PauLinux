@@ -68,42 +68,28 @@
 
   programs.kitty = {
     enable = true;
-
   settings = {
-      hide_window_decorations = "yes";
       window_padding_width = 5;
       window_border_width = 2;
       background_opacity = lib.mkForce "0.8";
-      tab_title_template = "{title}";
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
-      close_on_child_death = "yes";
-      allow_remote_control = "yes";
       confirm_os_window_close = 0;
   };
-
   keybindings = {
-    "ctrl+tab"     = "next_tab";
-    "ctrl+shift+tab" = "previous_tab";
-    "ctrl+shift+n" = "new_os_window_with_cwd";
-    
+    "ctrl+tab" = "next_tab";
     "ctrl+1" = "goto_tab 1";
     "ctrl+2" = "goto_tab 2";
     "ctrl+3" = "goto_tab 3";
     "ctrl+4" = "goto_tab 4";
     "ctrl+5" = "goto_tab 5";
     "ctrl+6" = "goto_tab 6";
-    "ctrl+7" = "goto_tab 7";
-    "ctrl+8" = "goto_tab 8";
-    "ctrl+9" = "goto_tab 9";
-    "ctrl+0" = "goto_tab 10";
     };
   };
 
   programs.bash = {
     enable = true;
     enableCompletion = true;
-
     shellAliases = {
       q = "exit";
       ff = "fastfetch --logo small";
@@ -113,7 +99,7 @@
       lt = "eza -T --level=2 --icons --hyperlink";
       v = "nvim";
       cat = "bat";
-      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
       f = "fzf";
       wttr = "curl wttr.in/Palma";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
@@ -164,10 +150,12 @@
       settings = {
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         "browser.compactmode.show" = true;
-        "browser.uidensity" = 1; # 1 = Compact
-        "apz.overscroll.enabled" = false; # Disable overscroll "rubberbanding"
-        "browser.gesture.swipe.left" = ""; # Disable swipe to go back
-        "browser.gesture.swipe.right" = ""; # Disable swipe to go forward
+        "browser.uidensity" = 1;
+        "apz.overscroll.enabled" = false;
+        "browser.gesture.swipe.left" = "";
+        "browser.gesture.swipe.right" = "";
+        "gfx.webrender.all" = true;
+        "widget.wayland.opaque-region.enabled" = true;
         "full-screen-api.transition-duration.enter" = "0 0";
         "full-screen-api.transition-duration.leave" = "0 0";
         "full-screen-api.warning.delay" = 0;
@@ -254,11 +242,11 @@
           tooltip-format = "{ifname} via {gwaddr} 󰊗";
           format-linked = "{ifname} (No IP) ";
           format-disconnected = "Disconnected ⚠";
-          on-click = "/etc/profiles/per-user/pau/bin/impala";
+          on-click = "~/.nixos-config/config/network.sh";
         };
         "backlight" = {
           format = "{percent}% {icon}";
-          format-icons = ["" ""];
+          format-icons = ["" "" "" "󰖨" ""];
         };
         "pulseaudio" = {
           format = "{volume}% {icon}";
