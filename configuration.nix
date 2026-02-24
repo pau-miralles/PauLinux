@@ -8,11 +8,9 @@
     ];
 
   # Bootloader.
-  # boot.loader.grub.enable = true;
-  # boot.loader.grub.device = "/dev/vda";
-  # boot.loader.grub.useOSProber = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.timeout = 0;
 
   networking.hostName = "framework"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -120,6 +118,7 @@
   # Enable Power Profiles Daemon
   services.power-profiles-daemon.enable = true;
 
+  services.logind.powerKey = "ignore";
 
 # --- STYLIX CONFIGURATION ---
   stylix = {
@@ -192,6 +191,14 @@
     settings = {
       bigclock = true;
       blank_password = true;
+      save_session = false;
     };
+  };
+
+  services.logind.settings.Login = {
+    HandlePowerKey = "ignore";
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
   };
 }

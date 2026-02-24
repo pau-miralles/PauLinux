@@ -135,8 +135,6 @@ top: 4px !important;
 left: 50% !important;
 transform: translateX(-50%) !important;
 z-index: 9999 !important;
-/* Add a shadow so it stands out over the tabs */
-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* --- AUTO-HIDE ICONS & TEXT SPACING --- */
@@ -161,6 +159,7 @@ padding-right: 5px !important;
 /* --- HIDING ELEMENTS --- */
 #back-button,
 #forward-button,
+#home-button,
 #stop-reload-button {
 display: none !important;
 }
@@ -176,59 +175,27 @@ toolbarspring,
 	display: none !important;
 }
 
-/* :root#main-window { */
-/*     background-color: transparent !important; */
-/* } */
-/* #navigator-toolbox { */
-/*     background-color: rgba(28, 28, 30, 0.5) !important; */
-/*     border-bottom: none !important; */
-/* } */
 :root,
 #main-window,
-body {
-    background-color: transparent !important;
-    background-image: none !important;
-}
+body,
 #navigator-toolbox,
 #browser,
 #appcontent,
 #tabbrowser-tabbox,
 #tabbrowser-tabpanels,
 .browserContainer,
-.browserContainer > stack {
-    background-color: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    border: none !important;
-}
+.browserContainer > stack,
 #nav-bar,
 #TabsToolbar,
 #PersonalToolbar,
-#titlebar {
-    background-color: transparent !important;
-    appearance: none !important;
-    background-image: none !important;
-}
-#urlbar-background {
-    background-color: rgba(25, 25, 25, 0.7) !important;
-    backdrop-filter: blur(10px) !important;
-}
-findbar {
-    background-color: transparent !important;
-    border-top: none !important;
-}
-.findbar-textbox {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    color: white !important;
-    border: none !important;
-}
-#sidebar-box, 
+#titlebar,
+#sidebar-box,
 #sidebar-header,
 #sidebar-search-container {
     background-color: transparent !important;
+    background-image: none !important;
 }
-menupopup,
-panel {
-    --panel-background: rgba(30, 30, 30, 0.8) !important;
-    --panel-border-color: rgba(255, 255, 255, 0.7) !important;
+#urlbar-background {
+    background-color: rgba(25, 25, 25, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
 }

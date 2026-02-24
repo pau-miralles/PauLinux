@@ -34,6 +34,9 @@ for_window [app_id="gimp-2.10"] opacity 1
 corner_radius 4
 shadows disable
 # Gaps & Borders
+font pango:monospace 0.001
+titlebar_border_thickness 0
+titlebar_padding 0
 default_border pixel 2
 default_floating_border pixel 1
 gaps inner 5
@@ -102,16 +105,20 @@ seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
     bindsym $mod+Return exec $term
+    bindsym $mod+d exec $menu
     bindsym $mod+e exec thunar
     bindsym $mod+w exec firefox
     bindsym $mod+q kill
-    bindsym --no-repeat --release Super_L exec pkill rofi || $menu
     bindsym $mod+period exec rofi -show emoji
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
-    bindsym $mod+v exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
+    bindsym $mod+v exec cliphist list | rofi -dmenu -p "Clipboard" | cliphist decode | wl-copy
+    bindsym Control+Mod1+Shift+c exec cliphist wipe
+    bindsym $mod+p exec rofi-power
+    bindsym XF86PowerOff exec rofi-power
+    bindsym $mod+g exec rofi-gammastep
     bindsym $mod+b exec ~/.nixos-config/config/cycle_power.sh
 
     # Rotate Display with Ctrl+Alt+Arrows
@@ -150,7 +157,7 @@ seat seat0 xcursor_theme Posy_Cursor 32
 
 # Layout stuff:
     # Switch the current container between different layout styles
-    bindsym $mod+t layout tabbed
+    bindsym $mod+t exec 'swaymsg "[workspace=$(swaymsg -t get_workspaces | jq -r ".[] | select(.focused).name") tiling] move container to workspace current; layout tabbed"'
     bindsym $mod+s layout toggle split
     bindsym $mod+f fullscreen
     bindsym $mod+Shift+f floating toggle

@@ -1,5 +1,29 @@
 { config, pkgs, lib, ... }:
 
+let
+  rofi-power = pkgs.writeShellScriptBin "rofi-power" ''
+    entries="󰐥 Poweroff\n󰤄 Suspend\n󰜉 Reboot\n󰈆 Log out"
+    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Power" -theme-str 'window { width: 300px; } listview { lines: 4; }')
+    case "$selected" in
+      *"Poweroff") systemctl poweroff ;;
+      *"Suspend") systemctl suspend ;;
+      *"Reboot") systemctl reboot ;;
+      *"Log out") swaymsg exit ;;
+    esac
+  '';
+
+  rofi-gammastep = pkgs.writeShellScriptBin "rofi-gammastep" ''
+    entries="󰖨 Day (Reset)\n󰛨 Night (3500K)\n󰖔 Midnight (2500K)"
+    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Gamma")
+
+    pkill gammastep
+    case "$selected" in
+      *"Day"*) ${pkgs.gammastep}/bin/gammastep -x -m wayland ;;
+      *"Night"*) ${pkgs.gammastep}/bin/gammastep -O 3500 -m wayland & ;;
+      *"Midnight"*) ${pkgs.gammastep}/bin/gammastep -O 2500 -m wayland & ;;
+    esac
+  '';
+in
 {
   home.username = "pau";
   home.homeDirectory = "/home/pau";
@@ -48,9 +72,18 @@
     ffmpegthumbnailer # Video thumbnails
     libgsf # ODF (LibreOffice) thumbnails
     mpv
+    jq # Json, for the sway tabs script
+
+    rofi-power
+    rofi-gammastep
+    rofi-emoji
+    wtype
   ];
 
-  services.cliphist.enable = true;
+  services.cliphist = {
+    enable = true;
+    allowImages = true; # Critical for your request
+  };
   services.udiskie.enable = true;
   services.gammastep = {
     enable = true;
@@ -74,7 +107,6 @@
       background_opacity = lib.mkForce "0.8";
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
-      confirm_os_window_close = 0;
   };
   keybindings = {
     "ctrl+tab" = "next_tab";
@@ -121,7 +153,7 @@
         fi
         rm -f -- "$tmp"
       }
-      
+
       # Cargo env (if you use rustup)
       if [ -f "$HOME/.cargo/env" ]; then
         . "$HOME/.cargo/env"
@@ -186,23 +218,18 @@
 
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi; 
-
-    plugins = [
-      pkgs.rofi-calc
-      pkgs.rofi-emoji
-    ];
+    package = pkgs.rofi;
+    plugins = [ pkgs.rofi-calc pkgs.rofi-emoji ];
 
     extraConfig = {
-      modi = "drun,calc,window,emoji";
+      modi = "drun,calc";
       show-icons = true;
-      drun-display-format = "{icon} {name}";
-      display-drun = "   Apps ";
-      display-calc = "   Calc ";
-      display-window = " 󰕰  Window";
-      display-emoji = "   Emoji ";
-      # Enable the sidebar to switch modes with Shift+Left/Right
-      sidebar-mode = true;
+      display-drun = " ";
+      display-calc = " ";
+      sidebar-mode = false;
+
+      kb-mode-next = "Shift+Right";
+      kb-mode-previous = "Shift+Left";
     };
   };
 
@@ -215,15 +242,12 @@
         layer = "top";
         position = "bottom";
         height = 20;
-        modules-left = [ "battery" "power-profiles-daemon" "temperature" "sway/workspaces" ];
-        modules-center = [ "sway/window" ];
+        modules-left = [ "battery" "power-profiles-daemon" "temperature" ];
+        modules-center = [ "sway/workspaces" ];
         modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
 
         "sway/workspaces" = {
           all-outputs = true;
-        };
-        "sway/window" = {
-          max-length = 50;
         };
         "battery" = {
           interval = 60;
@@ -238,27 +262,21 @@
         };
         "network" = {
           format-wifi = "{essid} ({signalStrength}%) ";
-          format-ethernet = "{ipaddr}/{cidr} 󰊗";
-          tooltip-format = "{ifname} via {gwaddr} 󰊗";
-          format-linked = "{ifname} (No IP) ";
+          format-ethernet = "󰈀";
+          tooltip-format = "{ifname} via {gwaddr}";
+          format-linked = "{ifname} (No IP)";
           format-disconnected = "Disconnected ⚠";
-          on-click = "~/.nixos-config/config/network.sh";
         };
         "backlight" = {
           format = "{percent}% {icon}";
-          format-icons = ["" "" "" "󰖨" ""];
+          format-icons = ["" "󰖨" "" ""];
         };
         "pulseaudio" = {
           format = "{volume}% {icon}";
           format-bluetooth = "{volume}% {icon}";
-          format-muted = "Muted ";
+          format-muted = " ";
           format-icons = {
               headphone = "";
-              hands-free = "";
-              headset = "";
-              phone = "";
-              portable = "";
-              car = "";
               default = ["" ""];
           };
           scroll-step = 1;
@@ -266,18 +284,18 @@
         };
         "power-profiles-daemon" = {
           format = "{icon}";
-          tooltip-format = "Power profile: {profile}\nDriver: {driver}";
+          tooltip-format = "{profile}";
           tooltip = true;
           format-icons = {
             default = "";
             performance = "";
             balanced = "";
-            power-saver = "";
+            power-saver = "󰌪";
           };
         };
         "clock" = {
           interval = 1;
-          format = "{:%H:%M:%S %d/%m/%y}";
+          format = "{:%d/%m/%y %H:%M:%S}";
           tooltip-format = "<tt><small>{calendar}</small></tt>";
           calendar = {
             mode = "year";
@@ -285,11 +303,11 @@
             weeks-pos = "right";
             on-scroll = 1;
             format = {
-              months = "<span color='#ffead3'><b>{}</b></span>";
-              days = "<span color='#ecc6d9'><b>{}</b></span>";
-              weeks = "<span color='#99ffdd'><b>W{}</b></span>";
-              weekdays = "<span color='#ffcc66'><b>{}</b></span>";
-              today = "<span color='#ff6699'><b><u>{}</u></b></span>";
+              months = "<span color='#f2c6a0'><b>{}</b></span>";
+              days = "<span color='#e6b3c2'><b>{}</b></span>";
+              weeks = "<span color='#d8a657'><b>W{}</b></span>";
+              weekdays = "<span color='#eebd7a'><b>{}</b></span>";
+              today = "<span color='#d3869b'><b><u>{}</u></b></span>";
             };
           };
           actions = {
@@ -309,19 +327,12 @@
         min-height: 0;
       }
       #workspaces button {
-        padding: 0 5px;
-        background: transparent;
-        color: white;
-        border-bottom: 3px solid transparent;
-      }
-      #workspaces button.focused {
-        border-bottom: 3px solid white;
+        padding: 0 3px;
       }
       #battery,
       #clock,
       #workspaces,
       #mode,
-      #window,
       #temperature,
       #network,
       #pulseaudio,
