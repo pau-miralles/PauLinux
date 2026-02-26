@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -7,10 +7,42 @@
 ./sway.nix
     ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.timeout = 0;
+  boot = {
+    # Bootloader
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+    loader.timeout = 0;
+    consoleLogLevel = 0;
+    initrd = {
+      verbose = false;
+      kernelModules = [ "amdgpu" ];
+      systemd.enable = true;
+    };
+    kernelParams = [
+    "quiet"                       # Reduces kernel output
+    "loglevel=3"                  # Only show Errors (ignores warnings/info)
+    "systemd.show_status=auto"    # ONLY show systemd status if a service fails or is slow
+    "rd.systemd.show_status=auto" # Same as above, but for the very start (initrd)
+    "rd.udev.log_level=3"         # Keep udev quiet unless it breaks
+    "udev.log_priority=3"
+    "8250.nr_uarts=0"             # Fixes the 3s serial port timeout
+    "tpm_tis.interrupts=0"        # Fixes TPM wait
+    "tpm.tpm_do_selftest=0"       # Skips TPM test
+    "amdgpu.fastboot=1"           # Skips flicker/logo transitions
+    "fbcon=nodefer"               # Tells the kernel to take the screen immediately
+    ];
+    blacklistedKernelModules = [
+      "sp5100_tco"
+      "8250_pnp"
+    ];
+  };
+
+  systemd.targets.emergency.enable = false;
+
+  systemd.services."home-manager-pau" = {
+    before = lib.mkForce [ ]; # Don't block other services
+    wantedBy = lib.mkForce [ "multi-user.target" ];
+  };
 
   networking.hostName = "framework"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -23,6 +55,7 @@
   # Enable networking
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.backend = "iwd";
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   # Set your time zone.
   time.timeZone = "Europe/Madrid";
@@ -105,15 +138,17 @@
     jack.enable = true;
   };
 
+  services.fprintd.enable = false;
   # --- BLUETOOTH ---
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  services.blueman.enable = true; # GUI for managing bluetooth
+  hardware.bluetooth.powerOnBoot = false;
+  systemd.services.bluetooth.wantedBy = lib.mkForce [ ];
+  # services.blueman.enable = true; # GUI for managing bluetooth
 
   # --- PRINTING ---
   services.printing.enable = true;
-  # specific drivers for most common printers
   services.printing.drivers = [ pkgs.gutenprint pkgs.hplip ];
+  systemd.services.cups.wantedBy = lib.mkForce [ ];
 
   # Enable Power Profiles Daemon
   services.power-profiles-daemon.enable = true;
@@ -125,6 +160,7 @@
     enable = true;
     targets.gtk.enable = true;
     image = ./config/wallpaper.jpg;
+    # base16Scheme = ./config/themes/theme.yaml;
 
     polarity = "dark";
     fonts = {
@@ -177,12 +213,19 @@
 
   services.kanata = {
     enable = true;
-    keyboards = {
-      internal = {
-        configFile = ./config/kanata/kanata.kbd; 
-        # devices = [ "/dev/input/by-path/..." ]; 
-      };
+    keyboards.internal = {
+      configFile = ./config/kanata/kanata.kbd;
+      devices = [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ];
     };
+  };
+  
+systemd.services.kanata-internal = {
+    # Force it to be non-blocking
+    serviceConfig.Type = lib.mkForce "simple"; 
+    wantedBy = lib.mkForce [ "multi-user.target" ];
+    # Optional: Start it slightly later to let the screen initialize first
+    after = [ "local-fs.target" ];
+    before = lib.mkForce [ ]; 
   };
 
 

@@ -12,15 +12,22 @@ let
     esac
   '';
 
-  rofi-gammastep = pkgs.writeShellScriptBin "rofi-gammastep" ''
+rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" ''
     entries="󰖨 Day (Reset)\n󰛨 Night (3500K)\n󰖔 Midnight (2500K)"
-    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Gamma")
-
-    pkill gammastep
+    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Temperature")
+    systemctl --user stop wlsunset.service 2>/dev/null
+    pkill -x wlsunset
+    sleep 0.2
     case "$selected" in
-      *"Day"*) ${pkgs.gammastep}/bin/gammastep -x -m wayland ;;
-      *"Night"*) ${pkgs.gammastep}/bin/gammastep -O 3500 -m wayland & ;;
-      *"Midnight"*) ${pkgs.gammastep}/bin/gammastep -O 2500 -m wayland & ;;
+      *"Day"*)
+        systemctl --user start wlsunset.service
+        ;;
+      *"Night"*)
+        systemd-run --user --unit=wlsunset-manual ${pkgs.wlsunset}/bin/wlsunset -t 5000 -T 6500
+        ;;
+      *"Midnight"*)
+        systemd-run --user --unit=wlsunset-manual ${pkgs.wlsunset}/bin/wlsunset -t 4000 -T 6500
+        ;;
     esac
   '';
 in
@@ -33,7 +40,6 @@ in
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    # GUI Apps
     audacity
     handbrake
     libreoffice-fresh
@@ -43,7 +49,6 @@ in
     vlc
     syncthing
 
-    # CLI Tools
     neovim
     yazi
     rmpc
@@ -61,9 +66,9 @@ in
     speedtest-cli
     python3
 
-    cliphist # Clipboard backend
+    cliphist
     udiskie # Automatic USB drives
-    gammastep # Night Light
+    wlsunset
     pavucontrol # GUI Audio Panel
     wiremix # TUI Pipewire Audio Panel
     impala # TUI Wifi Panel
@@ -71,32 +76,38 @@ in
     posy-cursors
     ffmpegthumbnailer # Video thumbnails
     libgsf # ODF (LibreOffice) thumbnails
-    mpv
     jq # Json, for the sway tabs script
 
     rofi-power
-    rofi-gammastep
+    rofi-wlsunset
     rofi-emoji
-    wtype
   ];
 
   services.cliphist = {
     enable = true;
-    allowImages = true; # Critical for your request
+    allowImages = true;
   };
   services.udiskie.enable = true;
-  services.gammastep = {
+
+  services.mpd = {
     enable = true;
-    provider = "manual";
-    latitude = 39.5; # Palma coordinates
-    longitude = 2.6;
+    musicDirectory = "/home/pau/Music";
+    extraConfig = ''
+      audio_output {
+        type "pulse"
+        name "PulseAudio"
+      }
+    '';
+    network.listenAddress = "any"; 
   };
 
 
   xdg.configFile = {
-  "fastfetch".source = ./config/fastfetch;
-  "sway".source = ./config/sway;
-  "nvim".source = ./config/nvim;
+    "fastfetch".source = ./config/fastfetch;
+    "sway".source = ./config/sway;
+    "nvim".source = ./config/nvim;
+    "rmpc/config.ron".source = ./config/rmpc/config.ron;
+    "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
   };
 
   programs.kitty = {
@@ -107,6 +118,7 @@ in
       background_opacity = lib.mkForce "0.8";
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
+      confirm_os_window_close = 0;
   };
   keybindings = {
     "ctrl+tab" = "next_tab";
@@ -133,6 +145,8 @@ in
       cat = "bat";
       sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
       f = "fzf";
+      bluetooth = "sudo systemctl start bluetooth";
+      printer = "sudo systemctl start cups";
       wttr = "curl wttr.in/Palma";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
     };
@@ -341,6 +355,36 @@ in
         padding: 0 10px;
       }
     '';
+  };
+
+  programs.mpv = {
+    enable = true;
+    scripts = with pkgs.mpvScripts; [
+      autoload
+      mpv-gallery-view
+      thumbfast
+    ];
+    config = {
+      gpu-context = "wayland";
+      hwdec = "auto-safe";
+      vo = "gpu";
+      image-display-duration = "inf";
+      loop-file = "inf";
+      osc = "no";
+      osd-bar = "no";
+    };
+    bindings = {
+      "l" = "seek 5";
+      "h" = "seek -5";
+      "k" = "add volume 2";
+      "j" = "add volume -2";
+      "H" = "playlist-prev";
+      "L" = "playlist-next";
+      "f" = "cycle fullscreen";
+      "q" = "quit";
+      "v" = "script-binding gallery-view-toggle";
+      "g" = "script-binding playlist-view-toggle";
+    };
   };
 
   programs.git = {

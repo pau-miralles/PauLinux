@@ -2,11 +2,12 @@
 #![enable(unwrap_newtypes)]
 #![enable(unwrap_variant_newtypes)]
 (
-    address: "/home/pau/.config/mpd/socket",
+    address: "127.0.0.1:6600",
     cache_dir: Some("/tmp/rmpc/cache"),
 
     password: None,
     enable_config_hot_reload: true,
+    theme: "theme",
     volume_step: 5,
     max_fps: 60, 
     scrolloff: 5,
@@ -33,13 +34,11 @@
             "s":       Stop,
             "<Tab>":   NextTab,
             "<S-Tab>": PreviousTab,
-            // --- CLEANED UP TABS ---
             "1":       SwitchToTab("Queue"),
             "2":       SwitchToTab("Albums"),
             "3":       SwitchToTab("Artists"),
             "4":       SwitchToTab("Library"),
             "5":       SwitchToTab("Playlists"),
-            // -----------------------
             "q":       Quit,
             ">":       NextTrack,
             "<":       PreviousTrack,
@@ -98,7 +97,7 @@
             "<C-s>":   Save,
         },
     ),
-    
+
     search: (
         case_sensitive: false,
         mode: Contains,
@@ -110,19 +109,18 @@
             (value: "filename",    label: "File"),
         ],
     ),
-    
+
     artists: (
         album_display_mode: SplitByDate,
         album_sort_by: Date,
     ),
-    
+
     current_song: (
         format: "  {title}\n  {artist}\n  {album}", 
         align: Left, 
     ),
-    
+
     tabs: [
-        // 1. QUEUE (Borders Removed)
         (
             name: "Queue",
             pane: Split(
@@ -133,22 +131,18 @@
                 ],
             ),
         ),
-        // 2. ALBUMS
         (
             name: "Albums",
             pane: Pane(Albums),
         ),
-        // 3. ARTISTS
         (
             name: "Artists",
             pane: Pane(Artists),
         ),
-        // 4. LIBRARY
         (
             name: "Library",
             pane: Pane(Directories),
         ),
-        // 5. PLAYLISTS
         (
             name: "Playlists",
             pane: Pane(Playlists),

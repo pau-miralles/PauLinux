@@ -118,7 +118,7 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym Control+Mod1+Shift+c exec cliphist wipe
     bindsym $mod+p exec rofi-power
     bindsym XF86PowerOff exec rofi-power
-    bindsym $mod+g exec rofi-gammastep
+    bindsym $mod+g exec rofi-wlsunset
     bindsym $mod+b exec ~/.nixos-config/config/cycle_power.sh
 
     # Rotate Display with Ctrl+Alt+Arrows

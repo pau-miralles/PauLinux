@@ -28,6 +28,7 @@ outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs: {
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
+            home-manager.backupFileExtension = "backup";
             home-manager.useUserPackages = true;
             home-manager.users.pau = import ./home.nix;
           }
