@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   rofi-power = pkgs.writeShellScriptBin "rofi-power" ''
@@ -65,6 +65,14 @@ in
     tealdeer
     speedtest-cli
     python3
+
+    gcc
+    pyright
+    nixd
+    clang-tools # C/C++ (includes clangd)
+    vscode-langservers-extracted # HTML/CSS/JSON/ESLint
+    typescript-language-server
+    arduino-language-server
 
     cliphist
     udiskie # Automatic USB drives
@@ -229,6 +237,12 @@ in
     colorTheme.enable = true; 
   };
 
+  stylix.targets.neovim = {
+    enable = true;
+    colors.enable = true;
+    transparentBackground.main = true;
+    plugin = "mini.base16";
+  };
 
   programs.rofi = {
     enable = true;
@@ -368,6 +382,9 @@ in
       gpu-context = "wayland";
       hwdec = "auto-safe";
       vo = "gpu";
+      prefetch-playlist-index = "yes"; 
+      sws-scaler = "fast-bilinear";
+      video-sync = "display-resample";
       image-display-duration = "inf";
       loop-file = "inf";
       osc = "no";
@@ -376,14 +393,20 @@ in
     bindings = {
       "l" = "seek 5";
       "h" = "seek -5";
-      "k" = "add volume 2";
-      "j" = "add volume -2";
-      "H" = "playlist-prev";
-      "L" = "playlist-next";
+      "." = "add volume 2";
+      "," = "add volume -2";
+      "k" = "playlist-prev";
+      "j" = "playlist-next";
       "f" = "cycle fullscreen";
       "q" = "quit";
-      "v" = "script-binding gallery-view-toggle";
       "g" = "script-binding playlist-view-toggle";
+      "+" = "add video-zoom 0.1";
+      "-" = "add video-zoom -0.1";
+      "=" = "set video-zoom 0; set video-pan-x 0; set video-pan-y 0";
+      "Alt+h" = "add video-pan-x 0.05";
+      "Alt+l" = "add video-pan-x -0.05";
+      "Alt+k" = "add video-pan-y 0.05";
+      "Alt+j" = "add video-pan-y -0.05";
     };
   };
 
