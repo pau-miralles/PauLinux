@@ -153,8 +153,6 @@
   # Enable Power Profiles Daemon
   services.power-profiles-daemon.enable = true;
 
-  services.logind.powerKey = "ignore";
-
 # --- STYLIX CONFIGURATION ---
   stylix = {
     enable = true;

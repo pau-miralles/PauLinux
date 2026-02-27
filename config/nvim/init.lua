@@ -38,6 +38,8 @@ vim.o.ignorecase = true        -- Case insensitive search
 vim.o.smartcase = true         -- Case sensitive if uppercase in search
 
 -- Visual settings
+vim.o.winborder = 'single'                       -- Global borders none single double rounded solid shadow
+vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
 vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options 
 vim.o.showmode = false                           -- Don't show mode in command line 
@@ -67,6 +69,8 @@ vim.o.guicursor = "n-v-c:block,i-ci-r:ver25,cr-o:hor20" -- Cursor
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldlevel = 99           -- Start with all folds open
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 
 -- Split behavior
 vim.o.splitbelow = true        -- Horizontal splits go below
@@ -85,6 +89,7 @@ vim.g.maplocalleader = " "
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = '[Q]uit buffer' })
+vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite buffer' })
 vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result" })
@@ -112,7 +117,7 @@ vim.keymap.set('n', '<leader>py', function()
   end
   local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
   vim.cmd('botright split')
-  vim.cmd('resize ' .. math.floor(vim.o.lines / 3))
+  vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
   vim.cmd('terminal python3 ' .. file)
   vim.cmd('startinsert')
 end, { desc = 'Save and run [P]ython file' })
@@ -196,7 +201,7 @@ local function FloatingTerminal()
   term_state.win = vim.api.nvim_open_win(term_state.buf, true, {
     relative = 'editor', width = w, height = h,
     row = math.floor((vim.o.lines - h) / 2), col = math.floor((vim.o.columns - w) / 2),
-    style = 'minimal', border = 'rounded',
+    -- style = 'minimal', border = 'rounded',
   })
   vim.wo[term_state.win].winblend = 0
   if vim.api.nvim_buf_line_count(term_state.buf) == 1 and vim.api.nvim_buf_get_lines(term_state.buf, 0, 1, false)[1] == "" then
@@ -289,8 +294,8 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim", 
     dependencies = { "nvim-lua/plenary.nvim" },
     keys = {
-      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+      { "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+      { "<leader>f", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
     }
   },
   -- Git & Diagnostics
@@ -300,12 +305,13 @@ require("lazy").setup({
   { "norcalli/nvim-colorizer.lua", config = true },
   {
     "iamcco/markdown-preview.nvim",
-    build = "cd app && npm install",
-    init = function() vim.g.mkdp_filetypes = { "markdown" } end,
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "master", -- <-- ADD THIS LINE
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter.configs").setup({

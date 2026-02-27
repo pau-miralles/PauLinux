@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   rofi-power = pkgs.writeShellScriptBin "rofi-power" ''
@@ -13,11 +13,10 @@ let
   '';
 
 rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" ''
-    entries="󰖨 Day (Reset)\n󰛨 Night (3500K)\n󰖔 Midnight (2500K)"
-    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Temperature")
-    systemctl --user stop wlsunset.service 2>/dev/null
+    entries="󰖨  Day\n󰛨  Night\n󰖔  Midnight"
+    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Temperature" -theme-str 'window { width: 300px; } listview { lines: 3; }')
     pkill -x wlsunset
-    sleep 0.2
+    sleep 0.1
     case "$selected" in
       *"Day"*)
         systemctl --user start wlsunset.service
@@ -108,7 +107,6 @@ in
     '';
     network.listenAddress = "any"; 
   };
-
 
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
