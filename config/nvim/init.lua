@@ -1,17 +1,33 @@
 vim.g.have_nerd_font = true
--- transparency
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
-vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "TabLine", { bg = "none" })
-vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none", fg = "#767676" })
-vim.api.nvim_set_hl(0, "TabLineSel", { bg = "none" })
-vim.api.nvim_set_hl(0, "ColorColumn", { bg = "none" })
+
+-- TRANSPARENCY =====================================
+local function clear_bg()
+  -- Standard Neovim highlight groups
+  local groups = {
+    "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer",
+    "SignColumn", "LineNr", "CursorLineNr", "StatusLine", "StatusLineNC",
+    "TabLine", "TabLineFill", "TabLineSel"
+  }
+  for _, hl in ipairs(groups) do
+    pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE")
+  end
+  -- Dynamically fetch all plugin highlight groups
+  for _, prefix in ipairs({"BufferLine", "MiniStatusline", "NeoTree", "Telescope", "GitSigns"}) do
+    for _, hl in ipairs(vim.fn.getcompletion(prefix, "highlight")) do
+      pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE")
+    end
+  end
+end
+-- Run immediately
+clear_bg()
+-- Run delayed on Theme change and Startup to defeat plugin race conditions
+vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {
+  callback = function() vim.defer_fn(clear_bg, 50) end
+})
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  callback = function() vim.defer_fn(clear_bg, 50) end
+})
 
 -- BASIC SETTINGS =====================================
 vim.o.number = true            -- Line numbers
@@ -38,11 +54,11 @@ vim.o.ignorecase = true        -- Case insensitive search
 vim.o.smartcase = true         -- Case sensitive if uppercase in search
 
 -- Visual settings
-vim.o.winborder = 'single'                       -- Global borders none single double rounded solid shadow
+vim.o.winborder = 'rounded'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
 vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options 
-vim.o.showmode = false                           -- Don't show mode in command line 
+-- vim.o.showmode = false                           -- Don't show mode in command line 
 vim.o.lazyredraw = true                          -- Don't redraw during macros
 vim.o.synmaxcol = 300                            -- Syntax highlighting limit 
 vim.opt.fillchars = { eob = " " }                -- Hide ~ on empty lines
@@ -311,7 +327,7 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master", -- <-- ADD THIS LINE
+    branch = "master",
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter.configs").setup({
@@ -348,4 +364,9 @@ require("lazy").setup({
   }
 }, {
   lockfile = vim.fn.stdpath("state") .. "/lazy-lock.json",
+  performance = {
+    rtp = {
+      reset = false,
+    }
+  }
 })

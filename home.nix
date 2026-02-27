@@ -48,7 +48,6 @@ in
     vlc
     syncthing
 
-    neovim
     yazi
     rmpc
     bottom
@@ -111,7 +110,6 @@ in
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
     "sway".source = ./config/sway;
-    "nvim".source = ./config/nvim;
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
   };
@@ -119,8 +117,8 @@ in
   programs.kitty = {
     enable = true;
   settings = {
-      window_padding_width = 5;
-      window_border_width = 2;
+      window_padding_width = 3;
+      window_border_width = 0;
       background_opacity = lib.mkForce "0.8";
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
@@ -135,6 +133,20 @@ in
     "ctrl+5" = "goto_tab 5";
     "ctrl+6" = "goto_tab 6";
     };
+  };
+
+  programs.neovim = {
+    enable = true;
+    extraLuaConfig = builtins.readFile ./config/nvim/init.lua;
+  };
+
+  stylix.targets.neovim = {
+    enable = true;
+    colors.enable = true;
+    transparentBackground.main = true;
+    transparentBackground.signColumn = true;
+    transparentBackground.numberLine = true;
+    plugin = "mini.base16";
   };
 
   programs.bash = {
@@ -159,11 +171,9 @@ in
 
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
-
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
-
       # Yazi Function (Shell Wrapper)
       function y() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
@@ -173,11 +183,6 @@ in
         fi
         rm -f -- "$tmp"
       }
-
-      # Cargo env (if you use rustup)
-      if [ -f "$HOME/.cargo/env" ]; then
-        . "$HOME/.cargo/env"
-      fi
     '';
   };
 
@@ -233,13 +238,6 @@ in
   stylix.targets.firefox = {
     profileNames = [ "default" ];
     colorTheme.enable = true; 
-  };
-
-  stylix.targets.neovim = {
-    enable = true;
-    colors.enable = true;
-    transparentBackground.main = true;
-    plugin = "mini.base16";
   };
 
   programs.rofi = {

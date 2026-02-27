@@ -4,8 +4,6 @@
 #titlebar *,
 toolbar,
 #nav-bar,
-/* #PersonalToolbar, */
-/* .browserContainer, */
 .panel-subview-body {
 	border-radius: 4px !important;
 }
