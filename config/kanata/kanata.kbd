@@ -4,18 +4,14 @@
   process-unmapped-keys yes
   log-layer-changes no
 )
-
 (defsrc
-  ;; Changed '\' to 'bksl' (US Backslash key) to be safe.
   esc  tab  q    w    e    r    t    y    u    i    o    p    [    ]    bksl
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
   lctl lmet lalt           spc            ralt rctl
 )
 
-;; ---------------------------------------------------------------------------
-;; BASE CHORDS
-;; ---------------------------------------------------------------------------
+;; Base chords
 (defchords base-chords 20
   (u) u
   (i) i
@@ -28,11 +24,9 @@
   (m) m
   (c) c
   (x) x
-  (;) '  
-
+  (;) '
   (lsft) lsft
   (rsft) rsft
-
   (i o)    -
   (o p)    S-2
   (j k l)  (multi lctl c)
@@ -42,14 +36,10 @@
   (u i)    S-'
   (u i o)  C-S-v
   (lsft rsft) caps
-  
-  ;; NEW: l + ; (physical keys) -> sends [ (Spanish ` accent)
   (l ;)    [
 )
 
-;; ---------------------------------------------------------------------------
-;; SYMBOL CHORDS
-;; ---------------------------------------------------------------------------
+;; Symbol chords
 (defchords symbol-chords 20
   (d) S-8
   (f) S-9
@@ -57,7 +47,7 @@
 )
 
 (defalias
-  ;; --- Chords ---
+  ;; Chords
   ch_u (chord base-chords u)
   ch_i (chord base-chords i)
   ch_o (chord base-chords o)
@@ -70,33 +60,24 @@
   ch_c (chord base-chords c)
   ch_x (chord base-chords x)
   ch_scl (chord base-chords ;)
-  
   ch_ls (chord base-chords lsft)
   ch_rs (chord base-chords rsft)
-
   sym_d (chord symbol-chords d)
   sym_f (chord symbol-chords f)
-
-  ;; --- Modifiers ---
+  ;; Modifiers
   cec (tap-hold 150 150 esc lctl)
   altbck (tap-hold-press 150 150 bspc lalt)
   spn (tap-hold-release 200 200 spc (layer-toggle navigation))
   sym (layer-toggle symbols)
   less lsgt
-  
-  ;; --- New Symbols (LCTL/RCTL) ---
-  ;; Spanish \ is AltGr + º (º is usually the `grv` key in Kanata)
   bksl (multi ralt grv)
-  ;; Spanish ª is Shift + º
   ord  S-grv
-
-  ;; --- Navigation ---
+  ;; Navigation
   mh_l (multi lctl lalt lsft left)
   cm_l (multi lctl lmet left)
   cm_r (multi lctl lmet rght)
   mh_r (multi lctl lalt lsft rght)
-
-  ;; --- Symbol Macros ---
+  ;; Symbol Macros
   at   (multi ralt 2)
   hash (multi ralt 3)
   eu   (multi ralt e)
@@ -106,14 +87,12 @@
   rbra (multi ralt ])
   lcur (multi ralt ')
   rcur (multi ralt \)
-
-  ;; --- Layers ---
-  game (layer-switch normal) 
+  ;; Layers
+  game (layer-switch normal)
   base (layer-switch base)
 )
 
 (deflayer base
-  ;; Changed the key after @ch_p (physical [) to 'del'
   caps tab  _    _    _    _    _    _    @ch_u @ch_i @ch_o @ch_p    del  _    /
   @cec _    _    _    _    _    _    @ch_j @ch_k @ch_l @ch_scl  ret    _
   @ch_ls _  @ch_x @ch_c v    b    @ch_n @ch_m ,    .    S-7  @ch_rs
@@ -130,12 +109,11 @@
 (deflayer symbols
   S-=  S-=  S--  @at    @lcur  @rcur  @pipe        S-0  4    5    6    ]    kp*  _    _
   =    S-1  S-4  @sym_d @sym_f @hash               0    1    2    3    /    S-7  @base
-  @eu  @til S-6  @lbra  @rbra  S-5                 .    7    8    9    S-[  `  
+  @eu  @til S-6  @lbra  @rbra  S-5                 .    7    8    9    S-[  `
   @bksl lsgt    S-lsgt              S-/              _    @ord
 )
 
 (deflayer normal
-  ;; Changed the key after @ch_p (physical [) to 'del'
   caps tab  _    _    _    _    _    _    @ch_u @ch_i @ch_o @ch_p    del  _    /
   @cec _    _    _    _    _    _    @ch_j @ch_k @ch_l @ch_scl  '    _
   @ch_ls _  @ch_x @ch_c v    b    @ch_n @ch_m ,    .    S-7  @ch_rs

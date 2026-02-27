@@ -34,7 +34,7 @@ vim.o.number = true            -- Line numbers
 vim.o.relativenumber = true    -- Relative line numbers
 vim.o.cursorline = true        -- Highlight current line
  vim.o.wrap = false            -- set nowrap
-vim.o.scrolloff = 10           -- Keep 10 lines above/below cursor 
+vim.o.scrolloff = 10           -- Keep 10 lines above/below cursor
 vim.o.sidescrolloff = 8        -- Keep 8 columns left/right of cursor
 vim.o.breakindent = true       -- Better wrapping visualization
 vim.o.list = true              -- Show invisible characters
@@ -57,10 +57,10 @@ vim.o.smartcase = true         -- Case sensitive if uppercase in search
 vim.o.winborder = 'rounded'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
-vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options 
--- vim.o.showmode = false                           -- Don't show mode in command line 
+vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options
+-- vim.o.showmode = false                           -- Don't show mode in command line
 vim.o.lazyredraw = true                          -- Don't redraw during macros
-vim.o.synmaxcol = 300                            -- Syntax highlighting limit 
+vim.o.synmaxcol = 300                            -- Syntax highlighting limit
 vim.opt.fillchars = { eob = " " }                -- Hide ~ on empty lines
 vim.o.cmdheight = 0                              -- Hides the command line when not in use
 
@@ -75,7 +75,6 @@ vim.o.ttimeoutlen = 0          -- Key code timeout
 -- Behavior settings
 vim.opt.iskeyword:append("-")  -- Treat dash as part of word
 vim.opt.path:append("**")      -- Include subdirectories in search
-vim.o.selection = "exclusive"  -- Selection behavior
 vim.o.mouse = "a"              -- Enable mouse support
 vim.schedule(function() vim.opt.clipboard:append("unnamedplus") end)
 
@@ -292,11 +291,11 @@ require("lazy").setup({
   { "akinsho/bufferline.nvim", dependencies = "nvim-tree/nvim-web-devicons", config = true },
   -- Flash
   {
-    "folke/flash.nvim", 
+    "folke/flash.nvim",
     opts = { modes = { char = { enabled = false } } }, -- Disables default f/t/s overrides
-    keys = { 
-      { "f", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash Jump" } 
-    } 
+    keys = {
+      { "f", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash Jump" }
+    }
   },
   -- Neo-tree
   {
@@ -307,7 +306,7 @@ require("lazy").setup({
   },
   -- Telescope
   {
-    "nvim-telescope/telescope.nvim", 
+    "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     keys = {
       { "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
@@ -318,7 +317,22 @@ require("lazy").setup({
   { "lewis6991/gitsigns.nvim", config = true },
   { "rachartier/tiny-inline-diagnostic.nvim", event = "VeryLazy", config = true },
   -- Colorizer & Markdown
-  { "norcalli/nvim-colorizer.lua", config = true },
+  {
+    "norcalli/nvim-colorizer.lua",
+    config = function()
+      require("colorizer").setup({
+        "*", -- highlight all filetypes
+      }, {
+        RGB      = true,
+        RRGGBB   = true,
+        names    = false,
+        RRGGBBAA = true,
+        AARRGGBB = true,
+        css      = true,
+        css_fn   = true,
+      })
+    end,
+  },
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },

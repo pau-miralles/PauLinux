@@ -4,10 +4,7 @@
 #titlebar *,
 toolbar,
 #nav-bar,
-.panel-subview-body {
-	border-radius: 4px !important;
-}
-
+.panel-subview-body,
 .tabbrowser-tab,
 .tab-background {
 	border-radius: 4px !important;
@@ -21,147 +18,118 @@ toolbar,
 	--tab-block-margin: 2px;
 }
 
-/* --- GLOBAL FONT --- */
-body {
-	font-family: "Ubuntu Mono", monospace !important;
-}
-
-/* --- LAYOUT: ONE-LINER SETUP --- */
+/* ONE-LINER LAYOUT */
 #navigator-toolbox {
 display: flex;
 flex-wrap: wrap;
 flex-direction: row;
 position: relative !important;
 }
-
 /* Hide the standard menu bar when inactive */
 #toolbar-menubar[inactive="true"] {
 display: none !important;
 }
-
-/* --- TABS BAR --- */
+/* Tabs bar */
 #titlebar {
 width: 0;
 flex-grow: 1;
 overflow: hidden;
 }
-
 #TabsToolbar {
 display: flex !important;
 align-items: center;
 padding-left: var(--tab-block-margin) !important;
 }
-
 #tabbrowser-tabs {
 width: 0 !important;
 flex: 1 !important;
 border-inline: none !important;
 }
-
 /* Tab Styling */
 .tabbrowser-tab {
 	min-height: calc(var(--tab-min-height) - 2px) !important;
 	transition: none !important;
 }
-
 .tab-background {
 	border-radius: var(--user-radius) !important;
 	margin-block: var(--tab-block-margin) !important;
 	box-shadow: none !important;
 	transition: background-color .2s;
 }
-
 #tabbrowser-tabs {
 --fx-tab-open-transition-duration: 0ms !important;
 }
-
 .tab-loading-burst {
 	display: none !important;
 }
 
-/* --- SINGLE TAB BEHAVIOR --- */
+/* Single tab no 225px limit so it expands */
 .tabbrowser-tab:only-of-type {
 	max-width: none !important;
-	/* Removes the 225px limit so it expands */
 }
-
 .tabbrowser-tab:only-of-type .tab-background {
 	background: transparent !important;
 	box-shadow: none !important;
 }
 
-
-/* --- NAVIGATION BAR --- */
+/* NAVIGATION BAR */
 #nav-bar {
 background: transparent !important;
 width: auto !important;
 padding-right: 0 !important;
 }
-
 #urlbar-container {
 width: var(--urlbar-collapsed-width) !important;
 transition: width .2s, min-width .2s;
 margin-left: auto !important;
 }
-
 /* Expand URL bar on hover/focus */
 #urlbar-container:focus-within,
 #urlbar-container:hover {
 width: var(--urlbar-open-width) !important;
 }
-
-/* URL Bar Styling */
 #urlbar {
---urlbar-toolbar-height: 38px !important;
+--urlbar-toolbar-height: 36px !important;
 min-height: 32px !important;
 border-radius: var(--user-radius) !important;
 }
-
 #urlbar-background {
 border-radius: var(--user-radius) !important;
 background-color: var(--toolbar-field-background-color, inherit);
 }
 
-/* --- SEARCH BAR POSITION --- */
+/* SEARCH BAR POSITION */
 #urlbar[breakout][breakout-extend] {
 width: 100% !important;
 max-width: 800px !important;
-/* Adjusted max-width for better look */
 position: fixed !important;
-/* This puts it at the very top */
 top: 4px !important;
 left: 50% !important;
 transform: translateX(-50%) !important;
 z-index: 9999 !important;
 }
 
-/* --- AUTO-HIDE ICONS & TEXT SPACING --- */
-
-/* 1. Hide icons completely (display: none) instead of opacity.
- *     This removes the empty space on the sides. */
+/* SEARCH BAR TEXT SPACING */
+/* Hide icons completely */
 #urlbar-container:not(:hover):not(:focus-within) :where(#tracking-protection-icon-container, #identity-box, .urlbar-page-action) {
 display: none !important;
 }
-
-/* 2. Center the URL text when not typing */
+/* Center the URL text when not typing */
 #urlbar:not([focused]) #urlbar-input {
 text-align: center !important;
 }
-
-/* 3. Ensure a couple of pixels margin on sides so text doesn't hit the border */
+/* Ensure a couple of pixels margin on sides so text doesn't hit the border */
 #urlbar-input {
 padding-left: 5px !important;
 padding-right: 5px !important;
 }
 
-/* --- HIDING ELEMENTS --- */
+/* HIDING ELEMENTS */
 #back-button,
 #forward-button,
 #home-button,
-#stop-reload-button {
-display: none !important;
-}
-
+#stop-reload-button,
+.tab-close-button,
 toolbarspring,
 [id^="wrapper-customizableui-special-spring"],
 .titlebar-spacer,
@@ -169,10 +137,7 @@ toolbarspring,
 	display: none !important;
 }
 
-.tab-close-button {
-	display: none !important;
-}
-
+/* TRANSPARENCY */
 :root,
 #main-window,
 body,

@@ -11,36 +11,36 @@ in
       default_album_art_path: None,
       show_song_table_header: true,
       draw_borders: true,
-      border_type: "Rounded", 
+      border_type: "Rounded",
       browser_column_widths: [20, 30, 60],
       symbols: (song: "󰎈 ", dir: "󰉋 ", marker: " ", ellipsis: "..."),
-      
-      text_color: "#${colors.base05}", 
-      
+
+      text_color: "#${colors.base05}",
+
       tab_bar: (
           enabled: true,
           active_style: (bg: "#${colors.base08}", fg: "#${colors.base00}"),
           inactive_style: (fg: "#${colors.base03}"),
       ),
 
-      highlighted_item_style: (fg: "#${colors.base0D}", modifiers: "Bold"), 
-      current_item_style: (fg: "#${colors.base05}", bg: "#${colors.base02}", modifiers: "Bold"), 
-      
-      borders_style: (fg: "#${colors.base03}"), 
-      highlight_border_style: (fg: "#${colors.base08}"), 
+      highlighted_item_style: (fg: "#${colors.base0D}", modifiers: "Bold"),
+      current_item_style: (fg: "#${colors.base05}", bg: "#${colors.base02}", modifiers: "Bold"),
+
+      borders_style: (fg: "#${colors.base03}"),
+      highlight_border_style: (fg: "#${colors.base08}"),
 
       progress_bar: (
-          symbols: ["═", "◉", "─"], 
-          track_style: (fg: "#${colors.base03}"), 
-          elapsed_style: (fg: "#${colors.base08}"), 
-          thumb_style: (fg: "#${colors.base0B}"), 
+          symbols: ["═", "◉", "─"],
+          track_style: (fg: "#${colors.base03}"),
+          elapsed_style: (fg: "#${colors.base08}"),
+          thumb_style: (fg: "#${colors.base0B}"),
       ),
 
       scrollbar: (
-          symbols: ["│", "┃", "▲", "▼"], 
-          track_style: (fg: "#${colors.base01}"),   
+          symbols: ["│", "┃", "▲", "▼"],
+          track_style: (fg: "#${colors.base01}"),
           ends_style: (fg: "#${colors.base03}"),
-          thumb_style: (fg: "#${colors.base08}"),   
+          thumb_style: (fg: "#${colors.base08}"),
       ),
 
       browser_song_format: [
@@ -49,7 +49,7 @@ in
               kind: Group([
                   (kind: Property(Title)),
                   (kind: Text(" ")),
-                  (kind: Property(Artist), style: (fg: "#${colors.base0E}")), 
+                  (kind: Property(Artist), style: (fg: "#${colors.base0E}")),
               ]),
               default: (kind: Property(Filename))
           ),
@@ -58,8 +58,8 @@ in
       song_table_format: [
           (
               prop: (
-                  kind: Property(Title), 
-                  style: (fg: "#${colors.base05}", modifiers: "Bold"), 
+                  kind: Property(Title),
+                  style: (fg: "#${colors.base05}", modifiers: "Bold"),
                   highlighted_item_style: (fg: "#${colors.base05}", modifiers: "Bold"),
                   default: (kind: Property(Filename), style: (fg: "#${colors.base03}"))
               ),
@@ -67,14 +67,14 @@ in
           ),
           (
               prop: (
-                  kind: Property(Artist), 
-                  style: (fg: "#${colors.base0C}"), 
+                  kind: Property(Artist),
+                  style: (fg: "#${colors.base0C}"),
                   default: (kind: Text("Unknown"), style: (fg: "#${colors.base03}"))
               ),
               width: "35%",
           ),
           (
-              prop: (kind: Property(Duration), style: (fg: "#${colors.base03}")), 
+              prop: (kind: Property(Duration), style: (fg: "#${colors.base03}")),
               width: "20%",
               alignment: Right,
           ),
@@ -105,14 +105,14 @@ in
                       (kind: Property(Status(Duration)), style: (fg: "#${colors.base03}")),
                   ],
                   center: [
-                      (kind: Property(Song(Artist)), style: (fg: "#${colors.base0C}"), 
+                      (kind: Property(Song(Artist)), style: (fg: "#${colors.base0C}"),
                           default: (kind: Text("Unknown Artist"), style: (fg: "#${colors.base03}"))
                       ),
                   ],
                   right: [
                       (
                           kind: Property(Widget(States(
-                              active_style: (fg: "#${colors.base08}", modifiers: "Bold"), 
+                              active_style: (fg: "#${colors.base08}", modifiers: "Bold"),
                               separator_style: (fg: "#${colors.base03}")))
                           ),
                           style: (fg: "#${colors.base03}")
@@ -121,7 +121,7 @@ in
               ),
           ],
       ),
-      
+
       layout: Split(
           direction: Vertical,
           panes: [

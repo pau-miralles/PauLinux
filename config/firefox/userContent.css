@@ -3,9 +3,7 @@
   box-shadow: none !important;
 }
 @-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
-    body {
-        background-color: transparent !important;
-    }
+    body { background: transparent !important; }
     .top-site-outer .tile {
         background-color: rgba(255,255,255,0.6) !important;
     }

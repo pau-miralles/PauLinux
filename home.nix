@@ -11,7 +11,6 @@ let
       *"Log out") swaymsg exit ;;
     esac
   '';
-
 rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" ''
     entries="󰖨  Day\n󰛨  Night\n󰖔  Midnight"
     selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Temperature" -theme-str 'window { width: 300px; } listview { lines: 3; }')
@@ -34,35 +33,45 @@ in
   home.username = "pau";
   home.homeDirectory = "/home/pau";
   home.stateVersion = "25.11"; # Keep this the same as your system version
-
-  # This makes home-manager manage itself
-  programs.home-manager.enable = true;
-
+  programs.home-manager.enable = true; # This makes home-manager manage itself
   home.packages = with pkgs; [
-    audacity
-    handbrake
-    libreoffice-fresh
-    obs-studio
-    obsidian
-    gimp
-    vlc
     syncthing
+    obsidian
+    libreoffice-fresh
+    libgsf # ODF (LibreOffice) thumbnails
+    gimp
+    audacity
+    vlc
+    handbrake
+    obs-studio
 
+    python3
+    ffmpeg
     yazi
-    rmpc
-    bottom
-    fastfetch
-    cava
     eza
-    bat
     fzf
+    bat
     ripgrep
     zoxide
-    ffmpeg
-    tty-clock
     tealdeer
+    rmpc
+    cava
+    bottom
+    fastfetch
+    tty-clock
     speedtest-cli
-    python3
+
+    cliphist
+    wlsunset
+    udiskie # Automatic USB drives
+    playerctl # Play/Pause buttons
+    pavucontrol # GUI Audio Panel
+    wiremix # TUI Audio Panel
+    impala # TUI Wifi Panel
+    bluetui # TUI Bluetooth Panel
+    ffmpegthumbnailer # Video thumbnails
+    jq # Json, for the sway tabs script
+    posy-cursors
 
     gcc
     pyright
@@ -71,18 +80,6 @@ in
     vscode-langservers-extracted # HTML/CSS/JSON/ESLint
     typescript-language-server
     arduino-language-server
-
-    cliphist
-    udiskie # Automatic USB drives
-    wlsunset
-    pavucontrol # GUI Audio Panel
-    wiremix # TUI Pipewire Audio Panel
-    impala # TUI Wifi Panel
-    bluetui # TUI Bluetooth Panel
-    posy-cursors
-    ffmpegthumbnailer # Video thumbnails
-    libgsf # ODF (LibreOffice) thumbnails
-    jq # Json, for the sway tabs script
 
     rofi-power
     rofi-wlsunset
@@ -94,7 +91,6 @@ in
     allowImages = true;
   };
   services.udiskie.enable = true;
-
   services.mpd = {
     enable = true;
     musicDirectory = "/home/pau/Music";
@@ -104,7 +100,7 @@ in
         name "PulseAudio"
       }
     '';
-    network.listenAddress = "any"; 
+    network.listenAddress = "any";
   };
 
   xdg.configFile = {
@@ -116,7 +112,7 @@ in
 
   programs.kitty = {
     enable = true;
-  settings = {
+    settings = {
       window_padding_width = 3;
       window_border_width = 0;
       background_opacity = lib.mkForce "0.8";
@@ -137,9 +133,8 @@ in
 
   programs.neovim = {
     enable = true;
-    extraLuaConfig = builtins.readFile ./config/nvim/init.lua;
+    initLua = builtins.readFile ./config/nvim/init.lua;
   };
-
   stylix.targets.neovim = {
     enable = true;
     colors.enable = true;
@@ -154,21 +149,20 @@ in
     enableCompletion = true;
     shellAliases = {
       q = "exit";
-      ff = "fastfetch --logo small";
       ls = "eza --icons --hyperlink";
       ll = "eza -l --header --icons --hyperlink";
       la = "eza -a --icons --hyperlink";
       lt = "eza -T --level=2 --icons --hyperlink";
-      v = "nvim";
+      ltt = "eza -T --icons --hyperlink";
       cat = "bat";
-      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
+      v = "nvim";
       f = "fzf";
       bluetooth = "sudo systemctl start bluetooth";
       printer = "sudo systemctl start cups";
-      wttr = "curl wttr.in/Palma";
+      ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
+      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
     };
-
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
       # Environment Variables
@@ -185,8 +179,6 @@ in
       }
     '';
   };
-
-  # Enable Zoxide and FZF integration automatically for Bash
   programs.zoxide = {
     enable = true;
     enableBashIntegration = true;
@@ -194,6 +186,45 @@ in
   programs.fzf = {
     enable = true;
     enableBashIntegration = true;
+  };
+
+  programs.mpv = {
+    enable = true;
+    scripts = with pkgs.mpvScripts; [
+      autoload
+      mpv-gallery-view
+      thumbfast
+    ];
+    config = {
+      gpu-context = "wayland";
+      hwdec = "auto-safe";
+      vo = "gpu";
+      prefetch-playlist-index = "yes";
+      sws-scaler = "fast-bilinear";
+      video-sync = "display-resample";
+      image-display-duration = "inf";
+      loop-file = "inf";
+      osc = "no";
+      osd-bar = "no";
+    };
+    bindings = {
+      "l" = "seek 5";
+      "h" = "seek -5";
+      "." = "add volume 2";
+      "," = "add volume -2";
+      "k" = "playlist-prev";
+      "j" = "playlist-next";
+      "f" = "cycle fullscreen";
+      "q" = "quit";
+      "g" = "script-binding playlist-view-toggle";
+      "+" = "add video-zoom 0.1";
+      "-" = "add video-zoom -0.1";
+      "=" = "set video-zoom 0; set video-pan-x 0; set video-pan-y 0";
+      "Alt+h" = "add video-pan-x 0.05";
+      "Alt+l" = "add video-pan-x -0.05";
+      "Alt+k" = "add video-pan-y 0.05";
+      "Alt+j" = "add video-pan-y -0.05";
+    };
   };
 
   programs.firefox = {
@@ -205,6 +236,8 @@ in
       userChrome = builtins.readFile ./config/firefox/userChrome.css;
       userContent = builtins.readFile ./config/firefox/userContent.css;
       settings = {
+        "media.rdd-ffmpeg.enabled" = true;
+        "widget.wayland.fractional-scale.enabled" = true; # Crisper Wayland scaling
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         "browser.compactmode.show" = true;
         "browser.uidensity" = 1;
@@ -218,7 +251,6 @@ in
         "full-screen-api.warning.delay" = 0;
         "full-screen-api.warning.timeout" = 0;
       };
-
       search = {
         force = true;
         default = "Brave";
@@ -237,26 +269,23 @@ in
   };
   stylix.targets.firefox = {
     profileNames = [ "default" ];
-    colorTheme.enable = true; 
+    colorTheme.enable = true;
   };
 
   programs.rofi = {
     enable = true;
     package = pkgs.rofi;
     plugins = [ pkgs.rofi-calc pkgs.rofi-emoji ];
-
     extraConfig = {
       modi = "drun,calc";
       show-icons = true;
       display-drun = " ";
       display-calc = " ";
       sidebar-mode = false;
-
       kb-mode-next = "Shift+Right";
       kb-mode-previous = "Shift+Left";
     };
   };
-
 
   programs.waybar = {
     enable = true;
@@ -269,14 +298,13 @@ in
         modules-left = [ "battery" "power-profiles-daemon" "temperature" ];
         modules-center = [ "sway/workspaces" ];
         modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
-
         "sway/workspaces" = {
           all-outputs = true;
         };
         "battery" = {
           interval = 60;
           format = "{capacity}% ({time}) {icon}";
-          format-charging = "{capacity}% ({time}) "; 
+          format-charging = "{capacity}% ({time}) ";
           format-icons = [ "" "" "" "" "" ];
         };
         "temperature" = {
@@ -342,7 +370,6 @@ in
         };
       };
     };
-
     style = ''
       * {
         border: none;
@@ -365,45 +392,6 @@ in
         padding: 0 10px;
       }
     '';
-  };
-
-  programs.mpv = {
-    enable = true;
-    scripts = with pkgs.mpvScripts; [
-      autoload
-      mpv-gallery-view
-      thumbfast
-    ];
-    config = {
-      gpu-context = "wayland";
-      hwdec = "auto-safe";
-      vo = "gpu";
-      prefetch-playlist-index = "yes"; 
-      sws-scaler = "fast-bilinear";
-      video-sync = "display-resample";
-      image-display-duration = "inf";
-      loop-file = "inf";
-      osc = "no";
-      osd-bar = "no";
-    };
-    bindings = {
-      "l" = "seek 5";
-      "h" = "seek -5";
-      "." = "add volume 2";
-      "," = "add volume -2";
-      "k" = "playlist-prev";
-      "j" = "playlist-next";
-      "f" = "cycle fullscreen";
-      "q" = "quit";
-      "g" = "script-binding playlist-view-toggle";
-      "+" = "add video-zoom 0.1";
-      "-" = "add video-zoom -0.1";
-      "=" = "set video-zoom 0; set video-pan-x 0; set video-pan-y 0";
-      "Alt+h" = "add video-pan-x 0.05";
-      "Alt+l" = "add video-pan-x -0.05";
-      "Alt+k" = "add video-pan-y 0.05";
-      "Alt+j" = "add video-pan-y -0.05";
-    };
   };
 
   programs.git = {

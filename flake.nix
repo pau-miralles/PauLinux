@@ -1,6 +1,5 @@
 {
   description = "PauLinux - Powered by NixOS";
-
   inputs = {
     # The source of our packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -16,15 +15,15 @@
     };
   };
 
-outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs: {
     nixosConfigurations = {
       framework = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
-	  inputs.nixos-hardware.nixosModules.framework-13-7040-amd
-	  stylix.nixosModules.stylix
+          inputs.nixos-hardware.nixosModules.framework-13-7040-amd
+          stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
