@@ -127,6 +127,16 @@
   services.gvfs.enable = true;    # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
   programs.xfconf.enable = true;  # Required to save Thunar settings
+  services.udisks2.enable = true;
+    security.polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+             action.id == "org.freedesktop.udisks2.filesystem-mount") &&
+            subject.isInGroup("wheel")) {
+          return polkit.Result.YES;
+        }
+      });
+    '';
 
   services.kanata = {
     enable = true;
@@ -179,6 +189,19 @@
     opacity.desktop = 0.8;
     opacity.popups = 0.8;
   };
+
+  specialisation.light.configuration = {
+    stylix.polarity = lib.mkForce "light";
+  };
+  security.sudo.extraRules = [
+    {
+      users = [ "pau" ];
+      commands =[
+        { command = "/run/current-system/specialisation/light/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
+        { command = "/nix/var/nix/profiles/system/bin/switch-to-configuration"; options = [ "NOPASSWD" ]; }
+      ];
+    }
+  ];
 
   networking.firewall.allowedTCPPorts = [ 22000 ]; # For Syncthing
   networking.firewall.allowedUDPPorts =[ 22000 21027 ];

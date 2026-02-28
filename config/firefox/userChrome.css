@@ -89,8 +89,8 @@ margin-left: auto !important;
 width: var(--urlbar-open-width) !important;
 }
 #urlbar {
---urlbar-toolbar-height: 36px !important;
-min-height: 32px !important;
+--urlbar-toolbar-height: 34px !important;
+min-height: 34px !important;
 border-radius: var(--user-radius) !important;
 }
 #urlbar-background {

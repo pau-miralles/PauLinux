@@ -1,0 +1,14 @@
+[opener]
+mpv =[
+  { run = 'mpv "$@"', orphan = true, desc = "mpv" }
+]
+firefox =[
+  { run = 'firefox "$@"', orphan = true, desc = "firefox" }
+]
+
+[open]
+prepend_rules =[
+  { mime = "image/*", use = "mpv" },
+  { mime = "video/*", use = "mpv" },
+  { mime = "application/pdf", use = "firefox" }
+]

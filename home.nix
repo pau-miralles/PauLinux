@@ -1,33 +1,8 @@
 { config, pkgs, lib, ... }:
-
 let
-  rofi-power = pkgs.writeShellScriptBin "rofi-power" ''
-    entries="󰐥 Poweroff\n󰤄 Suspend\n󰜉 Reboot\n󰈆 Log out"
-    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Power" -theme-str 'window { width: 300px; } listview { lines: 4; }')
-    case "$selected" in
-      *"Poweroff") systemctl poweroff ;;
-      *"Suspend") systemctl suspend ;;
-      *"Reboot") systemctl reboot ;;
-      *"Log out") swaymsg exit ;;
-    esac
-  '';
-rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" ''
-    entries="󰖨  Day\n󰛨  Night\n󰖔  Midnight"
-    selected=$(echo -e "$entries" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Temperature" -theme-str 'window { width: 300px; } listview { lines: 3; }')
-    pkill -x wlsunset
-    sleep 0.1
-    case "$selected" in
-      *"Day"*)
-        systemctl --user start wlsunset.service
-        ;;
-      *"Night"*)
-        systemd-run --user --unit=wlsunset-manual ${pkgs.wlsunset}/bin/wlsunset -t 5000 -T 6500
-        ;;
-      *"Midnight"*)
-        systemd-run --user --unit=wlsunset-manual ${pkgs.wlsunset}/bin/wlsunset -t 4000 -T 6500
-        ;;
-    esac
-  '';
+  rofi-power = pkgs.writeShellScriptBin "rofi-power" (builtins.readFile ./config/rofi-power.sh);
+  rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" (builtins.readFile ./config/rofi-wlsunset.sh);
+  toggle-theme = pkgs.writeShellScriptBin "toggle-theme" (builtins.readFile ./config/toggle-theme.sh);
 in
 {
   home.username = "pau";
@@ -71,6 +46,7 @@ in
     bluetui # TUI Bluetooth Panel
     ffmpegthumbnailer # Video thumbnails
     jq # Json, for the sway tabs script
+    nodejs # For markdown-preview.nvim
     posy-cursors
 
     gcc
@@ -81,6 +57,7 @@ in
     typescript-language-server
     arduino-language-server
 
+    toggle-theme
     rofi-power
     rofi-wlsunset
     rofi-emoji
@@ -106,6 +83,7 @@ in
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
     "sway".source = ./config/sway;
+    # "yazi".source = ./config/yazi;
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
   };
@@ -203,8 +181,7 @@ in
       sws-scaler = "fast-bilinear";
       video-sync = "display-resample";
       image-display-duration = "inf";
-      loop-file = "inf";
-      osc = "no";
+      # loop-file = "inf";
       osd-bar = "no";
     };
     bindings = {
@@ -212,18 +189,18 @@ in
       "h" = "seek -5";
       "." = "add volume 2";
       "," = "add volume -2";
-      "k" = "playlist-prev";
-      "j" = "playlist-next";
+      "j" = "playlist-prev";
+      "k" = "playlist-next";
       "f" = "cycle fullscreen";
       "q" = "quit";
       "g" = "script-binding playlist-view-toggle";
       "+" = "add video-zoom 0.1";
       "-" = "add video-zoom -0.1";
       "=" = "set video-zoom 0; set video-pan-x 0; set video-pan-y 0";
-      "Alt+h" = "add video-pan-x 0.05";
-      "Alt+l" = "add video-pan-x -0.05";
-      "Alt+k" = "add video-pan-y 0.05";
-      "Alt+j" = "add video-pan-y -0.05";
+      "Ctrl+h" = "add video-pan-x 0.05";
+      "Ctrl+l" = "add video-pan-x -0.05";
+      "Ctrl+k" = "add video-pan-y 0.05";
+      "Ctrl+j" = "add video-pan-y -0.05";
     };
   };
 
@@ -284,6 +261,7 @@ in
       sidebar-mode = false;
       kb-mode-next = "Shift+Right";
       kb-mode-previous = "Shift+Left";
+      dpi = 192;
     };
   };
 

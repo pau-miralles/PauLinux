@@ -66,11 +66,26 @@ vim.o.cmdheight = 0                              -- Hides the command line when 
 
 -- File handling
 vim.o.writebackup = false      -- Don't create backup before writing
-vim.o.swapfile = false         -- Don't create swap files
 vim.o.undofile = true          -- Persistent undo
 vim.o.updatetime = 250         -- Faster completion
 vim.o.timeoutlen = 300         -- Key timeout duration
 vim.o.ttimeoutlen = 0          -- Key code timeout
+local swapdir = vim.fn.stdpath("state") .. "/swap//"  -- Use centralized swap directory
+vim.opt.directory = swapdir
+vim.fn.mkdir(vim.fn.stdpath("state") .. "/swap", "p") -- Ensure swap directory exists
+vim.opt.shortmess:append("A")                         -- Suppress swap prompt (auto-recover silently)
+vim.api.nvim_create_autocmd("BufReadPost", {          -- Auto-delete swap file after successful recovery
+  callback = function(args)
+    if vim.v.swapchoice == "r" then
+      local swapname = vim.fn.swapname(args.file)
+      if swapname ~= "" and vim.fn.filereadable(swapname) == 1 then
+        vim.fn.delete(swapname)
+      end
+    end
+  end,
+})
+
+
 
 -- Behavior settings
 vim.opt.iskeyword:append("-")  -- Treat dash as part of word
@@ -133,7 +148,7 @@ vim.keymap.set('n', '<leader>py', function()
   local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
   vim.cmd('botright split')
   vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
-  vim.cmd('terminal python3 ' .. file)
+  vim.cmd('terminal python3 ' .. file .. ' && read')
   vim.cmd('startinsert')
 end, { desc = 'Save and run [P]ython file' })
 

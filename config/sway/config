@@ -4,11 +4,6 @@ set $left h
 set $down j
 set $up k
 set $right l
-set $term kitty
-set $menu rofi -show drun
-
-exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
 ### SwayFX
 corner_radius 4
@@ -97,21 +92,22 @@ seat seat0 hide_cursor 30000
 seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
-    bindsym $mod+Return exec $term
-    bindsym $mod+d exec $menu
-    bindsym $mod+e exec thunar
+    bindsym $mod+Return exec kitty
+    bindsym $mod+d exec rofi -show drun
     bindsym $mod+w exec firefox
+    bindsym $mod+e exec thunar
     bindsym $mod+q kill
-    bindsym $mod+period exec rofi -show emoji
-    floating_modifier $mod normal
-    bindsym $mod+Shift+c reload
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
     bindsym $mod+v exec cliphist list | rofi -dmenu -p "Clipboard" | cliphist decode | wl-copy
     bindsym Control+Mod1+Shift+c exec cliphist wipe
     bindsym $mod+p exec rofi-power
     bindsym XF86PowerOff exec rofi-power
-    bindsym $mod+g exec rofi-wlsunset
     bindsym $mod+b exec ~/.nixos-config/config/cycle_power.sh
+    bindsym $mod+g exec rofi-wlsunset
+    bindsym $mod+period exec rofi -show emoji
+    bindsym $mod+Shift+t exec toggle-theme
+    floating_modifier $mod normal
+    bindsym $mod+Shift+c reload
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
     # Rotate Display with Ctrl+Alt+Arrows
     bindsym Control+Mod1+Up    output eDP-1 transform normal
     bindsym Control+Mod1+Right output eDP-1 transform 90
@@ -150,7 +146,6 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+f fullscreen
     bindsym $mod+Shift+f floating toggle
     bindsym $mod+space focus mode_toggle
-    bindsym $mod+a focus parent
 # Scratchpad:
     bindsym $mod+Shift+minus move scratchpad
     bindsym $mod+minus scratchpad show
@@ -175,12 +170,17 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
     bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
     # Special key to take a screenshot with grim
-    bindsym Print exec grim
-    bindsym $mod+Shift+s exec grim
+    bindsym Print exec grim - | wl-copy
+    bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
 
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
 exec_always autotiling
 exec_always systemctl --user restart waybar
+exec rm -f ~/.local/share/rofi/rofi_calc_history
+exec rm -f ~/ly-session.log
+exec rm -f ~/Baixades
 
 client.focused          #888888  #888888  #ffffff  #888888  #888888
 client.focused_inactive #444444  #444444  #cccccc  #444444  #444444
