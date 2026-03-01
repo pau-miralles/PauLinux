@@ -54,7 +54,7 @@ output eDP-1 {
   mode 2256x1504@59.999Hz
   scale 1.5
 }
-output * bg /etc/nixos/config/wallpaper.jpg fill
+output * bg $HOME/.nixos-config/config/wallpaper.jpg fill
 
 ### Idle configuration
 exec swayidle -w \

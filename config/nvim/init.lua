@@ -54,7 +54,7 @@ vim.o.ignorecase = true        -- Case insensitive search
 vim.o.smartcase = true         -- Case sensitive if uppercase in search
 
 -- Visual settings
-vim.o.winborder = 'rounded'                       -- Global borders: none single double rounded solid shadow
+vim.o.winborder = 'single'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
 vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options
