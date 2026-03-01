@@ -7,14 +7,14 @@ toolbar,
 .panel-subview-body,
 .tabbrowser-tab,
 .tab-background {
-	border-radius: 4px !important;
+	border-radius: 0px !important;
 }
 
 :root {
 	scrollbar-width: none;
 	--urlbar-collapsed-width: 200px;
 	--urlbar-open-width: 300px;
-	--user-radius: 4px;
+	--user-radius: 0px;
 	--tab-block-margin: 2px;
 }
 

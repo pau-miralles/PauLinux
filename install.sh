@@ -21,3 +21,5 @@ echo "Rebuild"
 sudo nixos-rebuild switch --flake .#framework
 
 echo "DONE!"
+read -n 1 -s -r -p "Press any key to reboot: "
+sudo reboot
