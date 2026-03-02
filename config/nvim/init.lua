@@ -35,7 +35,7 @@ vim.o.relativenumber = true    -- Relative line numbers
 vim.o.cursorline = true        -- Highlight current line
  vim.o.wrap = false            -- set nowrap
 vim.o.scrolloff = 10           -- Keep 10 lines above/below cursor
-vim.o.sidescrolloff = 8        -- Keep 8 columns left/right of cursor
+vim.o.sidescrolloff = 5        -- Keep 8 columns left/right of cursor
 vim.o.breakindent = true       -- Better wrapping visualization
 vim.o.list = true              -- Show invisible characters
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Must use vim.opt for tables
@@ -231,7 +231,6 @@ local function FloatingTerminal()
   term_state.win = vim.api.nvim_open_win(term_state.buf, true, {
     relative = 'editor', width = w, height = h,
     row = math.floor((vim.o.lines - h) / 2), col = math.floor((vim.o.columns - w) / 2),
-    -- style = 'minimal', border = 'rounded',
   })
   vim.wo[term_state.win].winblend = 0
   if vim.api.nvim_buf_line_count(term_state.buf) == 1 and vim.api.nvim_buf_get_lines(term_state.buf, 0, 1, false)[1] == "" then
@@ -281,18 +280,39 @@ require("lazy").setup({
       require('mini.pairs').setup()
       require('mini.statusline').setup()
       require('mini.surround').setup()
-      -- Setup Mini.clue (Which-key alternative)
+      require('mini.completion').setup()
+      require('mini.cursorword').setup()
+      -- Setup mini.hipatterns
+      local hipatterns = require('mini.hipatterns')
+      hipatterns.setup({
+        highlighters = {
+          fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
+          hack  = { pattern = '%f[%w]()HACK()%f[%W]',  group = 'MiniHipatternsHack'  },
+          todo  = { pattern = '%f[%w]()TODO()%f[%W]',  group = 'MiniHipatternsTodo'  },
+          note  = { pattern = '%f[%w]()NOTE()%f[%W]',  group = 'MiniHipatternsNote'  },
+          hex_color = hipatterns.gen_highlighter.hex_color(),
+        },
+      })
+      -- Setup mini.clue
       local miniclue = require('mini.clue')
       miniclue.setup({
         window = { delay = 0 },
         triggers = {
-          { mode = 'n', keys = '<Leader>' }, { mode = 'x', keys = '<Leader>' },
-          { mode = 'n', keys = 'g' },        { mode = 'x', keys = 'g' },
-          { mode = 'n', keys = "'" },        { mode = 'n', keys = '`' },
-          { mode = 'n', keys = '"' },        { mode = 'x', keys = '"' },
+          { mode = { 'n', 'x' }, keys = '<Leader>' },
+          { mode = 'n', keys = '[' },
+          { mode = 'n', keys = ']' },
+          { mode = 'i', keys = '<C-x>' },
+          { mode = { 'n', 'x' }, keys = 'g' },
+          { mode = { 'n', 'x' }, keys = "'" },
+          { mode = { 'n', 'x' }, keys = '`' },
+          { mode = { 'n', 'x' }, keys = '"' },
+          { mode = { 'i', 'c' }, keys = '<C-r>' },
           { mode = 'n', keys = '<C-w>' },
+          { mode = { 'n', 'x' }, keys = 'z' },
         },
         clues = {
+          miniclue.gen_clues.square_brackets(),
+          miniclue.gen_clues.builtin_completion(),
           miniclue.gen_clues.g(),
           miniclue.gen_clues.marks(),
           miniclue.gen_clues.registers(),
@@ -331,28 +351,15 @@ require("lazy").setup({
   -- Git & Diagnostics
   { "lewis6991/gitsigns.nvim", config = true },
   { "rachartier/tiny-inline-diagnostic.nvim", event = "VeryLazy", config = true },
-  -- Colorizer & Markdown
-  {
-    "norcalli/nvim-colorizer.lua",
-    config = function()
-      require("colorizer").setup({
-        "*", -- highlight all filetypes
-      }, {
-        RGB      = true,
-        RRGGBB   = true,
-        names    = false,
-        RRGGBBAA = true,
-        AARRGGBB = true,
-        css      = true,
-        css_fn   = true,
-      })
-    end,
-  },
+  -- Markdown
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
-    build = function() vim.fn["mkdp#util#install"]() end,
+    build = "cd app && yarn install --frozen-lockfile",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter",

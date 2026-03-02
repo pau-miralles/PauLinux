@@ -20,6 +20,5 @@ nix-shell -p git --run "git add . && nix flake update"
 echo "Rebuild"
 sudo nixos-rebuild switch --flake .#framework
 
-echo "DONE!"
-read -n 1 -s -r -p "Press any key to reboot: "
+echo "INSTALLATION DONE! Rebooting..."
 sudo reboot

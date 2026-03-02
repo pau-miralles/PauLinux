@@ -10,7 +10,6 @@ in
   home.stateVersion = "25.11"; # Keep this the same as your system version
   programs.home-manager.enable = true; # This makes home-manager manage itself
   home.packages = with pkgs; [
-    syncthing
     obsidian
     libreoffice-fresh
     libgsf # ODF (LibreOffice) thumbnails
@@ -47,6 +46,9 @@ in
     ffmpegthumbnailer # Video thumbnails
     jq # Json, for the sway tabs script
     nodejs # For markdown-preview.nvim
+    yarn
+    zip
+    unzip
     posy-cursors
 
     gcc
@@ -63,6 +65,7 @@ in
     rofi-emoji
   ];
 
+  services.syncthing.enable = true;
   services.cliphist = {
     enable = true;
     allowImages = true;
@@ -79,6 +82,7 @@ in
     '';
     network.listenAddress = "any";
   };
+  services.mpd-mpris.enable = true;
 
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
@@ -92,8 +96,8 @@ in
     enable = true;
     settings = {
       window_padding_width = 3;
-      window_border_width = 0;
-      background_opacity = lib.mkForce "0.8";
+      background_opacity = lib.mkForce "0.7";
+      dynamic_background_opacity = true;
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
       confirm_os_window_close = 0;
@@ -172,6 +176,7 @@ in
       autoload
       mpv-gallery-view
       thumbfast
+      mpris
     ];
     config = {
       gpu-context = "wayland";
@@ -223,6 +228,7 @@ in
         "browser.gesture.swipe.right" = "";
         "gfx.webrender.all" = true;
         "widget.wayland.opaque-region.enabled" = true;
+        "browser.tabs.allow_transparent_browser" = true;
         "full-screen-api.transition-duration.enter" = "0 0";
         "full-screen-api.transition-duration.leave" = "0 0";
         "full-screen-api.warning.delay" = 0;

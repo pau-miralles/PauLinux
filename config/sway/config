@@ -14,14 +14,13 @@ blur_passes 3
 blur_radius 6
 blur_noise 0.03
 # Transparency
-for_window [app_id=".*"] opacity 0.9
-for_window [class=".*"] opacity 0.9
+for_window [app_id=".*"] opacity 0.85
+for_window [class=".*"] opacity 0.85
 # Exceptions
 for_window [app_id="firefox"] opacity 1
+for_window [app_id="gimp"] opacity 1
+for_window [app_id="mpv"] opacity 1
 for_window [app_id="vlc"] opacity 1
-for_window [app_id="org.kde.kdenlive"] opacity 1
-for_window [class="Gimp"] opacity 1
-for_window [app_id="gimp-2.10"] opacity 1
 # Gaps & Borders
 font pango:monospace 0.001
 titlebar_border_thickness 0
@@ -43,9 +42,10 @@ layer_effects "waybar" {
 }
 layer_effects "panel", "rofi", "gtk-layer-shell" {
     blur enable;
-    corner_radius 4;
-    shadows disable;
+    blur_xray enable;
     blur_ignore_transparent enable;
+    shadows disable;
+    corner_radius 4;
 }
 
 ### Output configuration
@@ -92,6 +92,7 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+g exec rofi-wlsunset
     bindsym $mod+period exec rofi -show emoji
     bindsym $mod+Shift+t exec toggle-theme
+    bindsym XF86AudioMedia exec toggle-theme
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
