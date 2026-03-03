@@ -170,8 +170,8 @@ exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
 exec rm -f ~/Baixades
 
-client.focused          #888888  #888888  #ffffff  #888888  #888888
-client.focused_inactive #444444  #444444  #cccccc  #444444  #444444
-client.unfocused        #333333  #333333  #aaaaaa  #333333  #333333
-client.urgent           #666666  #666666  #ffffff  #666666  #666666
-client.placeholder      #222222  #222222  #888888  #222222  #222222
+client.focused          #888888  #888888  #eeeeee  #888888  #888888
+client.focused_inactive #444444  #444444  #eeeeee  #444444  #444444
+client.unfocused        #333333  #333333  #eeeeee  #333333  #333333
+client.urgent           #666666  #666666  #eeeeee  #666666  #666666
+client.placeholder      #222222  #222222  #eeeeee  #222222  #222222
