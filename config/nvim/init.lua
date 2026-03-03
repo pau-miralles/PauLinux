@@ -28,7 +28,6 @@ vim.api.nvim_create_autocmd("User", {
   pattern = "VeryLazy",
   callback = function() vim.defer_fn(clear_bg, 50) end
 })
-
 -- BASIC SETTINGS =====================================
 vim.o.number = true            -- Line numbers
 vim.o.relativenumber = true    -- Relative line numbers
@@ -54,7 +53,7 @@ vim.o.ignorecase = true        -- Case insensitive search
 vim.o.smartcase = true         -- Case sensitive if uppercase in search
 
 -- Visual settings
-vim.o.winborder = 'single'                       -- Global borders: none single double rounded solid shadow
+vim.o.winborder = 'rounded'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
 vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options
@@ -131,8 +130,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus left' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus right' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus down' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus up' })
-vim.keymap.set('n', '<leader>-', '<cmd>split<CR>', { desc = 'New horizontal split' })
-vim.keymap.set('n', '<leader>|', '<cmd>vsplit<CR>', { desc = 'New vertical split' })
 -- Better indent
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
@@ -173,7 +170,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- Filetype indents
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,
-  pattern = { "lua", "python" },
+  pattern = { "python" },
   callback = function()
     vim.bo.tabstop, vim.bo.shiftwidth = 4, 4
   end,
@@ -271,17 +268,15 @@ require("lazy").setup({
   {
     "echasnovski/mini.nvim",
     config = function()
-      require('mini.ai').setup()
       require('mini.comment').setup()
       require('mini.indentscope').setup()
       require('mini.pairs').setup()
       require('mini.statusline').setup()
       require('mini.surround').setup()
       require('mini.completion').setup()
+      require('mini.cmdline').setup()
       require('mini.cursorword').setup()
       require('mini.pick').setup()
-      require('mini.extra').setup() -- idk if this is in use
-      require('mini.cmdline').setup()
       require('mini.move').setup()
       require('mini.tabline').setup({
         format = function(buf_id, label)
@@ -324,6 +319,25 @@ require("lazy").setup({
           miniclue.gen_clues.z(),
         },
       })
+      local pick = require('mini.pick')
+      pick.setup({
+        source = {
+          show = pick.default_show,
+        },
+        window = {
+          config = function()
+            local height = math.floor(0.618 * vim.o.lines)
+            local width = math.floor(0.618 * vim.o.columns)
+            return {
+              anchor = 'NW',
+              height = height,
+              width = width,
+              row = math.floor(0.5 * (vim.o.lines - height)),
+              col = math.floor(0.5 * (vim.o.columns - width)),
+            }
+          end,
+        },
+      })
       local minifiles = require("mini.files")
       minifiles.setup({
         windows = {
@@ -335,9 +349,9 @@ require("lazy").setup({
           minifiles.open(vim.api.nvim_buf_get_name(0), true)
         end
       end, { desc = "Toggle mini.files" })
-
       vim.keymap.set("n", "<leader><space>", "<cmd>Pick files<cr>", { desc = "Find Files" })
       vim.keymap.set("n", "<leader>f", "<cmd>Pick grep_live<cr>", { desc = "Live Grep" })
+
     end
   },
   {
@@ -347,22 +361,6 @@ require("lazy").setup({
       { "f", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash Jump" }
     }
   },
-  -- Neo-tree
-  -- {
-  --   "nvim-neo-tree/neo-tree.nvim",
-  --   branch = "v3.x",
-  --   dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" },
-  --   keys = { { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "Toggle Explorer" } }
-  -- },
-  -- Telescope
-  -- {
-  --   "nvim-telescope/telescope.nvim",
-  --   dependencies = { "nvim-lua/plenary.nvim" },
-  --   keys = {
-  --     { "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-  --     { "<leader>f", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-  --   }
-  -- },
   -- Git & Diagnostics
   { "lewis6991/gitsigns.nvim", config = true },
   { "rachartier/tiny-inline-diagnostic.nvim", event = "VeryLazy", config = true },

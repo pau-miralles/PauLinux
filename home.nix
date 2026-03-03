@@ -23,10 +23,8 @@ in
     ffmpeg
     yazi
     eza
-    fzf
     bat
     ripgrep
-    zoxide
     tealdeer
     rmpc
     cava
@@ -73,7 +71,7 @@ in
   services.udiskie.enable = true;
   services.mpd = {
     enable = true;
-    musicDirectory = "/home/pau/Music";
+    musicDirectory = "${config.home.homeDirectory}/Music";
     extraConfig = ''
       audio_output {
         type "pulse"
@@ -86,8 +84,7 @@ in
 
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
-    "sway".source = ./config/sway;
-    # "yazi".source = ./config/yazi;
+    "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
   };
@@ -115,7 +112,9 @@ in
 
   programs.neovim = {
     enable = true;
-    initLua = builtins.readFile ./config/nvim/init.lua;
+    initLua = ''
+      dofile("${config.home.homeDirectory}/.nixos-config/config/nvim/init.lua")
+    '';
   };
   stylix.targets.neovim = {
     enable = true;
@@ -138,7 +137,6 @@ in
       ltt = "eza -T --icons --hyperlink";
       cat = "bat";
       v = "nvim";
-      f = "fzf";
       bluetooth = "sudo systemctl start bluetooth";
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
@@ -227,7 +225,6 @@ in
         "browser.gesture.swipe.left" = "";
         "browser.gesture.swipe.right" = "";
         "gfx.webrender.all" = true;
-        "widget.wayland.opaque-region.enabled" = true;
         "browser.tabs.allow_transparent_browser" = true;
         "full-screen-api.transition-duration.enter" = "0 0";
         "full-screen-api.transition-duration.leave" = "0 0";
