@@ -3,6 +3,7 @@ let
   rofi-power = pkgs.writeShellScriptBin "rofi-power" (builtins.readFile ./config/rofi-power.sh);
   rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" (builtins.readFile ./config/rofi-wlsunset.sh);
   toggle-theme = pkgs.writeShellScriptBin "toggle-theme" (builtins.readFile ./config/toggle-theme.sh);
+  colors = config.lib.stylix.colors.withHashtag;
 in
 {
   home.username = "pau";
@@ -87,6 +88,24 @@ in
     "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
+    "sway-colors".text = ''
+      set $base00 ${colors.base00}
+      set $base01 ${colors.base01}
+      set $base02 ${colors.base02}
+      set $base03 ${colors.base03}
+      set $base04 ${colors.base04}
+      set $base05 ${colors.base05}
+      set $base06 ${colors.base06}
+      set $base07 ${colors.base07}
+      set $base08 ${colors.base08}
+      set $base09 ${colors.base09}
+      set $base0A ${colors.base0A}
+      set $base0B ${colors.base0B}
+      set $base0C ${colors.base0C}
+      set $base0D ${colors.base0D}
+      set $base0E ${colors.base0E}
+      set $base0F ${colors.base0F}
+    '';
   };
 
   programs.kitty = {
@@ -142,6 +161,7 @@ in
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
       sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
+      btm = "btm --battery";
     };
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
@@ -215,22 +235,23 @@ in
       extensions.force = true;
       userChrome = builtins.readFile ./config/firefox/userChrome.css;
       userContent = builtins.readFile ./config/firefox/userContent.css;
-      settings = {
-        "media.rdd-ffmpeg.enabled" = true;
-        "widget.wayland.fractional-scale.enabled" = true; # Crisper Wayland scaling
-        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-        "browser.compactmode.show" = true;
-        "browser.uidensity" = 1;
-        "apz.overscroll.enabled" = false;
-        "browser.gesture.swipe.left" = "";
-        "browser.gesture.swipe.right" = "";
-        "gfx.webrender.all" = true;
-        "browser.tabs.allow_transparent_browser" = true;
-        "full-screen-api.transition-duration.enter" = "0 0";
-        "full-screen-api.transition-duration.leave" = "0 0";
-        "full-screen-api.warning.delay" = 0;
-        "full-screen-api.warning.timeout" = 0;
-      };
+      extraConfig = ''
+        ${builtins.readFile ./config/firefox/betterfox.js}
+        user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+        user_pref("media.rdd-ffmpeg.enabled", true);
+        user_pref("widget.wayland.fractional-scale.enabled", true);
+        user_pref("browser.compactmode.show", true);
+        user_pref("browser.uidensity", 1);
+        user_pref("apz.overscroll.enabled", false);
+        user_pref("browser.gesture.swipe.left", "");
+        user_pref("browser.gesture.swipe.right", "");
+        user_pref("gfx.webrender.all", true);
+        user_pref("browser.tabs.allow_transparent_browser", true);
+        user_pref("full-screen-api.transition-duration.enter", "0 0");
+        user_pref("full-screen-api.transition-duration.leave", "0 0");
+        user_pref("full-screen-api.warning.delay", 0);
+        user_pref("full-screen-api.warning.timeout", 0);
+      '';
       search = {
         force = true;
         default = "Brave";

@@ -2,32 +2,36 @@ vim.g.have_nerd_font = true
 
 -- TRANSPARENCY =====================================
 local function clear_bg()
-  -- Standard Neovim highlight groups
   local groups = {
-    "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer",
-    "SignColumn", "LineNr", "CursorLineNr", "StatusLine", "StatusLineNC",
-    "TabLine", "TabLineFill", "TabLineSel"
+    "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer", "SignColumn", "LineNr", "CursorLineNr", "TabLineFill"
+  }
+  for _, p in ipairs({ "Mini", "GitSigns" }) do
+    vim.list_extend(groups, vim.fn.getcompletion(p, "highlight"))
+  end
+  local exclude_groups = {
+    MiniTablineModifiedCurrent = true;
+    MiniTablineModifiedVisible = true;
+    MiniTablineModifiedHidden = true;
+    MiniTablineCurrent = true;
+    MiniTablineVisible = true;
+    MiniTablineHidden = true;
+    MiniPickMatchRanges = true,
+    MiniPickMatchMarked = true,
+    MiniPickMatchCurrent = true,
+    MiniFilesCursorLine = true,
+    MiniFilesDirectory = true,
   }
   for _, hl in ipairs(groups) do
-    pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE")
-  end
-  -- Dynamically fetch all plugin highlight groups
-  for _, prefix in ipairs({"BufferLine", "MiniStatusline", "NeoTree", "Telescope", "GitSigns"}) do
-    for _, hl in ipairs(vim.fn.getcompletion(prefix, "highlight")) do
-      pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE")
+    if not exclude_groups[hl] then
+      pcall(vim.cmd, ("hi %s guibg=NONE ctermbg=NONE"):format(hl))
     end
   end
 end
--- Run immediately
 clear_bg()
--- Run delayed on Theme change and Startup to defeat plugin race conditions
-vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {
-  callback = function() vim.defer_fn(clear_bg, 50) end
-})
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  callback = function() vim.defer_fn(clear_bg, 50) end
-})
+local cb = function() vim.schedule(clear_bg) end
+vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, { callback = cb })
+vim.api.nvim_create_autocmd("User", { pattern = "VeryLazy", callback = cb })
+
 -- BASIC SETTINGS =====================================
 vim.o.number = true            -- Line numbers
 vim.o.relativenumber = true    -- Relative line numbers
@@ -53,7 +57,7 @@ vim.o.ignorecase = true        -- Case insensitive search
 vim.o.smartcase = true         -- Case sensitive if uppercase in search
 
 -- Visual settings
-vim.o.winborder = 'rounded'                       -- Global borders: none single double rounded solid shadow
+vim.o.winborder = 'single'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
 vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options
@@ -274,10 +278,22 @@ require("lazy").setup({
       require('mini.statusline').setup()
       require('mini.surround').setup()
       require('mini.completion').setup()
-      require('mini.cmdline').setup()
       require('mini.cursorword').setup()
       require('mini.pick').setup()
       require('mini.move').setup()
+      require('mini.cmdline').setup({
+        autocomplete = {
+          enable = true,
+          delay = 0,          -- show immediately while typing
+          map_arrows = true,  -- consistent navigation
+        },
+        autocorrect = {
+          enable = true,      -- keep smart correction
+        },
+        autopeek = {
+          enable = true,      -- range preview is genuinely useful
+        },
+      })
       require('mini.tabline').setup({
         format = function(buf_id, label)
           return MiniTabline.default_format(buf_id, label)

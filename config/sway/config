@@ -6,13 +6,12 @@ set $up k
 set $right l
 
 ### SwayFX
-corner_radius 3
-shadows disable
+# corner_radius 4
 # Window Blur
 blur enable
 blur_passes 3
 blur_radius 6
-blur_noise 0.03
+blur_noise 0.04
 # Transparency
 for_window [app_id=".*"] opacity 0.85
 for_window [class=".*"] opacity 0.85
@@ -26,34 +25,16 @@ font pango:monospace 0.001
 titlebar_border_thickness 0
 titlebar_padding 0
 default_border pixel 2
-default_floating_border pixel 1
-gaps inner 5
+# gaps inner 4
 gaps outer 0
 smart_gaps on
 smart_borders on
-hide_edge_borders --i3 none
-# Layer Shell Effects
+
 layer_effects "waybar" {
     blur enable;
     blur_xray enable;
     blur_ignore_transparent enable;
-    shadows disable;
-    corner_radius 0;
 }
-layer_effects "rofi" {
-    blur enable;
-    corner_radius 3;
-    shadows disable;
-    blur_ignore_transparent enable;
-}
-}
-layer_effects "gtk-layer-shell" {
-    blur enable;
-    corner_radius 4;
-    shadows disable;
-    blur_ignore_transparent enable;
-}
-
 
 ### Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -178,10 +159,11 @@ exec_always autotiling
 exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
-exec rm -f ~/Baixades
+# exec rm -f ~/Baixades
 
-client.focused          #888888  #888888  #eeeeee  #888888  #888888
-client.focused_inactive #444444  #444444  #eeeeee  #444444  #444444
-client.unfocused        #333333  #333333  #eeeeee  #333333  #333333
-client.urgent           #666666  #666666  #eeeeee  #666666  #666666
-client.placeholder      #222222  #222222  #eeeeee  #222222  #222222
+include ~/.config/sway-colors
+client.focused          $base0D   $base0D   $base00   $base0D   $base0D
+client.focused_inactive $base01   $base01   $base05   $base01   $base01
+client.unfocused        $base00   $base00   $base05   $base00   $base00
+client.urgent           $base08   $base08   $base00   $base08   $base08
+client.placeholder      $base00   $base00   $base05   $base00   $base00
