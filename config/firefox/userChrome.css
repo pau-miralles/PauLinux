@@ -1,3 +1,11 @@
+#urlbar-background, 
+.panel-arrowcontent, 
+.menupopup-arrowscrollbox {
+    box-shadow: none !important;
+}
+
+#urlbar[breakout][breakout-extend] > #urlbar-background,
+.urlbarView-row-inner,
 #TabsToolbar,
 #TabsToolbar *,
 #titlebar,

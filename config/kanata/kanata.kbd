@@ -96,7 +96,7 @@
   caps tab  _    _    _    _    _    _    @ch_u @ch_i @ch_o @ch_p    _  _    /
   @cec _    _    _    _    _    _    @ch_j @ch_k @ch_l @ch_scl  _    _
   @ch_ls _  @ch_x @ch_c v    b    @ch_n @ch_m ,    .    S-7  @ch_rs
-  _    _    @altbck              @spn           @sym @less
+  spc    _    @altbck              @spn           @sym @less
 )
 
 (deflayer navigation

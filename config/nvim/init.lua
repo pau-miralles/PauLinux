@@ -60,8 +60,7 @@ vim.o.smartcase = true         -- Case sensitive if uppercase in search
 vim.o.winborder = 'single'                       -- Global borders: none single double rounded solid shadow
 vim.o.termguicolors = true                       -- True color support
 vim.o.signcolumn = "yes"                         -- Always show sign column
-vim.o.completeopt = "menuone,noinsert,noselect"  -- Completion options
--- vim.o.showmode = false                           -- Don't show mode in command line
+vim.o.completeopt = "menuone,noinsert"  -- Insert mode completion options
 vim.o.lazyredraw = true                          -- Don't redraw during macros
 vim.o.synmaxcol = 300                            -- Syntax highlighting limit
 vim.opt.fillchars = { eob = " " }                -- Hide ~ on empty lines
@@ -110,7 +109,7 @@ vim.o.splitbelow = true        -- Horizontal splits go below
 vim.o.splitright = true        -- Vertical splits go right
 
 -- Command-line & Diff
-vim.o.wildmode = "longest:full,full"
+vim.o.wildmode = "noselect,full"
 vim.opt.wildignore:append({ "*.o", "*.obj", "*.pyc", "*.class", "*.jar" })
 vim.opt.diffopt:append("linematch:60")
 vim.o.redrawtime = 10000
@@ -122,6 +121,7 @@ vim.g.maplocalleader = " "
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = '[Q]uit buffer' })
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = '[D]elete [B]uffer' })
 vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite buffer' })
 vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
@@ -281,25 +281,8 @@ require("lazy").setup({
       require('mini.cursorword').setup()
       require('mini.pick').setup()
       require('mini.move').setup()
-      require('mini.cmdline').setup({
-        autocomplete = {
-          enable = true,
-          delay = 0,          -- show immediately while typing
-          map_arrows = true,  -- consistent navigation
-        },
-        autocorrect = {
-          enable = true,      -- keep smart correction
-        },
-        autopeek = {
-          enable = true,      -- range preview is genuinely useful
-        },
-      })
-      require('mini.tabline').setup({
-        format = function(buf_id, label)
-          return MiniTabline.default_format(buf_id, label)
-            .. (vim.bo[buf_id].modified and '● ' or '')
-        end,
-      })
+      require('mini.cmdline').setup()
+      require('mini.tabline').setup()
       local hipatterns = require('mini.hipatterns')
       hipatterns.setup({
         highlighters = {

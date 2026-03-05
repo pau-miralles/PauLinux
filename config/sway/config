@@ -10,8 +10,11 @@ set $right l
 # Window Blur
 blur enable
 blur_passes 3
+# try 5 instead of 3
 blur_radius 6
+# try 7 instead of 6
 blur_noise 0.04
+
 # Transparency
 for_window [app_id=".*"] opacity 0.85
 for_window [class=".*"] opacity 0.85
@@ -159,7 +162,7 @@ exec_always autotiling
 exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
-# exec rm -f ~/Baixades
+exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
 
 include ~/.config/sway-colors
 client.focused          $base0D   $base0D   $base00   $base0D   $base0D

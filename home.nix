@@ -34,9 +34,7 @@ in
     tty-clock
     speedtest-cli
 
-    cliphist
     wlsunset
-    udiskie # Automatic USB drives
     playerctl # Play/Pause buttons
     pavucontrol # GUI Audio Panel
     wiremix # TUI Audio Panel
@@ -48,7 +46,6 @@ in
     yarn
     zip
     unzip
-    posy-cursors
 
     gcc
     pyright
@@ -61,15 +58,14 @@ in
     toggle-theme
     rofi-power
     rofi-wlsunset
-    rofi-emoji
   ];
-
+  services.mako.enable = true; # Notification daemon
   services.syncthing.enable = true;
   services.cliphist = {
     enable = true;
     allowImages = true;
   };
-  services.udiskie.enable = true;
+  services.udiskie.enable = true; # Automatic mount USB drives
   services.mpd = {
     enable = true;
     musicDirectory = "${config.home.homeDirectory}/Music";
@@ -237,6 +233,7 @@ in
       userContent = builtins.readFile ./config/firefox/userContent.css;
       extraConfig = ''
         ${builtins.readFile ./config/firefox/betterfox.js}
+        user_pref("browser.search.separatePrivateDefault", false);
         user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
         user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("widget.wayland.fractional-scale.enabled", true);

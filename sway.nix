@@ -7,9 +7,6 @@
     wrapperFeatures.gtk = true; # Fixes GTK apps in Sway
   };
   environment.systemPackages = with pkgs; [
-    waybar       # Status bar
-    kitty        # Terminal
-    mako         # Notification daemon
     libnotify    # To send notifications
     swaybg       # Wallpapers in Sway
     wl-clipboard # Clipboard manager backend
