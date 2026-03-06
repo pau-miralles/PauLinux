@@ -1,11 +1,9 @@
-#urlbar-background, 
-.panel-arrowcontent, 
+#urlbar-background,
+.panel-arrowcontent,
 .menupopup-arrowscrollbox {
     box-shadow: none !important;
 }
 
-#urlbar[breakout][breakout-extend] > #urlbar-background,
-.urlbarView-row-inner,
 #TabsToolbar,
 #TabsToolbar *,
 #titlebar,
@@ -55,7 +53,7 @@ border-inline: none !important;
 }
 /* Tab Styling */
 .tabbrowser-tab {
-	min-height: calc(var(--tab-min-height) - 2px) !important;
+	min-height: 24px !important;
 	transition: none !important;
 }
 .tab-background {

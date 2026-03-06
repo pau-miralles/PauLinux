@@ -9,11 +9,9 @@ set $right l
 # corner_radius 4
 # Window Blur
 blur enable
-blur_passes 3
-# try 5 instead of 3
+blur_passes 4
 blur_radius 6
-# try 7 instead of 6
-blur_noise 0.04
+blur_noise 0.02
 
 # Transparency
 for_window [app_id=".*"] opacity 0.85
@@ -23,6 +21,12 @@ for_window [app_id="firefox"] opacity 1
 for_window [app_id="gimp"] opacity 1
 for_window [app_id="mpv"] opacity 1
 for_window [app_id="vlc"] opacity 1
+for_window [app_id="obsidian"] opacity 1
+for_window [app_id="libreoffice-startcenter"] opacity 1
+for_window [app_id="libreoffice-writer"] opacity 1
+for_window [app_id="libreoffice-calc"] opacity 1
+for_window [app_id="libreoffice-impress"] opacity 1
+
 # Gaps & Borders
 font pango:monospace 0.001
 titlebar_border_thickness 0

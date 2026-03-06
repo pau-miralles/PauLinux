@@ -282,7 +282,12 @@ require("lazy").setup({
       require('mini.pick').setup()
       require('mini.move').setup()
       require('mini.cmdline').setup()
-      require('mini.tabline').setup()
+      require('mini.tabline').setup({
+        format = function(buf_id, label)
+          return MiniTabline.default_format(buf_id, label)
+            .. (vim.bo[buf_id].modified and '● ' or '')
+        end,
+      })
       local hipatterns = require('mini.hipatterns')
       hipatterns.setup({
         highlighters = {
