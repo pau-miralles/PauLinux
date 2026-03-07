@@ -3,6 +3,7 @@ let
   rofi-power = pkgs.writeShellScriptBin "rofi-power" (builtins.readFile ./config/rofi-power.sh);
   rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" (builtins.readFile ./config/rofi-wlsunset.sh);
   toggle-theme = pkgs.writeShellScriptBin "toggle-theme" (builtins.readFile ./config/toggle-theme.sh);
+  low-battery-warning = pkgs.writeShellScriptBin "low-battery-warning" (builtins.readFile ./config/low-battery-warning.sh);
   colors = config.lib.stylix.colors.withHashtag;
 in
 {
@@ -58,6 +59,8 @@ in
     toggle-theme
     rofi-power
     rofi-wlsunset
+    libnotify
+    low-battery-warning
   ];
   services.mako.enable = true; # Notification daemon
   services.syncthing.enable = true;
@@ -152,7 +155,7 @@ in
       ltt = "eza -T --icons --hyperlink";
       cat = "bat";
       v = "nvim";
-      bluetooth = "sudo systemctl start bluetooth";
+      bluetooth = "sudo systemctl start bluetooth && sleep 1 && sudo bluetoothctl power on && sudo bluetoothctl discoverable on";
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";

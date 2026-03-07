@@ -26,6 +26,8 @@ for_window [app_id="libreoffice-startcenter"] opacity 1
 for_window [app_id="libreoffice-writer"] opacity 1
 for_window [app_id="libreoffice-calc"] opacity 1
 for_window [app_id="libreoffice-impress"] opacity 1
+# Dimming
+default_dim_inactive 0.15
 
 # Gaps & Borders
 font pango:monospace 0.001
@@ -85,7 +87,8 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym Control+Mod1+Shift+c exec cliphist wipe
     bindsym $mod+p exec rofi-power
     bindsym XF86PowerOff exec rofi-power
-    bindsym $mod+b exec ~/.nixos-config/config/cycle_power.sh
+    bindsym $mod+b exec ~/.nixos-config/config/cycle-power.sh
+    bindsym $mod+Shift+d exec ~/.nixos-config/config/toggle-dim.sh
     bindsym $mod+g exec rofi-wlsunset
     bindsym $mod+period exec rofi -show emoji
     bindsym $mod+Shift+t exec toggle-theme
@@ -167,6 +170,7 @@ exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
 exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
+exec low-battery-warning
 
 include ~/.config/sway-colors
 client.focused          $base0D   $base0D   $base00   $base0D   $base0D
