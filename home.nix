@@ -82,6 +82,25 @@ in
   };
   services.mpd-mpris.enable = true;
 
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "inode/directory" = [ "thunar.desktop" ];
+      "image/jpeg" = [ "mpv.desktop" ];
+      "image/png" = [ "mpv.desktop" ];
+      "image/gif" = [ "mpv.desktop" ];
+      "image/webp" = [ "mpv.desktop" ];
+      "image/svg+xml" = [ "mpv.desktop" ];
+      "video/mp4" = [ "mpv.desktop" ];
+      "video/webm" = [ "mpv.desktop" ];
+      "video/x-matroska" = [ "mpv.desktop" ];
+      "audio/mpeg" = [ "mpv.desktop" ];
+      "audio/ogg" = [ "mpv.desktop" ];
+      "audio/flac" = [ "mpv.desktop" ];
+      "audio/x-wav" = [ "mpv.desktop" ];
+    };
+  };
+
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
     "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";

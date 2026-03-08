@@ -169,6 +169,7 @@
   stylix = {
     enable = true;
     targets.gtk.enable = true;
+    targets.console.enable = true;
     image = ./config/wallpaper.jpg;
     # base16Scheme = ./config/themes/theme.yaml;
     polarity = "dark";

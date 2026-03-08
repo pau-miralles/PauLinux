@@ -12,7 +12,7 @@
     wl-clipboard # Clipboard manager backend
     grim         # Screenshot tool
     slurp        # Screen area selector
-    autotiling   # Autotiling for Sway yessss
+    autotiling-rs   # Autotiling for Sway, in Rust!
     polkit_gnome # Authentication agent
   ];
   fonts.packages = with pkgs; [
