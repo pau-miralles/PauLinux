@@ -1,19 +1,15 @@
-/****************************************************************************
- * Betterfox                                                                *
- * "Ad meliora"                                                             *
- * version: 148                                                             *
- * url: https://github.com/yokoffing/Betterfox                              *
-****************************************************************************/
+/***********************************************
+ * Betterfox                                   *
+ * "Ad meliora"                                *
+ * version: 148                                *
+ * url: https://github.com/yokoffing/Betterfox *
+***********************************************/
 
-/****************************************************************************
- * SECTION: FASTFOX                                                         *
-****************************************************************************/
+/** SECTION: FASTFOX ***/
 user_pref("gfx.canvas.accelerated.cache-size", 256); // reset pref
 user_pref("gfx.webrender.layer-compositor", true);
 
-/****************************************************************************
- * SECTION: SECUREFOX                                                       *
-****************************************************************************/
+/** SECTION: SECUREFOX ***/
 /** TRACKING PROTECTION ***/
 user_pref("browser.contentblocking.category", "strict");
 user_pref("browser.download.start_downloads_in_tmp_dir", true);
@@ -119,9 +115,7 @@ user_pref("app.normandy.api_url", "");
 user_pref("breakpad.reportURL", "");
 user_pref("browser.tabs.crashReporting.sendReport", false);
 
-/****************************************************************************
- * SECTION: PESKYFOX                                                        *
-****************************************************************************/
+/** SECTION: PESKYFOX ***/
 /** MOZILLA UI ***/
 user_pref("extensions.getAddons.showPane", false);
 user_pref("extensions.htmlaboutaddons.recommendations.enabled", false);
@@ -174,9 +168,3 @@ user_pref("browser.bookmarks.openInTabClosesMenu", false);
 user_pref("browser.menu.showViewImageInfo", true);
 user_pref("findbar.highlightAll", true);
 user_pref("layout.word_select.eat_space_to_next_word", false);
-
-/****************************************************************************
- * SECTION: SMOOTHFOX                                                       *
-****************************************************************************/
-// visit https://github.com/yokoffing/Betterfox/blob/main/Smoothfox.js
-// Enter your scrolling overrides below this line:

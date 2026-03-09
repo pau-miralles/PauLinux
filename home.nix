@@ -20,6 +20,7 @@ in
     vlc
     handbrake
     obs-studio
+    activitywatch
 
     python3
     ffmpeg

@@ -1,10 +1,16 @@
 * {
-  border-radius: 1px !important;
+  border-radius: 0px !important;
   box-shadow: none !important;
 }
 @-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
     body { background: transparent !important; }
     .top-site-outer .tile {
         background-color: rgba(255,255,255,0.6) !important;
+    }
+    .logo-and-wordmark {
+        display: none !important;
+    }
+    .search-wrapper {
+        display: none !important;
     }
 }

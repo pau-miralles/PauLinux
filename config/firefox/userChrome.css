@@ -1,26 +1,31 @@
-#urlbar-background,
-.panel-arrowcontent,
-.menupopup-arrowscrollbox {
-    box-shadow: none !important;
-}
+/* #urlbar-background, */
+/* .panel-arrowcontent, */
+/* .menupopup-arrowscrollbox { */
+/*     box-shadow: none !important; */
+/* } */
+/**/
+/* #TabsToolbar, */
+/* #TabsToolbar *, */
+/* #titlebar, */
+/* #titlebar *, */
+/* toolbar, */
+/* #nav-bar, */
+/* .panel-subview-body, */
+/* .tabbrowser-tab, */
+/* .tab-background { */
+/* 	border-radius: 0px !important; */
+/* } */
 
-#TabsToolbar,
-#TabsToolbar *,
-#titlebar,
-#titlebar *,
-toolbar,
-#nav-bar,
-.panel-subview-body,
-.tabbrowser-tab,
-.tab-background {
-	border-radius: 1px !important;
+* {
+  border-radius: 0px !important;
+  box-shadow: none !important;
 }
 
 :root {
 	scrollbar-width: none;
 	--urlbar-collapsed-width: 200px;
 	--urlbar-open-width: 300px;
-	--user-radius: 1px;
+	--user-radius: 0px;
 	--tab-block-margin: 2px;
 }
 

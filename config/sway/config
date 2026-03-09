@@ -171,6 +171,8 @@ exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
 exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
 exec low-battery-warning
+exec_always --no-startup-id aw-qt
+bindsym $mod+a exec firefox http://localhost:5600
 
 include ~/.config/sway-colors
 client.focused          $base0D   $base0D   $base00   $base0D   $base0D
