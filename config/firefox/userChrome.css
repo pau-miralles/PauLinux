@@ -105,7 +105,7 @@
   --urlbar-toolbar-height: 24px !important;
   border-radius: var(--user-radius) !important;
   min-height: var(--urlbar-min-height) !important;
-  top: 0 !important;
+  top: 0;
 }
 #urlbar-background {
   border-radius: var(--user-radius) !important;
@@ -135,7 +135,7 @@
   height: var(--tab-min-height) !important;
   margin: 0 !important;
   padding: 0 !important;
-  top: 0 !important;
+  top: 0;
 }
 #urlbar-input {
   padding-left: 5px !important;
