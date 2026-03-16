@@ -134,9 +134,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus left' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus right' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus down' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus up' })
--- Better indent
-vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
-vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 -- Python run program
 vim.keymap.set('n', '<leader>py', function()
   vim.cmd('write')
@@ -390,6 +387,30 @@ require("lazy").setup({
       })
     end
   },
+  -- HTML Tags
+  {
+    "windwp/nvim-ts-autotag",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {},
+  },
+  -- Formatting
+  {
+    "stevearc/conform.nvim",
+    cmd = { "ConformInfo" },
+    keys = {
+      { "<leader>fm", function() require("conform").format({ async = true, lsp_fallback = true }) end, mode = "v", desc = "Format selection" },
+    },
+    opts = {
+      formatters_by_ft = {
+        html = { "prettier" },
+        css = { "prettier" },
+        javascript = { "prettier" },
+        json = { "prettier" },
+        python = { "isort", "black" },
+        lua = { "stylua" },
+      },
+    },
+  },
   -- LSP
   {
     "neovim/nvim-lspconfig",
@@ -401,7 +422,7 @@ require("lazy").setup({
         'html',
         'cssls',
         'ts_ls',
-        'arduino_language_server'
+        'arduino_language_server',
       })
       -- Auto-setup keybinds when LSP attaches to a buffer
       vim.api.nvim_create_autocmd('LspAttach', {

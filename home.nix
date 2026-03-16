@@ -20,11 +20,10 @@ in
     vlc
     handbrake
     obs-studio
-    activitywatch
 
+    yazi
     python3
     ffmpeg
-    yazi
     eza
     bat
     ripgrep
@@ -56,6 +55,11 @@ in
     vscode-langservers-extracted # HTML/CSS/JSON/ESLint
     typescript-language-server
     arduino-language-server
+
+    stylua                  # Lua
+    nodePackages.prettier   # HTML, CSS, JS, and JSON
+    black                   # Python (formatting)
+    isort                   # Python (sorting imports)
 
     toggle-theme
     rofi-power
@@ -130,7 +134,6 @@ in
   programs.kitty = {
     enable = true;
     settings = {
-      window_padding_width = 3;
       background_opacity = lib.mkForce "0.7";
       dynamic_background_opacity = true;
       cursor_trail = 1;
@@ -175,7 +178,6 @@ in
       ltt = "eza -T --icons --hyperlink";
       cat = "bat";
       v = "nvim";
-      bluetooth = "sudo systemctl start bluetooth && sleep 1 && sudo bluetoothctl power on && sudo bluetoothctl discoverable on";
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";

@@ -7,10 +7,4 @@
     .top-site-outer .tile {
         background-color: rgba(255,255,255,0.6) !important;
     }
-    .logo-and-wordmark {
-        display: none !important;
-    }
-    .search-wrapper {
-        display: none !important;
-    }
 }

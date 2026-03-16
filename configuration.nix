@@ -98,7 +98,7 @@
   nix.gc = {
     automatic = true;
     dates = "weekly";
-    options = "--delete-generations +5";
+    options = "--delete-generations +3";
   };
   security.rtkit.enable = true; # Sound (Pipeware)
   services.pipewire = {
