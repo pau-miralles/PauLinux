@@ -181,7 +181,7 @@ in
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
-      sync = "cd ~/.nixos-config/ && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage && sudo nixos-rebuild boot --flake .#framework && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && sudo nixos-rebuild list-generations --flake .#framework && sudo nix-collect-garbage -d && nix flake update && sudo nixos-rebuild switch --flake .#framework && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
     };
     initExtra = ''

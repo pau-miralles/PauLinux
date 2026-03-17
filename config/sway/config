@@ -25,7 +25,7 @@ default_dim_inactive 0.15
 font pango:monospace 0.001
 titlebar_border_thickness 0
 titlebar_padding 0
-default_border pixel 2
+default_border pixel 1
 # gaps inner 4
 gaps outer 0
 smart_gaps on
@@ -150,6 +150,9 @@ seat seat0 xcursor_theme Posy_Cursor 32
     # Special keys to adjust brightness via brightnessctl
     bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
     bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+    # Special keys to adjust keyboard brightness (Mod + Brightness keys)
+    bindsym --locked $mod+XF86MonBrightnessDown exec brightnessctl --device='*kbd_backlight*' set 10%-
+    bindsym --locked $mod+XF86MonBrightnessUp exec brightnessctl --device='*kbd_backlight*' set 10%+
     # Special key to take a screenshot with grim
     bindsym Print exec grim - | wl-copy
     bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
