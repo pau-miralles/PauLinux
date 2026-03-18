@@ -164,6 +164,7 @@ exec_always autotiling-rs
 exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
+exec rm -rf ~/Baixades
 exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
 exec low-battery-warning
 

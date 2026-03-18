@@ -318,7 +318,7 @@ in
       mainBar = {
         layer = "top";
         position = "bottom";
-        height = 20;
+        height = 18;
         modules-left = [ "battery" "power-profiles-daemon" "temperature" ];
         modules-center = [ "sway/workspaces" ];
         modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
