@@ -1,5 +1,0 @@
-hardware-configuration.nix
-*.ssh
-*.age
-.env
-*.swp
