@@ -56,11 +56,6 @@ in
     typescript-language-server
     arduino-language-server
 
-    stylua                  # Lua
-    nodePackages.prettier   # HTML, CSS, JS, and JSON
-    black                   # Python (formatting)
-    isort                   # Python (sorting imports)
-
     toggle-theme
     rofi-power
     rofi-wlsunset
@@ -139,16 +134,83 @@ in
       cursor_trail = 1;
       cursor_trail_start_threshold = 0;
       confirm_os_window_close = 0;
-  };
-  keybindings = {
-    "ctrl+tab" = "next_tab";
-    "ctrl+1" = "goto_tab 1";
-    "ctrl+2" = "goto_tab 2";
-    "ctrl+3" = "goto_tab 3";
-    "ctrl+4" = "goto_tab 4";
-    "ctrl+5" = "goto_tab 5";
-    "ctrl+6" = "goto_tab 6";
     };
+  };
+
+  programs.tmux = {
+    enable = true;
+    shortcut = "a";
+    mouse = true;
+    escapeTime = 0;
+    baseIndex = 1;
+    keyMode = "vi";
+    terminal = "tmux-256color";
+    plugins = with pkgs.tmuxPlugins;[
+      vim-tmux-navigator
+    ];
+    extraConfig = ''
+      set -ga terminal-overrides ",*:RGB"
+      set -g set-clipboard on
+      set -g focus-events on
+      unbind r
+      bind r source-file ~/.config/tmux/tmux.conf \; display-message "Tmux config reloaded"
+      bind C-l send-keys 'C-l'
+      bind - display-popup -E -w 75% -h 75% "tmux new-session -A -s scratchpad"
+
+      # Status Bar (vim-tpipeline)
+      set -g status-style "bg=default,fg=#${config.lib.stylix.colors.base05}"
+      set -g status-justify absolute-centre
+      set -g status-left-length 99
+      set -g status-right-length 99
+      set -g status-left ""
+      set -g status-right ""
+
+      # Stylix styling
+      set -g window-status-style "fg=#${config.lib.stylix.colors.base05}"
+      set -g window-status-format " #I:#W "
+      set -g window-status-current-style "bg=#${config.lib.stylix.colors.base0D},fg=#${config.lib.stylix.colors.base00},bold"
+      set -g window-status-current-format " #I:#W "
+
+      # Windows
+      set -g renumber-windows on
+      set -g pane-base-index 1
+      set-window-option -g pane-base-index 1
+
+      # Split Windows (Vim Style)
+      unbind '"'
+      unbind %
+      bind v split-window -h -c "#{pane_current_path}"
+      bind s split-window -v -c "#{pane_current_path}"
+
+      # Alt+number to select window
+      bind -n M-1 select-window -t 1
+      bind -n M-2 select-window -t 2
+      bind -n M-3 select-window -t 3
+      bind -n M-4 select-window -t 4
+      bind -n M-5 select-window -t 5
+      bind -n M-6 select-window -t 6
+
+      # Vim-like Copy
+      bind-key -T copy-mode-vi v send-keys -X begin-selection
+      bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+      bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+      unbind -T copy-mode-vi MouseDragEnd1Pane
+
+      # Smart pane switching with awareness of Vim splits.
+      vim_pattern='(\S+/)?g?\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?'
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+          | grep -iqE '^[^TXZ ]+ +''${vim_pattern}$'"
+
+      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
+      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
+      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
+      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
+
+      bind-key -T copy-mode-vi 'C-h' select-pane -L
+      bind-key -T copy-mode-vi 'C-j' select-pane -D
+      bind-key -T copy-mode-vi 'C-k' select-pane -U
+      bind-key -T copy-mode-vi 'C-l' select-pane -R
+    '';
   };
 
   programs.neovim = {
@@ -189,6 +251,14 @@ in
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
+      # Temux functon:
+      tm() {
+        if [ -z "$1" ]; then
+          tmux ls
+        else
+          tmux new -A -s "$1"
+        fi
+      }
       # Yazi Function (Shell Wrapper)
       function y() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

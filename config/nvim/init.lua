@@ -129,11 +129,6 @@ vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result" })
 vim.keymap.set("x", "p", '"_dP', { desc = "Paste without replacing clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
--- Window & Split Navigation
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus left' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus right' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus down' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus up' })
 -- Python run program
 vim.keymap.set('n', '<leader>py', function()
   vim.cmd('write')
@@ -276,7 +271,6 @@ require("lazy").setup({
       require('mini.surround').setup()
       require('mini.completion').setup()
       require('mini.cursorword').setup()
-      require('mini.pick').setup()
       require('mini.move').setup()
       require('mini.cmdline').setup()
       require('mini.tabline').setup({
@@ -356,6 +350,25 @@ require("lazy").setup({
     end
   },
   {
+    "christoomey/vim-tmux-navigator",
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatorProcessList",
+    },
+    keys = {
+      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+    },
+  },
+  {
+    "vimpostor/vim-tpipeline",
+  },
+  {
     "folke/flash.nvim",
     opts = { modes = { char = { enabled = false } } }, -- Disables default f/t/s overrides
     keys = {
@@ -392,24 +405,6 @@ require("lazy").setup({
     "windwp/nvim-ts-autotag",
     event = { "BufReadPre", "BufNewFile" },
     opts = {},
-  },
-  -- Formatting
-  {
-    "stevearc/conform.nvim",
-    cmd = { "ConformInfo" },
-    keys = {
-      { "<leader>fm", function() require("conform").format({ async = true, lsp_fallback = true }) end, mode = "v", desc = "Format selection" },
-    },
-    opts = {
-      formatters_by_ft = {
-        html = { "prettier" },
-        css = { "prettier" },
-        javascript = { "prettier" },
-        json = { "prettier" },
-        python = { "isort", "black" },
-        lua = { "stylua" },
-      },
-    },
   },
   -- LSP
   {
