@@ -1,0 +1,19 @@
+session_name: losacordes
+windows:
+- focus: 'true'
+  layout: 64a3,62x39,0,0,33
+  options:
+    automatic-rename: false
+  panes:
+  - focus: 'true'
+    shell_command: nvim
+  start_directory: /home/pau/dev/losacordes
+  window_name: nvim
+- layout: 56f5,125x40,0,0,35
+  options:
+    automatic-rename: false
+  panes:
+  - focus: 'true'
+    shell_command: bash
+  start_directory: /home/pau/dev/losacordes
+  window_name: live-server

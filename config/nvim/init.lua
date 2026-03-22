@@ -2,35 +2,28 @@ vim.g.have_nerd_font = true
 
 -- TRANSPARENCY =====================================
 local function clear_bg()
-  local groups = {
-    "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer", "SignColumn", "LineNr", "CursorLineNr", "TabLineFill"
-  }
-  for _, p in ipairs({ "Mini", "GitSigns" }) do
-    vim.list_extend(groups, vim.fn.getcompletion(p, "highlight"))
-  end
-  local exclude_groups = {
-    MiniTablineModifiedCurrent = true;
-    MiniTablineModifiedVisible = true;
-    MiniTablineModifiedHidden = true;
-    MiniTablineCurrent = true;
-    MiniTablineVisible = true;
-    MiniTablineHidden = true;
-    MiniPickMatchRanges = true,
-    MiniPickMatchMarked = true,
-    MiniPickMatchCurrent = true,
-    MiniFilesCursorLine = true,
-    MiniFilesDirectory = true,
+  local groups = { "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer", "SignColumn", "LineNr", "CursorLineNr", "TabLineFill" }
+  for _, p in ipairs({ "Mini", "GitSigns" }) do vim.list_extend(groups, vim.fn.getcompletion(p, "highlight")) end
+  local ex = { -- Exclude so its opaque
+    MiniTablineCurrent=1, MiniTablineVisible=1, MiniTablineHidden=1, MiniTablineModifiedCurrent=1,
+    MiniTablineModifiedVisible=1, MiniTablineModifiedHidden=1, MiniPickMatchRanges=1,
+    MiniPickMatchMarked=1, MiniPickMatchCurrent=1, MiniFilesCursorLine=1, MiniFilesDirectory=1
   }
   for _, hl in ipairs(groups) do
-    if not exclude_groups[hl] then
-      pcall(vim.cmd, ("hi %s guibg=NONE ctermbg=NONE"):format(hl))
-    end
+    if not ex[hl] then pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE") end
+  end
+  local bar = {
+    ModeNormal="CursorLineNr", ModeInsert="String", ModeVisual="Visual", ModeCommand="DiffAdd",
+    DevInfo="Constant", Fileinfo="Directory", Filename="Normal"
+  }
+  for part, link in pairs(bar) do
+    vim.api.nvim_set_hl(0, "MiniStatusline" .. part, { link = link, bg = "NONE", force = true })
   end
 end
-clear_bg()
 local cb = function() vim.schedule(clear_bg) end
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, { callback = cb })
 vim.api.nvim_create_autocmd("User", { pattern = "VeryLazy", callback = cb })
+clear_bg()
 
 -- BASIC SETTINGS =====================================
 vim.o.number = true            -- Line numbers
@@ -162,6 +155,24 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end
   end,
 })
+
+-- Tmux Window Renaming
+if vim.env.TMUX ~= nil then
+  vim.api.nvim_create_autocmd({"BufEnter", "FocusGained"}, {
+    group = augroup,
+    callback = function()
+      local name = vim.fn.expand("%:t")
+      if name == "" then name = "[Empty]" end
+      vim.fn.system(string.format("tmux rename-window '%s'", name))
+    end
+  })
+  vim.api.nvim_create_autocmd("VimLeave", {
+    group = augroup,
+    callback = function()
+      vim.fn.system("tmux set-window-option automatic-rename on")
+    end
+  })
+end
 
 -- Filetype indents
 vim.api.nvim_create_autocmd("FileType", {
@@ -365,8 +376,17 @@ require("lazy").setup({
       { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
     },
   },
+  { "vimpostor/vim-tpipeline", },
   {
-    "vimpostor/vim-tpipeline",
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    opts = {},
+    keys = {
+      { "<leader>ps", function() require("persistence").load() end, desc = "Restore Session" },
+      { "<leader>pS", function() require("persistence").select() end, desc = "Select Session" },
+      { "<leader>pl", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
+      { "<leader>pd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
+    },
   },
   {
     "folke/flash.nvim",

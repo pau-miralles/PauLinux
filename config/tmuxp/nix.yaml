@@ -1,0 +1,17 @@
+session_name: nix
+windows:
+- focus: 'true'
+  layout: ad7d,125x40,0,0,0
+  options: {}
+  panes:
+  - focus: 'true'
+    shell_command: nvim
+  start_directory: /home/pau/.nixos-config
+  window_name: nvim
+- layout: ad7e,125x40,0,0,1
+  options: {}
+  panes:
+  - focus: 'true'
+    shell_command: bash
+  start_directory: /home/pau/.nixos-config
+  window_name: bash

@@ -160,8 +160,8 @@ in
       bind C-l send-keys 'C-l'
       bind - display-popup -E -w 75% -h 75% "tmux new-session -A -s scratchpad"
       bind -n M-f resize-pane -Z
-      bind -n M-h previous-window
-      bind -n M-l next-window
+      bind -n M-C-h previous-window
+      bind -n M-C-l next-window
 
       # Status Bar (vim-tpipeline)
       set -g status-style "bg=default,fg=#${config.lib.stylix.colors.base05}"
@@ -172,10 +172,21 @@ in
       set -g status-right ""
 
       # Stylix styling
-      set -g window-status-style "fg=#${config.lib.stylix.colors.base05}"
-      set -g window-status-format " #I:#W "
-      set -g window-status-current-style "bg=#${config.lib.stylix.colors.base0D},fg=#${config.lib.stylix.colors.base00},bold"
-      set -g window-status-current-format " #I:#W "
+      set -g window-status-style "fg=#${config.lib.stylix.colors.base09}"
+      set -g window-status-format " #I #W "
+      set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base0D},bold"
+      set -g window-status-current-format " #I #W "
+
+      # Minimal Borders
+      set -g pane-border-style "fg=#${config.lib.stylix.colors.base01}"
+      set -g pane-active-border-style "fg=#${config.lib.stylix.colors.base01}"
+
+      # Auto-hide status bar if only 1 window is present
+      if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"
+      set-hook -g window-linked 'if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"'
+      set-hook -g window-unlinked 'if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"'
+
+      set -g popup-border-style "fg=#${config.lib.stylix.colors.base0D}"
 
       # Windows
       bind c new-window -c "#{pane_current_path}"
@@ -210,21 +221,6 @@ in
       bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
       bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
       unbind -T copy-mode-vi MouseDragEnd1Pane
-
-      # Smart pane switching with awareness of Vim splits.
-      vim_pattern='(\S+/)?g?\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?'
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-          | grep -iqE '^[^TXZ ]+ +''${vim_pattern}$'"
-
-      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
-      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
-      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
-      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
-
-      bind-key -T copy-mode-vi 'C-h' select-pane -L
-      bind-key -T copy-mode-vi 'C-j' select-pane -D
-      bind-key -T copy-mode-vi 'C-k' select-pane -U
-      bind-key -T copy-mode-vi 'C-l' select-pane -R
     '';
   };
 
@@ -260,6 +256,7 @@ in
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
       sync = "cd ~/.nixos-config/ && sudo nixos-rebuild list-generations --flake .#framework && sudo nix-collect-garbage -d && nix flake update && sudo nixos-rebuild switch --flake .#framework && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
+      tf = "tmuxp freeze";
     };
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
@@ -269,11 +266,19 @@ in
       # Temux function:
       tm() {
         if [ -z "$1" ]; then
-          tmux ls
+          tmux ls 2>/dev/null | bat --language=conf --style=plain
+          echo ---
+          lt $HOME/.nixos-config/config/tmuxp/ | bat --style=plain
         else
-          tmux new -A -s "$1"
+          if tmuxp load "$1" --check 2>/dev/null || [ -f "$HOME/.nixos-config/config/tmuxp/$1.yaml" ]; then
+            tmuxp load "$1" -y
+          else
+            tmux new -A -s "$1"
+          fi
         fi
       }
+      # Tmuxp freeze:
+      tmf() { tmuxp freeze "$1" -o ~/.config/tmuxp/"$1".yaml; }
       # Tmux Music function:
       music() {
         tmux has-session -t music 2>/dev/null
