@@ -22,6 +22,7 @@ in
     obs-studio
 
     yazi
+    tmuxp
     python3
     ffmpeg
     eza
@@ -104,6 +105,7 @@ in
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
     "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
+    "tmuxp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/tmuxp";
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
     "sway-colors".text = ''
@@ -147,6 +149,7 @@ in
     terminal = "tmux-256color";
     plugins = with pkgs.tmuxPlugins;[
       vim-tmux-navigator
+      yank
     ];
     extraConfig = ''
       set -ga terminal-overrides ",*:RGB"
@@ -156,6 +159,9 @@ in
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Tmux config reloaded"
       bind C-l send-keys 'C-l'
       bind - display-popup -E -w 75% -h 75% "tmux new-session -A -s scratchpad"
+      bind -n M-f resize-pane -Z
+      bind -n M-h previous-window
+      bind -n M-l next-window
 
       # Status Bar (vim-tpipeline)
       set -g status-style "bg=default,fg=#${config.lib.stylix.colors.base05}"
@@ -172,6 +178,7 @@ in
       set -g window-status-current-format " #I:#W "
 
       # Windows
+      bind c new-window -c "#{pane_current_path}"
       set -g renumber-windows on
       set -g pane-base-index 1
       set-window-option -g pane-base-index 1
@@ -181,6 +188,14 @@ in
       unbind %
       bind v split-window -h -c "#{pane_current_path}"
       bind s split-window -v -c "#{pane_current_path}"
+
+      # Panes
+      bind -r H swap-pane -U
+      bind -r L swap-pane -D
+      bind -r Left  resize-pane -L 5
+      bind -r Down  resize-pane -D 5
+      bind -r Up    resize-pane -U 5
+      bind -r Right resize-pane -R 5
 
       # Alt+number to select window
       bind -n M-1 select-window -t 1
@@ -193,7 +208,7 @@ in
       # Vim-like Copy
       bind-key -T copy-mode-vi v send-keys -X begin-selection
       bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-      bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+      bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
       unbind -T copy-mode-vi MouseDragEnd1Pane
 
       # Smart pane switching with awareness of Vim splits.
@@ -251,13 +266,24 @@ in
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
-      # Temux functon:
+      # Temux function:
       tm() {
         if [ -z "$1" ]; then
           tmux ls
         else
           tmux new -A -s "$1"
         fi
+      }
+      # Tmux Music function:
+      music() {
+        tmux has-session -t music 2>/dev/null
+        if [ $? != 0 ]; then
+          tmux new-session -d -s music -c /home/pau 'rmpc'
+          tmux split-window -v -l 8 -t music -c /home/pau 'cava'
+          tmux split-window -h -p 40 -t music -c /home/pau 'tty-clock -c -C 7 -D'
+          tmux select-pane -t music -U
+        fi
+        tmux attach-session -t music
       }
       # Yazi Function (Shell Wrapper)
       function y() {

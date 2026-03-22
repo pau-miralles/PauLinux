@@ -22,7 +22,7 @@ for_window [app_id="^(firefox|kitty|gimp|mpv|vlc|obsidian|libreoffice-.*)$"] opa
 default_dim_inactive 0.15
 
 # Gaps & Borders
-font pango:monospace 0.001
+font pango:monospace 3
 titlebar_border_thickness 0
 titlebar_padding 0
 default_border pixel 1
