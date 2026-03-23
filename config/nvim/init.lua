@@ -278,12 +278,33 @@ require("lazy").setup({
       require('mini.comment').setup()
       require('mini.indentscope').setup()
       require('mini.pairs').setup()
-      require('mini.statusline').setup()
+      require('mini.map').setup()
       require('mini.surround').setup()
       require('mini.completion').setup()
       require('mini.cursorword').setup()
       require('mini.move').setup()
       require('mini.cmdline').setup()
+
+      require('mini.statusline').setup()
+      MiniStatusline.section_fileinfo = function() return '' end
+      MiniStatusline.section_filename = function() return '' end
+      MiniStatusline.section_location = function() -- Custom section_location
+        local mode = vim.fn.mode()
+        local recording_reg = vim.fn.reg_recording() -- Macro recordings
+        local macro = recording_reg ~= "" and ("󰑊 REC @" .. recording_reg .. " ") or ""
+        local visual = "" -- Selection size
+        if mode:find('[Vv\22]') then -- If in Visual, Visual Line, or Visual Block
+          local starts = vim.fn.line('v')
+          local ends = vim.fn.line('.')
+          local lines = math.abs(ends - starts) + 1
+          local wc = vim.fn.wordcount() -- Character count
+          local chars = wc.visual_chars or 0
+          visual = string.format("[%dL, %dC] ", lines, chars)
+        end
+        local location = '%l:%v' -- Cursor position
+        return macro .. visual .. location
+      end
+
       require('mini.tabline').setup({
         format = function(buf_id, label)
           return MiniTabline.default_format(buf_id, label)
@@ -357,6 +378,7 @@ require("lazy").setup({
       end, { desc = "Toggle mini.files" })
       vim.keymap.set("n", "<leader><space>", "<cmd>Pick files<cr>", { desc = "Find Files" })
       vim.keymap.set("n", "<leader>f", "<cmd>Pick grep_live<cr>", { desc = "Live Grep" })
+      vim.keymap.set('n', '<leader>m', '<Cmd>lua MiniMap.toggle()<CR>', { desc = 'Map' })
 
     end
   },

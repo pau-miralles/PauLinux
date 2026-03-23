@@ -25,6 +25,7 @@ in
     tmuxp
     python3
     ffmpeg
+    yt-dlp
     eza
     bat
     ripgrep
@@ -150,9 +151,11 @@ in
     plugins = with pkgs.tmuxPlugins;[
       vim-tmux-navigator
       yank
+      open
     ];
     extraConfig = ''
       set -ga terminal-overrides ",*:RGB"
+      set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[2 q'
       set -g set-clipboard on
       set -g focus-events on
       unbind r
@@ -173,18 +176,9 @@ in
 
       # Stylix styling
       set -g window-status-style "fg=#${config.lib.stylix.colors.base09}"
-      set -g window-status-format " #I #W "
+      set -g window-status-format "#W "
       set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base0D},bold"
-      set -g window-status-current-format " #I #W "
-
-      # Minimal Borders
-      set -g pane-border-style "fg=#${config.lib.stylix.colors.base01}"
-      set -g pane-active-border-style "fg=#${config.lib.stylix.colors.base01}"
-
-      # Auto-hide status bar if only 1 window is present
-      if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"
-      set-hook -g window-linked 'if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"'
-      set-hook -g window-unlinked 'if -F "#{==:#{session_windows},1}" "set -g status off" "set -g status on"'
+      set -g window-status-current-format "#W "
 
       set -g popup-border-style "fg=#${config.lib.stylix.colors.base0D}"
 
@@ -263,12 +257,12 @@ in
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
-      # Temux function:
+      # Tmux function:
       tm() {
         if [ -z "$1" ]; then
-          tmux ls 2>/dev/null | bat --language=conf --style=plain
-          echo ---
-          lt $HOME/.nixos-config/config/tmuxp/ | bat --style=plain
+          tmux ls 3>/dev/null | bat --style=plain --language=TOML
+          echo .
+          eza -T $HOME/.nixos-config/config/tmuxp/ | tail -n +2
         else
           if tmuxp load "$1" --check 2>/dev/null || [ -f "$HOME/.nixos-config/config/tmuxp/$1.yaml" ]; then
             tmuxp load "$1" -y
@@ -279,17 +273,6 @@ in
       }
       # Tmuxp freeze:
       tmf() { tmuxp freeze "$1" -o ~/.config/tmuxp/"$1".yaml; }
-      # Tmux Music function:
-      music() {
-        tmux has-session -t music 2>/dev/null
-        if [ $? != 0 ]; then
-          tmux new-session -d -s music -c /home/pau 'rmpc'
-          tmux split-window -v -l 8 -t music -c /home/pau 'cava'
-          tmux split-window -h -p 40 -t music -c /home/pau 'tty-clock -c -C 7 -D'
-          tmux select-pane -t music -U
-        fi
-        tmux attach-session -t music
-      }
       # Yazi Function (Shell Wrapper)
       function y() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

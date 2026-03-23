@@ -1,17 +1,23 @@
 session_name: nix
 windows:
-- focus: 'true'
-  layout: ad7d,125x40,0,0,0
-  options: {}
+- layout: 56f0,125x40,0,0,11
+  options:
+    automatic-rename: false
   panes:
   - focus: 'true'
     shell_command: nvim
   start_directory: /home/pau/.nixos-config
-  window_name: nvim
-- layout: ad7e,125x40,0,0,1
-  options: {}
+  window_name: home.nix
+- focus: 'true'
+  layout: 42bc,125x40,0,0{62x40,0,0,12,62x40,63,0,13}
+  options:
+    automatic-rename: false
   panes:
+  - shell_command:
+    - cd /home/pau/.nixos-config
+    - bash
   - focus: 'true'
-    shell_command: bash
-  start_directory: /home/pau/.nixos-config
-  window_name: bash
+    shell_command:
+    - cd /home/pau/.nixos-config/config
+    - yazi
+  window_name: '[Empty]'
