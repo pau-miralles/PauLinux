@@ -8,5 +8,4 @@ else
   touch "$DUMMY_FILE"
 fi
 
-killall -SIGUSR1 kitty || true
 swaymsg reload || true

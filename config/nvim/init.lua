@@ -1,127 +1,104 @@
-vim.g.have_nerd_font = true
-
 -- TRANSPARENCY =====================================
 local function clear_bg()
-  local groups = { "Normal", "NormalNC", "NormalFloat", "FloatBorder", "EndOfBuffer", "SignColumn", "LineNr", "CursorLineNr", "TabLineFill" }
-  for _, p in ipairs({ "Mini", "GitSigns" }) do vim.list_extend(groups, vim.fn.getcompletion(p, "highlight")) end
-  local ex = { -- Exclude so its opaque
-    MiniTablineCurrent=1, MiniTablineVisible=1, MiniTablineHidden=1, MiniTablineModifiedCurrent=1,
-    MiniTablineModifiedVisible=1, MiniTablineModifiedHidden=1, MiniPickMatchRanges=1,
-    MiniPickMatchMarked=1, MiniPickMatchCurrent=1, MiniFilesCursorLine=1, MiniFilesDirectory=1
-  }
-  for _, hl in ipairs(groups) do
-    if not ex[hl] then pcall(vim.cmd, "hi " .. hl .. " guibg=NONE ctermbg=NONE") end
+  local bgs, get_hl, set_hl = {}, vim.api.nvim_get_hl, vim.api.nvim_set_hl
+  for _, g in ipairs({"Normal", "NormalFloat"}) do
+    local h = get_hl(0, {name=g, link=false})
+    if h.bg then bgs[h.bg] = true end
+    if h.ctermbg then bgs[h.ctermbg] = true end
   end
-  local bar = {
-    ModeNormal="CursorLineNr", ModeInsert="String", ModeVisual="Visual", ModeCommand="DiffAdd",
-    DevInfo="Constant", Fileinfo="Directory", Filename="Normal"
-  }
-  for part, link in pairs(bar) do
-    vim.api.nvim_set_hl(0, "MiniStatusline" .. part, { link = link, bg = "NONE", force = true })
+
+  for n, h in pairs(get_hl(0, {})) do
+    if n ~= "CursorLine" and ((h.bg and bgs[h.bg]) or (h.ctermbg and bgs[h.ctermbg])) then -- Exclude CursorLine
+      h.bg, h.ctermbg = nil, nil; set_hl(0, n, h)
+    end
+  end
+
+  for p, l in pairs({ModeNormal="CursorLineNr", ModeInsert="String", ModeVisual="Visual", ModeCommand="DiffAdd", DevInfo="Constant", Fileinfo="Directory", Filename="Normal"}) do
+    local h = get_hl(0, {name=l, link=false})
+    h.bg, h.ctermbg = nil, nil; set_hl(0, "MiniStatusline"..p, h)
   end
 end
 local cb = function() vim.schedule(clear_bg) end
-vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, { callback = cb })
-vim.api.nvim_create_autocmd("User", { pattern = "VeryLazy", callback = cb })
+vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {callback=cb})
+vim.api.nvim_create_autocmd("User", {pattern="VeryLazy", callback=cb})
 clear_bg()
 
 -- BASIC SETTINGS =====================================
-vim.o.number = true            -- Line numbers
-vim.o.relativenumber = true    -- Relative line numbers
-vim.o.cursorline = true        -- Highlight current line
- vim.o.wrap = false            -- set nowrap
-vim.o.scrolloff = 10           -- Keep 10 lines above/below cursor
-vim.o.sidescrolloff = 5        -- Keep 8 columns left/right of cursor
-vim.o.breakindent = true       -- Better wrapping visualization
-vim.o.list = true              -- Show invisible characters
+vim.o.number = true          -- Line numbers
+vim.o.relativenumber = true  -- Relative line numbers
+vim.o.cursorline = true      -- Highlight current line
+ vim.o.wrap = false          -- set nowrap
+vim.o.scrolloff = 10         -- Keep 10 lines above/below cursor
+vim.o.sidescrolloff = 5      -- Keep 8 columns left/right of cursor
+vim.o.breakindent = true     -- Better wrapping visualization
+vim.o.list = true            -- Show invisible characters
+vim.o.confirm = true         -- Ask to save instead of failing
+vim.o.inccommand = "split"   -- Live substitution preview
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Must use vim.opt for tables
-vim.o.confirm = true           -- Ask to save instead of failing
-vim.o.inccommand = "split"     -- Live substitution preview
 
 -- Indentation
-vim.o.tabstop = 2              -- Tab width
-vim.o.shiftwidth = 2           -- Indent width
-vim.o.softtabstop = 2          -- Soft tab stop
-vim.o.expandtab = true         -- Use spaces instead of tabs
-vim.o.smartindent = true       -- Smart auto-indenting
+vim.o.tabstop = 2            -- Tab width
+vim.o.shiftwidth = 2         -- Indent width
+vim.o.softtabstop = 2        -- Soft tab stop
+vim.o.expandtab = true       -- Use spaces instead of tabs
 
 -- Search settings
-vim.o.ignorecase = true        -- Case insensitive search
-vim.o.smartcase = true         -- Case sensitive if uppercase in search
+vim.o.ignorecase = true      -- Case insensitive search
+vim.o.smartcase = true       -- Case sensitive if uppercase in search
 
 -- Visual settings
-vim.o.winborder = 'single'                       -- Global borders: none single double rounded solid shadow
-vim.o.termguicolors = true                       -- True color support
-vim.o.signcolumn = "yes"                         -- Always show sign column
+vim.o.winborder = 'single'              -- Global borders: none single double rounded solid shadow
+vim.o.signcolumn = "yes"                -- Always show sign column
 vim.o.completeopt = "menuone,noinsert"  -- Insert mode completion options
-vim.o.lazyredraw = true                          -- Don't redraw during macros
-vim.o.synmaxcol = 300                            -- Syntax highlighting limit
-vim.opt.fillchars = { eob = " " }                -- Hide ~ on empty lines
-vim.o.cmdheight = 0                              -- Hides the command line when not in use
+vim.o.synmaxcol = 300                   -- Syntax highlighting limit
+vim.opt.fillchars = { eob = " " }       -- Hide ~ on empty lines
+vim.o.cmdheight = 0                     -- Hides the command line when not in use
 
 -- File handling
-vim.o.writebackup = false      -- Don't create backup before writing
-vim.o.undofile = true          -- Persistent undo
-vim.o.updatetime = 250         -- Faster completion
-vim.o.timeoutlen = 300         -- Key timeout duration
-vim.o.ttimeoutlen = 0          -- Key code timeout
-local swapdir = vim.fn.stdpath("state") .. "/swap//"  -- Use centralized swap directory
-vim.opt.directory = swapdir
-vim.fn.mkdir(vim.fn.stdpath("state") .. "/swap", "p") -- Ensure swap directory exists
-vim.opt.shortmess:append("A")                         -- Suppress swap prompt (auto-recover silently)
-vim.api.nvim_create_autocmd("BufReadPost", {          -- Auto-delete swap file after successful recovery
-  callback = function(args)
-    if vim.v.swapchoice == "r" then
-      local swapname = vim.fn.swapname(args.file)
-      if swapname ~= "" and vim.fn.filereadable(swapname) == 1 then
-        vim.fn.delete(swapname)
-      end
-    end
-  end,
-})
-
-
+vim.opt.undofile = true
+vim.opt.swapfile = true
+vim.opt.directory = vim.fn.stdpath("state") .. "/swap//"
+vim.opt.shortmess:append("A") -- No annoying popup
 
 -- Behavior settings
-vim.opt.iskeyword:append("-")  -- Treat dash as part of word
-vim.opt.path:append("**")      -- Include subdirectories in search
-vim.o.mouse = "a"              -- Enable mouse support
+vim.opt.iskeyword:append("-")-- Treat dash as part of word
+vim.opt.path:append("**")    -- Include subdirectories in search
 vim.schedule(function() vim.opt.clipboard:append("unnamedplus") end)
-
-vim.o.guicursor = "n-v-c:block,i-ci-r:ver25,cr-o:hor20" -- Cursor
 
 -- Folding settings
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.o.foldlevel = 99           -- Start with all folds open
+vim.o.foldlevel = 99         -- Start with all folds open
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
 -- Split behavior
-vim.o.splitbelow = true        -- Horizontal splits go below
-vim.o.splitright = true        -- Vertical splits go right
+vim.o.splitbelow = true      -- Horizontal splits go below
+vim.o.splitright = true      -- Vertical splits go right
 
 -- Command-line & Diff
 vim.o.wildmode = "noselect,full"
 vim.opt.wildignore:append({ "*.o", "*.obj", "*.pyc", "*.class", "*.jar" })
 vim.opt.diffopt:append("linematch:60")
-vim.o.redrawtime = 10000
-vim.o.maxmempattern = 20000
 
 -- KEY MAPPINGS ====================================
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = '[Q]uit buffer' })
-vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = '[D]elete [B]uffer' })
-vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite buffer' })
+vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = 'Quit buffer' })
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = 'Delete Buffer' })
+vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = 'Write buffer' })
 vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
-vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result" })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result" })
 vim.keymap.set("x", "p", '"_dP', { desc = "Paste without replacing clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
+-- Open terminal
+vim.keymap.set('n', '<leader>t', function()
+  vim.cmd('split')
+  vim.cmd('terminal')
+  vim.cmd('startinsert')
+end, { desc = 'Terminal' })
 -- Python run program
 vim.keymap.set('n', '<leader>py', function()
   vim.cmd('write')
@@ -130,15 +107,14 @@ vim.keymap.set('n', '<leader>py', function()
     return
   end
   local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
-  vim.cmd('botright split')
+  vim.cmd('split')
   vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
-  vim.cmd('terminal python3 ' .. file .. ' && read')
+  vim.cmd('terminal python3 ' .. file)
   vim.cmd('startinsert')
-end, { desc = 'Save and run [P]ython file' })
+end, { desc = 'Save and run Python file' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
-
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup,
   callback = function() vim.hl.on_yank() end,
@@ -173,92 +149,6 @@ if vim.env.TMUX ~= nil then
     end
   })
 end
-
--- Filetype indents
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup,
-  pattern = { "python" },
-  callback = function()
-    vim.bo.tabstop, vim.bo.shiftwidth = 4, 4
-  end,
-})
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup,
-  pattern = { "javascript", "typescript", "json", "html", "css" },
-  callback = function()
-    vim.bo.tabstop, vim.bo.shiftwidth = 2, 2
-  end,
-})
-
--- Terminal management
-vim.api.nvim_create_autocmd("TermClose", {
-  group = augroup,
-  callback = function()
-    if vim.v.event.status == 0 then vim.api.nvim_buf_delete(0, {}) end
-  end,
-})
-vim.api.nvim_create_autocmd("TermOpen", {
-  group = augroup,
-  callback = function()
-    vim.o.number, vim.o.relativenumber, vim.o.signcolumn = false, false, "no"
-  end,
-})
-
--- Auto-resize splits & Create dirs
-vim.api.nvim_create_autocmd("VimResized", {
-  group = augroup,
-  callback = function() vim.cmd("wincmd =") end,
-})
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = augroup,
-  callback = function(args)
-    local dir = vim.fn.fnamemodify(args.file, ":p:h")
-    if vim.fn.isdirectory(dir) == 0 then vim.fn.mkdir(dir, 'p') end
-  end,
-})
-
--- FLOATING TERMINAL ====================================
-local term_state = { buf = nil, win = nil, is_open = false }
-local function FloatingTerminal()
-  if term_state.is_open and vim.api.nvim_win_is_valid(term_state.win) then
-    vim.api.nvim_win_close(term_state.win, false)
-    term_state.is_open = false
-    return
-  end
-  if not term_state.buf or not vim.api.nvim_buf_is_valid(term_state.buf) then
-    term_state.buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[term_state.buf].bufhidden = 'hide'
-  end
-  local w, h = math.floor(vim.o.columns * 0.9), math.floor(vim.o.lines * 0.9)
-  term_state.win = vim.api.nvim_open_win(term_state.buf, true, {
-    relative = 'editor', width = w, height = h,
-    row = math.floor((vim.o.lines - h) / 2), col = math.floor((vim.o.columns - w) / 2),
-  })
-  vim.wo[term_state.win].winblend = 0
-  if vim.api.nvim_buf_line_count(term_state.buf) == 1 and vim.api.nvim_buf_get_lines(term_state.buf, 0, 1, false)[1] == "" then
-    vim.fn.termopen(os.getenv("SHELL"))
-  end
-  term_state.is_open = true
-  vim.cmd("startinsert")
-  vim.api.nvim_create_autocmd("BufLeave", {
-    buffer = term_state.buf,
-    callback = function()
-      if term_state.is_open and vim.api.nvim_win_is_valid(term_state.win) then
-        vim.api.nvim_win_close(term_state.win, false)
-        term_state.is_open = false
-      end
-    end,
-    once = true
-  })
-end
-
-vim.keymap.set("n", "<leader>t", FloatingTerminal, { desc = "Toggle floating terminal" })
-vim.keymap.set("t", "<Esc>", function()
-  if term_state.is_open then
-    vim.api.nvim_win_close(term_state.win, false)
-    term_state.is_open = false
-  end
-end, { desc = "Close floating terminal" })
 
 -- PLUGINS (LAZY.NVIM) ====================================
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -322,7 +212,10 @@ require("lazy").setup({
       })
       local miniclue = require('mini.clue')
       miniclue.setup({
-        window = { delay = 0 },
+        window = { 
+          delay = 0,
+          config = { width = 'auto', },
+        },
         triggers = {
           { mode = { 'n', 'x' }, keys = '<Leader>' },
           { mode = 'n', keys = '[' },
@@ -337,6 +230,8 @@ require("lazy").setup({
           { mode = { 'n', 'x' }, keys = 'z' },
         },
         clues = {
+          { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
+          { mode = 'n', keys = '<Leader>p', desc = '+Persistence' },
           miniclue.gen_clues.square_brackets(),
           miniclue.gen_clues.builtin_completion(),
           miniclue.gen_clues.g(),
@@ -371,14 +266,11 @@ require("lazy").setup({
           preview = true,
         },
       })
-      vim.keymap.set("n", "<leader>e", function()
-        if not minifiles.close() then
-          minifiles.open(vim.api.nvim_buf_get_name(0), true)
-        end
-      end, { desc = "Toggle mini.files" })
+      vim.keymap.set("n", "<leader>e", function() minifiles.open(vim.api.nvim_buf_get_name(0), true) end, { desc = "File Explorer" })
       vim.keymap.set("n", "<leader><space>", "<cmd>Pick files<cr>", { desc = "Find Files" })
       vim.keymap.set("n", "<leader>f", "<cmd>Pick grep_live<cr>", { desc = "Live Grep" })
-      vim.keymap.set('n', '<leader>m', '<Cmd>lua MiniMap.toggle()<CR>', { desc = 'Map' })
+      vim.keymap.set("n", "<leader>m", "<Cmd>lua MiniMap.toggle()<CR>", { desc = "Map" })
+      vim.keymap.set("n", "<leader>bb", "<cmd>Pick buffers<cr>", { desc = "Show Buffers" })
 
     end
   },
@@ -458,18 +350,7 @@ require("lazy").setup({
         'clangd',
         'html',
         'cssls',
-        'ts_ls',
         'arduino_language_server',
-      })
-      -- Auto-setup keybinds when LSP attaches to a buffer
-      vim.api.nvim_create_autocmd('LspAttach', {
-        callback = function(event)
-          local opts = { buffer = event.buf }
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts, { desc = "Go to definition" })
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts, { desc = "Hover documentation" })
-          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts, { desc = "Rename symbol" })
-          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts, { desc = "Code action" })
-        end
       })
     end
   }
