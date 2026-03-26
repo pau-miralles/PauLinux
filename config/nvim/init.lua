@@ -1,21 +1,22 @@
 -- TRANSPARENCY =====================================
 local function clear_bg()
   local bgs, get_hl, set_hl = {}, vim.api.nvim_get_hl, vim.api.nvim_set_hl
-  for _, g in ipairs({"Normal", "NormalFloat"}) do
+  for _, g in ipairs({"Normal", "NormalNC", "NormalFloat", "Pmenu", "TelescopeNormal", "SignColumn", "EndOfBuffer"}) do
     local h = get_hl(0, {name=g, link=false})
     if h.bg then bgs[h.bg] = true end
     if h.ctermbg then bgs[h.ctermbg] = true end
+    h.bg, h.ctermbg = "NONE", "NONE"; set_hl(0, g, h)
   end
 
   for n, h in pairs(get_hl(0, {})) do
-    if n ~= "CursorLine" and ((h.bg and bgs[h.bg]) or (h.ctermbg and bgs[h.ctermbg])) then -- Exclude CursorLine
-      h.bg, h.ctermbg = nil, nil; set_hl(0, n, h)
+    if n ~= "CursorLine" and ((h.bg and bgs[h.bg]) or (h.ctermbg and bgs[h.ctermbg])) then
+      h.bg, h.ctermbg = "NONE", "NONE"; set_hl(0, n, h)
     end
   end
 
   for p, l in pairs({ModeNormal="CursorLineNr", ModeInsert="String", ModeVisual="Visual", ModeCommand="DiffAdd", DevInfo="Constant", Fileinfo="Directory", Filename="Normal"}) do
     local h = get_hl(0, {name=l, link=false})
-    h.bg, h.ctermbg = nil, nil; set_hl(0, "MiniStatusline"..p, h)
+    h.bg, h.ctermbg = "NONE", "NONE"; set_hl(0, "MiniStatusline"..p, h)
   end
 end
 local cb = function() vim.schedule(clear_bg) end
@@ -27,7 +28,7 @@ clear_bg()
 vim.o.number = true          -- Line numbers
 vim.o.relativenumber = true  -- Relative line numbers
 vim.o.cursorline = true      -- Highlight current line
- vim.o.wrap = false          -- set nowrap
+vim.o.wrap = false          -- set nowrap
 vim.o.scrolloff = 10         -- Keep 10 lines above/below cursor
 vim.o.sidescrolloff = 5      -- Keep 8 columns left/right of cursor
 vim.o.breakindent = true     -- Better wrapping visualization

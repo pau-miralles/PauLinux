@@ -177,8 +177,8 @@
         terminal = 18;
         applications = 12;
       };
-      monospace.package = pkgs.nerd-fonts.ubuntu-mono;
-      monospace.name = "UbuntuMono Nerd Font";
+      monospace.package = pkgs.nerd-fonts.d2coding;
+      monospace.name = "D2CodingLigature Nerd Font";
       serif = config.stylix.fonts.monospace;
       sansSerif = config.stylix.fonts.monospace;
       emoji = config.stylix.fonts.monospace;

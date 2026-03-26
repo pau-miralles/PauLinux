@@ -16,7 +16,7 @@
     polkit_gnome # Authentication agent
   ];
   fonts.packages = with pkgs; [
-    nerd-fonts.ubuntu-mono
+    nerd-fonts.d2coding
   ];
   xdg.portal = {
     enable = true;

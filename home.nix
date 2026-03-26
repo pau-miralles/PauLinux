@@ -132,14 +132,23 @@ in
     '';
   };
 
-  programs.kitty = {
+  programs.ghostty = {
     enable = true;
     settings = {
-      background_opacity = lib.mkForce "0.7";
-      dynamic_background_opacity = true;
-      cursor_trail = 1;
-      cursor_trail_start_threshold = 0;
-      confirm_os_window_close = 0;
+      background-opacity = 0.7;
+      confirm-close-surface = false;
+      custom-shader = "/home/pau/.nixos-config/config/cursor_tail.glsl";
+      resize-overlay = "never";
+      window-padding-balance = true;
+      window-padding-color = "extend";
+      scrollbar = "never";
+      bell-features = false;
+      app-notifications = false;
+      clipboard-read = "allow";
+      clipboard-write = "allow";
+      clipboard-paste-protection = false;
+      mouse-hide-while-typing = true;
+      scrollback-limit = 10000;
     };
   };
 

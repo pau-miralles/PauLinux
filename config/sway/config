@@ -17,7 +17,7 @@ blur_noise 0.02
 for_window [app_id=".*"] opacity 0.85
 for_window [class=".*"] opacity 0.85
 # Exceptions
-for_window [app_id="^(firefox|kitty|gimp|mpv|vlc|obsidian|libreoffice-.*)$"] opacity 1
+for_window [app_id="^(firefox|com\.mitchellh\.ghostty|gimp|mpv|vlc|obsidian|libreoffice-.*)$"] opacity 1
 # Dimming
 default_dim_inactive 0.15
 
@@ -69,7 +69,7 @@ seat seat0 hide_cursor 30000
 seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
-    bindsym $mod+Return exec kitty
+    bindsym $mod+Return exec ghostty
     bindsym $mod+d exec rofi -show drun
     bindsym $mod+w exec firefox
     bindsym $mod+e exec thunar
