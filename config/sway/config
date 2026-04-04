@@ -10,7 +10,7 @@ set $right l
 # Window Blur
 blur enable
 blur_passes 4
-blur_radius 6
+blur_radius 5
 blur_noise 0.02
 
 # Transparency

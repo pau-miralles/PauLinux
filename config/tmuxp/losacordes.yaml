@@ -1,7 +1,7 @@
 session_name: losacordes
 windows:
 - focus: 'true'
-  layout: ad7e,125x40,0,0,1
+  layout: b6fe,124x33,0,0,1
   options:
     automatic-rename: false
   panes:
@@ -9,19 +9,19 @@ windows:
     shell_command: nvim
   start_directory: /home/pau/programacion/losacordes/template
   window_name: generator.py
-- layout: ad7f,125x40,0,0,2
+- layout: b6ff,124x33,0,0,2
   options:
     automatic-rename: true
   panes:
   - focus: 'true'
     shell_command: yazi
-  start_directory: /home/pau/programacion/losacordes/song-data
+  start_directory: /home/pau/programacion/losacordes
   window_name: yazi
-- layout: ad80,125x40,0,0,3
+- layout: b700,124x33,0,0,3
   options:
     automatic-rename: false
   panes:
   - focus: 'true'
-    shell_command: live-server
+    shell_command: nix run nixpkgs#live-server
   start_directory: /home/pau/programacion/losacordes
   window_name: live-server

@@ -6,6 +6,7 @@
       ./sway.nix
     ];
   boot = { # Bootloader
+    tmp.cleanOnBoot = true;
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     loader.timeout = 0;

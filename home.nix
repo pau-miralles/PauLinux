@@ -188,11 +188,9 @@ in
 
       # Stylix styling
       set -g window-status-style "fg=#${config.lib.stylix.colors.base09}"
-      set -g window-status-format "#W "
-      set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base0D},bold"
-      set -g window-status-current-format "#W "
-
-      set -g popup-border-style "fg=#${config.lib.stylix.colors.base0D}"
+      set -g window-status-format "#W"
+      set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base03},bold"
+      set -g window-status-current-format "#W"
 
       # Windows
       bind c new-window -c "#{pane_current_path}"
@@ -426,6 +424,7 @@ in
           format = "{capacity}% ({time}) {icon}";
           format-charging = "{capacity}% ({time}) ";
           format-icons = [ "" "" "" "" "" ];
+          on-click = "/etc/profiles/per-user/pau/bin/ghostty -e /etc/profiles/per-user/pau/bin/btm --battery";
         };
         "temperature" = {
           critical-threshold = 80;
@@ -438,6 +437,7 @@ in
           tooltip-format = "{ifname} via {gwaddr}";
           format-linked = "{ifname} (No IP)";
           format-disconnected = "Disconnected ⚠";
+          on-click = "/etc/profiles/per-user/pau/bin/ghostty -e /etc/profiles/per-user/pau/bin/impala";
         };
         "backlight" = {
           format = "{percent}% {icon}";
