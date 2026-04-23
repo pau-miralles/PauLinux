@@ -95,6 +95,7 @@
   # List services that you want to enable:
   services.fwupd.enable = true; # Framework update
   services.openssh.enable = true; # Enable the OpenSSH daemon.
+  services.tailscale.enable = true;
   nix.settings.auto-optimise-store = true; # Garbage collecting
   nix.gc = {
     automatic = true;

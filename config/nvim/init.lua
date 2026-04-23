@@ -72,7 +72,7 @@ vim.schedule(function() vim.opt.clipboard:append("unnamedplus") end)
 -- Folding settings
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.o.foldlevel = 99         -- Start with all folds open
+vim.opt.foldtext = ""
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
@@ -124,6 +124,12 @@ local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup,
   callback = function() vim.hl.on_yank() end,
+})
+
+-- Remove extra spaces
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  command = [[%s/\s\+$//e]],
 })
 
 -- Return to last edit position
@@ -241,7 +247,7 @@ hipatterns.setup({
 
 local miniclue = require('mini.clue')
 miniclue.setup({
-  window = { 
+  window = {
     delay = 0,
     config = { width = 'auto', },
   },
@@ -329,7 +335,8 @@ vim.lsp.enable({
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
   callback = function(ev)
-    pcall(vim.treesitter.start, ev.buf)
+    pcall(vim.treesitter.start, ev.buf) -- Attach Treesitter parser
   end,
 })

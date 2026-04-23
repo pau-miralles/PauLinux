@@ -101,8 +101,8 @@
 
 (deflayer navigation
   _    f1   f2    f3    f4   f5  f6    home pgdn pgup end  _    _    _    _
-  f7   f8   f9    f10   f11  f12 left  down up   rght _    _    @game
-  _    _    brdn  brup  vold volu @mh_l @cm_l @cm_r @mh_r _    _
+  f7   f8   f9    f10   f11  f12 left  down up   rght     _    _    @game
+  _    vold volu  brdn  brup _   @mh_l @cm_l @cm_r @mh_r _    _
   _    _    _              _              _    _
 )
 

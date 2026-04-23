@@ -11,6 +11,7 @@ in
   home.homeDirectory = "/home/pau";
   home.stateVersion = "25.11"; # Keep this the same as your system version
   programs.home-manager.enable = true; # This makes home-manager manage itself
+  home.sessionVariables.GTK_IM_MODULE = "simple";
   home.packages = with pkgs; [
     obsidian
     libreoffice-fresh

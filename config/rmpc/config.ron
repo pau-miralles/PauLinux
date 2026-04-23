@@ -57,7 +57,7 @@
             (value: "any",         label: "Any"),
             (value: "title",       label: "Title"),
             (value: "album",       label: "Album"),
-            (value: "artist",      label: "Artist"),
+            (value: "albumartist", label: "Artist"),
             (value: "filename",    label: "File"),
         ],
     ),
@@ -65,6 +65,7 @@
     artists: (
         album_display_mode: SplitByDate,
         album_sort_by: Date,
+        artist_tag: AlbumArtist,
     ),
 
     current_song: (
