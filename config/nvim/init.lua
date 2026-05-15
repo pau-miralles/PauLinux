@@ -171,11 +171,6 @@ vim.api.nvim_create_autocmd("PackChanged", { -- 1. Build hooks for external depe
     if kind == "install" or kind == "update" then
       if name == "markdown-preview.nvim" then
         vim.system({ "yarn", "install", "--frozen-lockfile" }, { cwd = path .. "/app" })
-      elseif name == "nvim-treesitter" then
-        vim.cmd.packadd("nvim-treesitter")
-        vim.cmd("TSUpdate")
-        -- Emulate "ensure_installed" natively without a custom command
-        vim.cmd("TSInstallSync python nix cpp html css javascript arduino lua vim vimdoc")
       end
     end
   end
@@ -190,7 +185,6 @@ vim.pack.add({
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/rachartier/tiny-inline-diagnostic.nvim",
   "https://github.com/iamcco/markdown-preview.nvim",
-  "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/windwp/nvim-ts-autotag",
   "https://github.com/neovim/nvim-lspconfig",
 })

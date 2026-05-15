@@ -11,7 +11,10 @@ in
   home.homeDirectory = "/home/pau";
   home.stateVersion = "25.11"; # Keep this the same as your system version
   programs.home-manager.enable = true; # This makes home-manager manage itself
-  home.sessionVariables.GTK_IM_MODULE = "simple";
+  home.sessionVariables = {
+    GTK_IM_MODULE = "simple";
+    NIXOS_OZONE_WL = "1";
+  };
   home.packages = with pkgs; [
     obsidian
     libreoffice-fresh
@@ -21,7 +24,9 @@ in
     vlc
     handbrake
     obs-studio
+    # arduino-ide
 
+    framework-tool-tui
     yazi
     tmuxp
     python3
@@ -230,7 +235,12 @@ in
   };
 
   programs.neovim = {
+    withRuby = false;
+    withPython3 = false;
     enable = true;
+    plugins = with pkgs.vimPlugins;[
+      nvim-treesitter.withAllGrammars
+    ];
     initLua = ''
       dofile("${config.home.homeDirectory}/.nixos-config/config/nvim/init.lua")
     '';
@@ -259,7 +269,7 @@ in
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
-      sync = "cd ~/.nixos-config/ && sudo nixos-rebuild list-generations --flake .#framework && sudo nix-collect-garbage -d && nix flake update && sudo nixos-rebuild switch --flake .#framework && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && sudo nixos-rebuild list-generations --flake .#framework && sudo nix-collect-garbage -d && sudo nixos-rebuild switch --flake .#framework && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
       tf = "tmuxp freeze";
     };
@@ -344,6 +354,7 @@ in
   };
 
   programs.firefox = {
+    configPath = ".mozilla/firefox";
     enable = true;
     profiles.default = {
       id = 0;

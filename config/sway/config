@@ -42,6 +42,7 @@ layer_effects "waybar" {
 output eDP-1 {
   scale 1.5
   pos 0 0
+  # color_profile icc ~/.nixos-config/config/sway/CalibratedDisplayProfile.icc
 }
 output DP-3 pos -400 -1080
 output * bg $HOME/.nixos-config/config/wallpaper.jpg fill
@@ -164,7 +165,7 @@ exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
 exec rm -rf ~/Baixades
-exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
+# exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
 exec low-battery-warning
 
 include ~/.config/sway-colors

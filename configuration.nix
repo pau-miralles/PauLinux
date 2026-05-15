@@ -42,7 +42,6 @@
   };
 
   networking.hostName = "framework"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.wireless.iwd.enable = true;
   networking.networkmanager.enable = true; # Enable networking
   networking.networkmanager.wifi.backend = "iwd";
@@ -79,7 +78,7 @@
   users.users.pau = { # Define a user account. Don't forget to set a password with ‘passwd’
     isNormalUser = true;
     description = "pau";
-    extraGroups = [ "networkmanager" "wheel" "uinput" ];
+    extraGroups = [ "networkmanager" "wheel" "uinput" "dialout" ];
     packages = with pkgs; [];
   };
   nixpkgs.config.allowUnfree = true;
@@ -95,7 +94,8 @@
   # List services that you want to enable:
   services.fwupd.enable = true; # Framework update
   services.openssh.enable = true; # Enable the OpenSSH daemon.
-  services.tailscale.enable = true;
+  # services.tailscale.enable = true;
+  services.gnome.gnome-keyring.enable = true;
   nix.settings.auto-optimise-store = true; # Garbage collecting
   nix.gc = {
     automatic = true;
@@ -207,6 +207,7 @@
 
   networking.firewall.allowedTCPPorts = [ 22000 ]; # For Syncthing
   networking.firewall.allowedUDPPorts =[ 22000 21027 ];
+  # networking.firewall.checkReversePath = "loose"; # Fixes potential routing issues with Tailscale
 
   # This value determines the NixOS release from which the default settings for stateful data, like file locations and database versions on your system were taken. It‘s perfectly fine and recommended to leave this value at the release version of the first install of this system.
   system.stateVersion = "25.11"; # DO NOT TOUCH
