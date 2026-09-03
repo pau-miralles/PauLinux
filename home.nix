@@ -24,6 +24,7 @@ in
     vlc
     handbrake
     obs-studio
+    mixxx
     # arduino-ide
 
     framework-tool-tui
@@ -330,7 +331,6 @@ in
       sws-scaler = "fast-bilinear";
       video-sync = "display-resample";
       image-display-duration = "inf";
-      # loop-file = "inf";
       osd-bar = "no";
     };
     bindings = {

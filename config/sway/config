@@ -17,7 +17,8 @@ blur_noise 0.02
 for_window [app_id=".*"] opacity 0.85
 for_window [class=".*"] opacity 0.85
 # Exceptions
-for_window [app_id="^(firefox|com\.mitchellh\.ghostty|gimp|mpv|vlc|obsidian|libreoffice-.*)$"] opacity 1
+for_window [app_id="^(firefox|org.mixxx.Mixxx|com\.mitchellh\.ghostty|gimp|mpv|vlc|obsidian|libreoffice-.*)$"] opacity 1
+for_window [app_id="org.mixxx.Mixxx"] inhibit_idle visible
 # Dimming
 default_dim_inactive 0.15
 
@@ -165,7 +166,6 @@ exec_always systemctl --user restart waybar
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
 exec rm -rf ~/Baixades
-# exec --no-startup-id systemd-run --user --unit=half-hour-break --on-boot=30min --on-unit-active=30min notify-send "Break Reminder" "Take a short break."
 exec low-battery-warning
 
 include ~/.config/sway-colors
