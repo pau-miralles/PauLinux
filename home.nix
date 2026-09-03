@@ -71,10 +71,6 @@ in
     libnotify
     low-battery-warning
   ];
-  gtk = {
-    enable = true;
-    gtk4.theme = config.gtk.theme;
-  };
   services.mako.enable = true; # Notification daemon
   services.syncthing.enable = true;
   services.cliphist = {
