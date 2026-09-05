@@ -17,7 +17,7 @@ in
   };
   home.packages = with pkgs; [
     obsidian
-    libreoffice-fresh
+    libreoffice
     libgsf # ODF (LibreOffice) thumbnails
     gimp
     audacity
@@ -42,6 +42,7 @@ in
     bottom
     fastfetch
     tty-clock
+    live-server
     speedtest-cli
 
     wlsunset
@@ -360,17 +361,16 @@ in
       userContent = builtins.readFile ./config/firefox/userContent.css;
       extraConfig = ''
         ${builtins.readFile ./config/firefox/betterfox.js}
-        user_pref("browser.search.separatePrivateDefault", false);
         user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
         user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("widget.wayland.fractional-scale.enabled", true);
+        user_pref("browser.tabs.drawInTitlebar", true);
         user_pref("browser.compactmode.show", true);
         user_pref("browser.uidensity", 1);
         user_pref("apz.overscroll.enabled", false);
         user_pref("browser.gesture.swipe.left", "");
         user_pref("browser.gesture.swipe.right", "");
         user_pref("gfx.webrender.all", true);
-        user_pref("browser.tabs.allow_transparent_browser", true);
         user_pref("full-screen-api.transition-duration.enter", "0 0");
         user_pref("full-screen-api.transition-duration.leave", "0 0");
         user_pref("full-screen-api.warning.delay", 0);
@@ -410,6 +410,13 @@ in
       kb-mode-next = "Shift+Right";
       kb-mode-previous = "Shift+Left";
       dpi = 192;
+    };
+    theme = {
+      "listview" = {
+        lines = 12;
+        columns = 1;
+        fixed-height = false;
+      };
     };
   };
 

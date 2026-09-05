@@ -171,7 +171,7 @@
     enable = true;
     targets.gtk.enable = true;
     image = ./config/wallpaper.jpg;
-    # base16Scheme = ./config/themes/theme.yaml;
+    # base16Scheme = ./config/theme/theme.yaml;
     polarity = "dark";
     fonts = {
       sizes = {
@@ -179,7 +179,7 @@
         applications = 12;
       };
       monospace.package = pkgs.nerd-fonts.d2coding;
-      monospace.name = "D2CodingLigature Nerd Font";
+      monospace.name = "D2KodingLigature Nerd Font";
       serif = config.stylix.fonts.monospace;
       sansSerif = config.stylix.fonts.monospace;
       emoji = config.stylix.fonts.monospace;

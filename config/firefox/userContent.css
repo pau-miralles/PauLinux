@@ -3,5 +3,8 @@
   box-shadow: none !important;
 }
 @-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
-    body { background: transparent !important; }
+    html, body, #root {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
 }
