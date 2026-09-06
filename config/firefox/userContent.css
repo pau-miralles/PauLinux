@@ -2,9 +2,9 @@
   border-radius: 0px !important;
   box-shadow: none !important;
 }
-@-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
-    html, body, #root {
-        background: transparent !important;
-        background-color: transparent !important;
-    }
+@-moz-document url-prefix("about:") {
+  :root, body {
+    background-color: transparent !important;
+    background-image: none !important;
+  }
 }
