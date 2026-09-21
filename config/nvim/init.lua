@@ -118,6 +118,19 @@ vim.keymap.set('n', '<leader>py', function()
   vim.cmd('terminal python3 ' .. file)
   vim.cmd('startinsert')
 end, { desc = 'Save and run Python file' })
+-- Java run program
+vim.keymap.set('n', '<leader>jv', function()
+  vim.cmd('write')
+  if vim.bo.filetype ~= 'java' then
+    vim.notify('Not a Java file', vim.log.levels.ERROR)
+    return
+  end
+  local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
+  vim.cmd('split')
+  vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
+  vim.cmd('terminal java ' .. file)
+  vim.cmd('startinsert')
+end, { desc = 'Save and run Java file' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
@@ -141,6 +154,17 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount and vim.bo.filetype ~= "commit" then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
+  end,
+})
+
+-- 4-Space Indentation for Java
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
+  pattern = "java",
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.softtabstop = 4
   end,
 })
 
@@ -242,7 +266,7 @@ hipatterns.setup({
 local miniclue = require('mini.clue')
 miniclue.setup({
   window = {
-    delay = 0,
+    delay = 250,
     config = { width = 'auto', },
   },
   triggers = {
@@ -326,6 +350,7 @@ vim.lsp.enable({
   'html',
   'cssls',
   'arduino_language_server',
+  'jdtls',
 })
 
 vim.api.nvim_create_autocmd("FileType", {

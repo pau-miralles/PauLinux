@@ -206,6 +206,8 @@
 
   networking.firewall.allowedTCPPorts = [ 22000 ]; # For Syncthing
   networking.firewall.allowedUDPPorts =[ 22000 21027 ];
+  networking.networkmanager.wifi.powersave = false;
+  networking.networkmanager.wifi.macAddress = "preserve";
 
   # This value determines the NixOS release from which the default settings for stateful data, like file locations and database versions on your system were taken. It‘s perfectly fine and recommended to leave this value at the release version of the first install of this system.
   system.stateVersion = "26.05"; # DO NOT TOUCH

@@ -14,6 +14,7 @@ in
   home.sessionVariables = {
     GTK_IM_MODULE = "simple";
     NIXOS_OZONE_WL = "1";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
   };
   home.packages = with pkgs; [
     obsidian
@@ -26,6 +27,16 @@ in
     obs-studio
     mixxx
     # arduino-ide
+    (pkgs.symlinkJoin {
+      name = "netbeans";
+      paths = [ pkgs.netbeans ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/netbeans \
+          --add-flags "-J-Dawt.useSystemAAFontSettings=on" \
+          --add-flags "-J-Dswing.aatext=true"
+      '';
+    })
 
     framework-tool-tui
     yazi
@@ -44,6 +55,7 @@ in
     tty-clock
     live-server
     speedtest-cli
+    appimage-run
 
     wlsunset
     playerctl # Play/Pause buttons
@@ -59,6 +71,8 @@ in
     unzip
 
     gcc
+    jdk
+    jdt-language-server
     pyright
     nixd
     clang-tools # C/C++ (includes clangd)
