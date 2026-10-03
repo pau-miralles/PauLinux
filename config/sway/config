@@ -165,9 +165,9 @@ exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CU
 exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
 exec_always autotiling-rs
 exec_always systemctl --user restart waybar
-exec rm -f ~/.local/share/rofi/rofi_calc_history
-exec rm -f ~/ly-session.log
-exec rm -rf ~/Baixades
+# exec rm -f ~/.local/share/rofi/rofi_calc_history
+# exec rm -f ~/ly-session.log
+# exec rm -rf ~/Baixades
 exec low-battery-warning
 
 include ~/.config/sway-colors

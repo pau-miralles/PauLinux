@@ -33,7 +33,6 @@ vim.o.linebreak = true       -- Wrap at word boundaries (no mid-word splits)
 vim.o.breakindent = true     -- Preserve indentation on wrapped lines
 vim.o.scrolloff = 10         -- Keep 10 lines above/below cursor
 vim.o.sidescrolloff = 5      -- Keep 5 columns left/right of cursor
-vim.o.breakindent = true     -- Better wrapping visualization
 vim.o.list = true            -- Show invisible characters
 vim.o.confirm = true         -- Ask to save instead of failing
 vim.o.inccommand = "split"   -- Live substitution preview
@@ -134,6 +133,16 @@ end, { desc = 'Save and run Java file' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
+
+-- Expand 'sout' to System.out.println() in Java files
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
+  pattern = "java",
+  callback = function()
+    vim.cmd("iabbrev <buffer> sout System.out.println();<Left><Left>")
+  end,
+})
+
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup,
   callback = function() vim.hl.on_yank() end,
@@ -145,7 +154,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   command = [[%s/\s\+$//e]],
 })
 
--- Return to last edit position
+-- Return to last edit position after opening file
 vim.api.nvim_create_autocmd("BufReadPost", {
   group = augroup,
   callback = function()
@@ -187,19 +196,6 @@ if vim.env.TMUX ~= nil then
 end
 
 -- PLUGINS (NATIVE) ====================================
-vim.g.mkdp_filetypes = { "markdown" }        -- Init configs that must run BEFORE plugins load
-vim.api.nvim_create_autocmd("PackChanged", { -- 1. Build hooks for external dependencies
-  group = vim.api.nvim_create_augroup("NativePluginsBuild", { clear = true }),
-  callback = function(ev)
-    local name, kind, path = ev.data.spec.name, ev.data.kind, ev.data.path
-    if kind == "install" or kind == "update" then
-      if name == "markdown-preview.nvim" then
-        vim.system({ "yarn", "install", "--frozen-lockfile" }, { cwd = path .. "/app" })
-      end
-    end
-  end
-})
-
 vim.pack.add({
   "https://github.com/echasnovski/mini.nvim",
   "https://github.com/christoomey/vim-tmux-navigator",
@@ -208,15 +204,11 @@ vim.pack.add({
   "https://github.com/folke/flash.nvim",
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/rachartier/tiny-inline-diagnostic.nvim",
-  "https://github.com/iamcco/markdown-preview.nvim",
-  "https://github.com/windwp/nvim-ts-autotag",
   "https://github.com/neovim/nvim-lspconfig",
 })
 
 require("gitsigns").setup()
 require("tiny-inline-diagnostic").setup()
-require('nvim-ts-autotag').setup()
-
 require('mini.indentscope').setup()
 require('mini.pairs').setup()
 require('mini.map').setup()
@@ -326,7 +318,6 @@ vim.keymap.set("n", "<leader><space>", "<cmd>Pick files<cr>", { desc = "Find Fil
 vim.keymap.set("n", "<leader>f", "<cmd>Pick grep_live<cr>", { desc = "Live Grep" })
 vim.keymap.set("n", "<leader>m", "<Cmd>lua MiniMap.toggle()<CR>", { desc = "Map" })
 vim.keymap.set("n", "<leader>bb", "<cmd>Pick buffers<cr>", { desc = "Show Buffers" })
-
 
 vim.keymap.set("n", "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>")
 vim.keymap.set("n", "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>")

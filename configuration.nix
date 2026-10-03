@@ -171,7 +171,7 @@
     enable = true;
     targets.gtk.enable = true;
     image = ./config/wallpaper.jpg;
-    # base16Scheme = ./config/theme/theme.yaml;
+    base16Scheme = ./config/theme/dark.yaml;
     polarity = "dark";
     fonts = {
       sizes = {
@@ -193,6 +193,8 @@
 
   specialisation.light.configuration = {
     stylix.polarity = lib.mkForce "light";
+    stylix.base16Scheme = lib.mkForce ./config/theme/light.yaml;
+    home-manager.users.pau.programs.ghostty.settings.background-opacity = lib.mkForce 0.85;
   };
   security.sudo.extraRules = [
     {

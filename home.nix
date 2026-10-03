@@ -24,7 +24,7 @@ in
     audacity
     vlc
     handbrake
-    obs-studio
+    kooha
     mixxx
     # arduino-ide
     (pkgs.symlinkJoin {
@@ -65,8 +65,6 @@ in
     bluetui # TUI Bluetooth Panel
     ffmpegthumbnailer # Video thumbnails
     jq # Json, for the sway tabs script
-    nodejs # For markdown-preview.nvim
-    yarn
     zip
     unzip
 
@@ -126,10 +124,10 @@ in
 
   xdg.configFile = {
     "fastfetch".source = ./config/fastfetch;
-    "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
     "tmuxp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/tmuxp";
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
+    "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
     "sway-colors".text = ''
       set $base00 ${colors.base00}
       set $base01 ${colors.base01}
@@ -148,12 +146,22 @@ in
       set $base0E ${colors.base0E}
       set $base0F ${colors.base0F}
     '';
+    "yazi/theme.toml".text = ''
+      [tabs]
+      sep_inner = { open = "", close = "" }
+      sep_outer = { open = "", close = "" }
+      [indicator]
+      padding = { open = "", close = "" }
+      [status]
+      sep_left  = { open = "", close = "" }
+      sep_right = { open = "", close = "" }
+    '';
   };
 
   programs.ghostty = {
     enable = true;
     settings = {
-      background-opacity = 0.7;
+      background-opacity = 0.4;
       confirm-close-surface = false;
       custom-shader = "/home/pau/.nixos-config/config/cursor_tail.glsl";
       resize-overlay = "never";
@@ -508,11 +516,11 @@ in
             weeks-pos = "right";
             on-scroll = 1;
             format = {
-              months = "<span color='#f2c6a0'><b>{}</b></span>";
-              days = "<span color='#e6b3c2'><b>{}</b></span>";
-              weeks = "<span color='#d8a657'><b>W{}</b></span>";
-              weekdays = "<span color='#eebd7a'><b>{}</b></span>";
-              today = "<span color='#d3869b'><b><u>{}</u></b></span>";
+              months = "<span color='${colors.base0A}'><b>{}</b></span>";
+              days = "<span color='${colors.base05}'><b>{}</b></span>";
+              weeks = "<span color='${colors.base09}'><b>W{}</b></span>";
+              weekdays = "<span color='${colors.base0D}'><b>{}</b></span>";
+              today = "<span color='${colors.base08}'><b><u>{}</u></b></span>";
             };
           };
           actions = {
