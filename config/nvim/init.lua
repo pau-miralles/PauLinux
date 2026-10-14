@@ -169,7 +169,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- 4-Space Indentation for Java
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,
-  pattern = "java",
+  pattern = { "java", "cpp", "tex" },
   callback = function()
     vim.opt_local.tabstop = 4
     vim.opt_local.shiftwidth = 4
@@ -195,6 +195,15 @@ if vim.env.TMUX ~= nil then
   })
 end
 
+-- Sync Zathura scroll to cursor position
+vim.o.updatetime = 250
+vim.api.nvim_create_autocmd("CursorHold", {
+  pattern = "*.tex",
+  callback = function()
+    pcall(vim.fn["vimtex#view#view"])
+  end,
+})
+
 -- PLUGINS (NATIVE) ====================================
 vim.pack.add({
   "https://github.com/echasnovski/mini.nvim",
@@ -205,6 +214,8 @@ vim.pack.add({
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/rachartier/tiny-inline-diagnostic.nvim",
   "https://github.com/neovim/nvim-lspconfig",
+  "https://github.com/lervag/vimtex",
+  "https://github.com/L3MON4D3/LuaSnip",
 })
 
 require("gitsigns").setup()
@@ -344,9 +355,133 @@ vim.lsp.enable({
   'jdtls',
 })
 
+-- VimTeX
+vim.g.vimtex_view_method = 'zathura'
+vim.g.vimtex_compiler_method = 'latexmk'
+vim.g.tex_flavor = 'latex'
+vim.o.conceallevel = 1
+vim.g.tex_conceal = 'abdmg'
+vim.g.vimtex_quickfix_open_on_warning = 0
+-- LuaSnip
+local ls = require("luasnip")
+local s = ls.snippet
+local t = ls.text_node
+local i = ls.insert_node
+local f = ls.function_node
+local fmta = require("luasnip.extras.fmt").fmta
+local rep = require("luasnip.extras").rep
+local line_begin = require("luasnip.extras.expand_conditions").line_begin
+-- Enable Autosnippets
+ls.config.set_config({
+  enable_autosnippets = true,
+  updateevents = "TextChanged,TextChangedI",
+})
+-- Expand or jump through snippet placeholders using Tab/Shift-Tab
+vim.keymap.set({"i", "s"}, "<Tab>", function()
+  if ls.expand_or_jumpable() then
+    ls.expand_or_jump()
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", true)
+  end
+end, {silent = true, desc = "LuaSnip expand/jump"})
+
+vim.keymap.set({"i", "s"}, "<S-Tab>", function()
+  if ls.jumpable(-1) then
+    ls.jump(-1)
+  end
+end, {silent = true, desc = "LuaSnip jump back"})
+
+-- Context Helper: Only trigger certain snippets in math mode
+local function in_mathzone()
+  -- Try to use Treesitter
+  local has_ts, ts = pcall(require, "vim.treesitter")
+  if has_ts then
+    local node = ts.get_node({ ignore_injections = false })
+    while node do
+      if node:type() == "inline_formula" or node:type() == "displayed_equation" or node:type() == "math_environment" then
+        return true
+      end
+      node = node:parent()
+    end
+    if node then return false end -- Treesitter is active, but we are not in a math node
+  end
+  -- Fallback to VimTeX's traditional syntax engine if Treesitter fails or isn't active
+  return vim.fn["vimtex#syntax#in_mathzone"]() == 1
+end
+-- Helper to quickly define math autosnippets that trigger inside words (UltiSnips `iA`)
+local function math_i(trig, nodes)
+  return s({ trig = trig, snippetType = "autosnippet", wordTrig = false }, nodes, { condition = in_mathzone })
+end
+
+-- SNIPPETS
+ls.add_snippets("tex", {
+  -- mk: Inline Math
+  s({ trig = "mk", snippetType = "autosnippet" },
+    fmta([[\(<>\)<>]], { i(1), i(0) })
+  ),
+  -- dm: Display Math
+  s({ trig = "dm", snippetType = "autosnippet" },
+    fmta([[
+\[
+  <>
+\]<>]], { i(1), i(0) })
+  ),
+
+  math_i("//", fmta("\\frac{<>}{<>}<>", { i(1), i(2), i(0) })),
+  math_i("sr", t("^2")),
+  math_i("cb", t("^3")),
+  math_i("**", fmta("^{<>}<>", { i(1), i(0) })),
+  math_i("__", fmta("_{<>}<>", { i(1), i(0) })),
+  math_i("bb", fmta("\\mathbb{<>}<>", { i(1), i(0) })),
+  math_i("ooo", t("\\infty")),
+  math_i("...", t("\\ldots")),
+  math_i(">=", t("\\geqslant")),
+  math_i("<=", t("\\leqslant")),
+  math_i("@a", t("\\alpha")),
+  math_i("@b", t("\\beta")),
+  math_i("@g", t("\\gamma")),
+  math_i("@d", t("\\delta")),
+  math_i("@e", t("\\epsilon")),
+  math_i("@l", t("\\lambda")),
+  -- Auto-subscript: a1 -> a_1
+  s({ trig = "([a-zA-Z])(%d)", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
+    f(function(_, snip)
+      return snip.captures[1] .. "_" .. snip.captures[2]
+    end),
+    { condition = in_mathzone }
+  ),
+  -- Auto-subscript: a_12 -> a_{12}
+  s({ trig = "([a-zA-Z])_(%d%d)", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
+    f(function(_, snip)
+      return snip.captures[1] .. "_{" .. snip.captures[2] .. "}"
+    end),
+    { condition = in_mathzone }
+  ),
+  -- Vector postfix: Auto-expands \w+,. or \w+., into \vec{\w+}
+  s({ trig = "(%\\?[a-zA-Z]+)%,%.", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
+    f(function(_, snip) return "\\vec{" .. snip.captures[1] .. "}" end),
+    { condition = in_mathzone }
+  ),
+  s({ trig = "(%\\?[a-zA-Z]+)%.%,", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
+    f(function(_, snip) return "\\vec{" .. snip.captures[1] .. "}" end),
+    { condition = in_mathzone }
+  ),
+-- beg: Environment (Triggers only at the beginning of a line, mirrors name)
+  s({ trig = "beg", snippetType = "autosnippet" },
+    fmta([[
+      \begin{<>}
+        <>
+      \end{<>}
+    ]], { i(1), i(0), rep(1) }),
+    { condition = line_begin }
+  ),
+})
+
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,
   callback = function(ev)
-    pcall(vim.treesitter.start, ev.buf) -- Attach Treesitter parser
+    if vim.bo[ev.buf].filetype ~= "tex" then
+      pcall(vim.treesitter.start, ev.buf) -- Attach Treesitter parser
+    end
   end,
 })

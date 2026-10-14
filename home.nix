@@ -24,7 +24,6 @@ in
     audacity
     vlc
     handbrake
-    kooha
     mixxx
     # arduino-ide
     (pkgs.symlinkJoin {
@@ -68,6 +67,11 @@ in
     zip
     unzip
 
+  (texlive.withPackages (ps: [
+      ps.scheme-full
+      ps.latexmk
+    ]))
+    xdotool
     gcc
     jdk
     jdt-language-server
@@ -107,6 +111,7 @@ in
     enable = true;
     defaultApplications = {
       "inode/directory" = [ "thunar.desktop" ];
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
       "image/jpeg" = [ "mpv.desktop" ];
       "image/png" = [ "mpv.desktop" ];
       "image/gif" = [ "mpv.desktop" ];
@@ -274,6 +279,14 @@ in
     plugin = "mini.base16";
   };
 
+  programs.zathura = {
+    enable = true;
+    options = {
+      recolor = true;
+      selection-clipboard = "clipboard";
+    };
+  };
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
@@ -395,6 +408,7 @@ in
         /* --- Performance, Input & Animations --- */
         user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("apz.overscroll.enabled", false);
+        user_pref("browser.quitShortcut.disabled", true);
         user_pref("browser.gesture.swipe.left", "");
         user_pref("browser.gesture.swipe.right", "");
         user_pref("full-screen-api.transition-duration.enter", "0 0");
