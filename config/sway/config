@@ -6,7 +6,7 @@ set $up k
 set $right l
 
 ### SwayFX
-# animation_duration_ms 150
+animation_duration_ms 100
 # corner_radius 8
 # Window Blur
 blur enable
@@ -18,9 +18,10 @@ blur_noise 0.02
 for_window [app_id=".*"] opacity 0.85
 for_window [class=".*"] opacity 0.85
 # Exceptions
-for_window [app_id="^(org.pwmt.zathura|firefox|org.mixxx.Mixxx|com\.mitchellh\.ghostty|gimp|mpv|md.Obsidian|libreoffice-.*)$"] opacity 1
+for_window [app_id="^(org.pwmt.zathura|firefox|org.mixxx.Mixxx|kitty|gimp|mpv|md.Obsidian|libreoffice-.*)$"] opacity 1
 for_window [class="^(vlc|Apache NetBeans IDE.*)$"] opacity 1
 for_window [app_id="org.mixxx.Mixxx"] inhibit_idle visible
+for_window [app_id="kitty" title="^waybar$"] floating enable, resize set 1300 850
 # Dimming
 default_dim_inactive 0.15
 
@@ -28,7 +29,7 @@ default_dim_inactive 0.15
 font pango:monospace 3
 titlebar_border_thickness 0
 titlebar_padding 0
-default_border pixel 1
+default_border pixel 2
 # gaps inner 4
 gaps outer 0
 smart_gaps on
@@ -45,7 +46,6 @@ layer_effects "waybar" {
 output eDP-1 {
   scale 1.5
   pos 0 0
-  # color_profile icc ~/.nixos-config/config/sway/CalibratedDisplayProfile.icc
 }
 output DP-3 pos -400 -1080
 output * bg $HOME/.nixos-config/config/wallpaper.jpg fill
@@ -73,13 +73,13 @@ seat seat0 hide_cursor 30000
 seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
-    bindsym $mod+Return exec ghostty
+    bindsym $mod+Return exec kitty -1
     bindsym $mod+d exec rofi -show drun
     bindsym $mod+w exec firefox
     bindsym $mod+e exec thunar
     bindsym $mod+q kill
     bindsym $mod+v exec cliphist list | rofi -dmenu -p "Clipboard" | cliphist decode | wl-copy
-    bindsym Control+Mod1+Shift+c exec cliphist wipe
+    bindsym Control+Mod1+Shift+c exec rm -fr ~/.cache/cliphist/
     bindsym $mod+p exec rofi-power
     bindsym XF86PowerOff exec rofi-power
     bindsym $mod+b exec ~/.nixos-config/config/cycle-power.sh
@@ -162,12 +162,11 @@ seat seat0 xcursor_theme Posy_Cursor 32
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
 exec_always autotiling-rs
 exec_always systemctl --user restart waybar
+exec --no-startup-id bash -c 'sleep 1 && kitty --single-instance --start-as=hidden'
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
-# exec rm -rf ~/Baixades
 exec low-battery-warning
 
 include ~/.config/sway-colors

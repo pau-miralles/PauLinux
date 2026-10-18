@@ -189,12 +189,13 @@
     cursor.size = 32;
     opacity.desktop = 0.8;
     opacity.popups = 0.8;
+    opacity.terminal = 0.5;
   };
 
   specialisation.light.configuration = {
     stylix.polarity = lib.mkForce "light";
     stylix.base16Scheme = lib.mkForce ./config/theme/light.yaml;
-    home-manager.users.pau.programs.ghostty.settings.background-opacity = lib.mkForce 0.85;
+    stylix.opacity.terminal = lib.mkForce 0.9;
   };
   security.sudo.extraRules = [
     {

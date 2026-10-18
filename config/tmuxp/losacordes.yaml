@@ -22,6 +22,6 @@ windows:
     automatic-rename: false
   panes:
   - focus: 'true'
-    shell_command: nix run nixpkgs#live-server
+    shell_command: live-server
   start_directory: /home/pau/programacion/losacordes
   window_name: live-server

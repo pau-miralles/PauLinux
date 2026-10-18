@@ -23,6 +23,7 @@ in
     gimp
     audacity
     vlc
+    zathura
     handbrake
     mixxx
     # arduino-ide
@@ -81,6 +82,7 @@ in
     vscode-langservers-extracted # HTML/CSS/JSON/ESLint
     typescript-language-server
     arduino-language-server
+    texlab
 
     toggle-theme
     rofi-power
@@ -163,23 +165,16 @@ in
     '';
   };
 
-  programs.ghostty = {
+  programs.kitty = {
     enable = true;
     settings = {
-      background-opacity = 0.4;
-      confirm-close-surface = false;
-      custom-shader = "/home/pau/.nixos-config/config/cursor_tail.glsl";
-      resize-overlay = "never";
-      window-padding-balance = true;
-      window-padding-color = "extend";
-      scrollbar = "never";
-      bell-features = false;
-      app-notifications = false;
-      clipboard-read = "allow";
-      clipboard-write = "allow";
-      clipboard-paste-protection = false;
-      mouse-hide-while-typing = true;
-      scrollback-limit = 10000;
+      dynamic_background_opacity = true;
+      cursor_trail = 1;
+      cursor_trail_start_threshold = 0;
+      confirm_os_window_close = 0;
+      mouse_hide_wait = -1;
+      "map ctrl+plus" = "change_font_size current +1";
+      "map ctrl+minus" = "change_font_size current -1";
     };
   };
 
@@ -279,14 +274,6 @@ in
     plugin = "mini.base16";
   };
 
-  programs.zathura = {
-    enable = true;
-    options = {
-      recolor = true;
-      selection-clipboard = "clipboard";
-    };
-  };
-
   programs.bash = {
     enable = true;
     enableCompletion = true;
@@ -299,6 +286,7 @@ in
       ltt = "eza -T --icons --hyperlink";
       cat = "bat";
       v = "nvim";
+      a = "tmux new -A -s a";
       printer = "sudo systemctl start cups";
       ff = "fastfetch --logo small";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
@@ -308,6 +296,7 @@ in
     };
     initExtra = ''
       export PS1="❭\w " # Custom Prompt
+      PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND; }printf '\\033[5 q'" # cursor
       # Environment Variables
       export VISUAL='nvim'
       export EDITOR='nvim'
@@ -396,6 +385,9 @@ in
       userContent = builtins.readFile ./config/firefox/userContent.css;
       extraConfig = ''
         ${builtins.readFile ./config/firefox/betterfox.js}
+        /* --- Instant New Windows / Pre-loading --- */
+        user_pref("browser.startup.preXulSkeletonDocument", true);
+        user_pref("browser.newtabpage.enabled", true);
         /* --- SwayFX & Wayland Transparency --- */
         user_pref("widget.gtk.transparent-windows", true);
         /* --- Stylesheet & Display --- */
@@ -462,7 +454,7 @@ in
 
   programs.waybar = {
     enable = true;
-    systemd.enable = true;
+    systemd.enable = false;
     settings = {
       mainBar = {
         layer = "top";
@@ -479,9 +471,10 @@ in
           format = "{capacity}% ({time}) {icon}";
           format-charging = "{capacity}% ({time}) ";
           format-icons = [ "" "" "" "" "" ];
-          on-click = "/etc/profiles/per-user/pau/bin/ghostty -e /etc/profiles/per-user/pau/bin/btm --battery";
+          on-click = "/etc/profiles/per-user/pau/bin/kitty --title waybar --override font_size=18 -e /etc/profiles/per-user/pau/bin/btm --battery";
         };
         "temperature" = {
+          hwmon-path = "/sys/class/hwmon/hwmon6/temp1_input";
           critical-threshold = 80;
           format-critical = "⚠{temperatureC}°C";
           format = "{temperatureC}°C";
@@ -492,7 +485,7 @@ in
           tooltip-format = "{ifname} via {gwaddr}";
           format-linked = "{ifname} (No IP)";
           format-disconnected = "Disconnected ⚠";
-          on-click = "/etc/profiles/per-user/pau/bin/ghostty -e /etc/profiles/per-user/pau/bin/impala";
+          on-click = "/etc/profiles/per-user/pau/bin/kitty --title waybar --override font_size=20 -e /etc/profiles/per-user/pau/bin/impala";
         };
         "backlight" = {
           format = "{percent}% {icon}";
@@ -573,7 +566,7 @@ in
     enable = true;
     settings.user = {
       name = "pau-miralles";
-      email = "pmms0808@gmail.com";
+      email = "pm.miralles@pm.me";
     };
   };
 }

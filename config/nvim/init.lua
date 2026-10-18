@@ -32,7 +32,7 @@ vim.o.wrap = false           -- Set nowrap
 vim.o.linebreak = true       -- Wrap at word boundaries (no mid-word splits)
 vim.o.breakindent = true     -- Preserve indentation on wrapped lines
 vim.o.scrolloff = 10         -- Keep 10 lines above/below cursor
-vim.o.sidescrolloff = 5      -- Keep 5 columns left/right of cursor
+vim.o.sidescrolloff = 10      -- Keep 5 columns left/right of cursor
 vim.o.list = true            -- Show invisible characters
 vim.o.confirm = true         -- Ask to save instead of failing
 vim.o.inccommand = "split"   -- Live substitution preview
@@ -40,9 +40,9 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Must use vim.
 vim.o.autochdir = true       -- Change directory to current file's
 
 -- Indentation
-vim.o.tabstop = 2            -- Tab width
-vim.o.shiftwidth = 2         -- Indent width
-vim.o.softtabstop = 2        -- Soft tab stop
+vim.o.tabstop = 4            -- Tab width
+vim.o.shiftwidth = 4         -- Indent width
+vim.o.softtabstop = 4        -- Soft tab stop
 vim.o.expandtab = true       -- Use spaces instead of tabs
 
 -- Search settings
@@ -104,44 +104,38 @@ vim.keymap.set('n', '<leader>t', function()
   vim.cmd('terminal')
   vim.cmd('startinsert')
 end, { desc = 'Terminal' })
--- Python run program
-vim.keymap.set('n', '<leader>py', function()
+
+vim.keymap.set('n', '<leader>r', function()
   vim.cmd('write')
-  if vim.bo.filetype ~= 'python' then
-    vim.notify('Not a Python file', vim.log.levels.ERROR)
+  local ft = vim.bo.filetype
+  local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
+  local filepath = vim.api.nvim_buf_get_name(0)
+  local dir = vim.fn.fnamemodify(filepath, ':h')
+  local cmd = nil
+
+  if ft == 'python' then
+    cmd = 'python3 ' .. file
+  elseif ft == 'java' then
+    cmd = 'java ' .. file
+  elseif ft == 'cpp' then
+    if vim.fn.filereadable(dir .. '/in.txt') == 1 then
+      cmd = 'clear && g++ -O3 *.cpp -o solution && ./solution < in.txt; rm -f solution'
+    else
+      cmd = 'clear && g++ -O3 ' .. file .. ' -o solution && ./solution; rm -f solution'
+    end
+  else
+    vim.notify('Unsupported filetype: ' .. ft, vim.log.levels.ERROR)
     return
   end
-  local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
+
   vim.cmd('split')
   vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
-  vim.cmd('terminal python3 ' .. file)
+  vim.cmd('terminal ' .. cmd)
   vim.cmd('startinsert')
-end, { desc = 'Save and run Python file' })
--- Java run program
-vim.keymap.set('n', '<leader>jv', function()
-  vim.cmd('write')
-  if vim.bo.filetype ~= 'java' then
-    vim.notify('Not a Java file', vim.log.levels.ERROR)
-    return
-  end
-  local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
-  vim.cmd('split')
-  vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
-  vim.cmd('terminal java ' .. file)
-  vim.cmd('startinsert')
-end, { desc = 'Save and run Java file' })
+end, { desc = 'Save and run file (Python, Java, C++)' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
-
--- Expand 'sout' to System.out.println() in Java files
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup,
-  pattern = "java",
-  callback = function()
-    vim.cmd("iabbrev <buffer> sout System.out.println();<Left><Left>")
-  end,
-})
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup,
@@ -166,14 +160,14 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
--- 4-Space Indentation for Java
+-- 2-Space Indentation
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,
-  pattern = { "java", "cpp", "tex" },
+  pattern = { "lua", "nix", "html", "css" },
   callback = function()
-    vim.opt_local.tabstop = 4
-    vim.opt_local.shiftwidth = 4
-    vim.opt_local.softtabstop = 4
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.softtabstop = 2
   end,
 })
 
@@ -353,6 +347,7 @@ vim.lsp.enable({
   'cssls',
   'arduino_language_server',
   'jdtls',
+  'texlab',
 })
 
 -- VimTeX
@@ -369,6 +364,7 @@ local t = ls.text_node
 local i = ls.insert_node
 local f = ls.function_node
 local fmta = require("luasnip.extras.fmt").fmta
+local fmt = require("luasnip.extras.fmt").fmt
 local rep = require("luasnip.extras").rep
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
 -- Enable Autosnippets
@@ -390,6 +386,44 @@ vim.keymap.set({"i", "s"}, "<S-Tab>", function()
     ls.jump(-1)
   end
 end, {silent = true, desc = "LuaSnip jump back"})
+
+-- Other snippets
+ls.add_snippets("java", {
+  s("sout", fmta("System.out.println(<>);", { i(1) })),
+})
+
+ls.add_snippets("cpp", {
+  s("plan", {
+    t({
+      "#include <bits/stdc++.h>",
+      "using namespace std;",
+      "",
+      "void solve() {",
+      "    "
+    }),
+    i(1, ""),
+    t({
+      "",
+      "}",
+      "",
+      "int main() {",
+      "    ios_base::sync_with_stdio(false);",
+      "    cin.tie(nullptr);",
+      "",
+      "    int t; cin >> t;",
+      "    while (t--) {",
+      "        solve();",
+      "    }",
+      "}",
+      ""
+    }),
+    i(0),
+  }),
+
+  s("cin", fmt("cin >> {};", { i(1) })),
+  s("cou", fmt("cout << {} << '\\n';", { i(1) })),
+  s("\\n", t("'\\n';")),
+})
 
 -- Context Helper: Only trigger certain snippets in math mode
 local function in_mathzone()
@@ -413,7 +447,7 @@ local function math_i(trig, nodes)
   return s({ trig = trig, snippetType = "autosnippet", wordTrig = false }, nodes, { condition = in_mathzone })
 end
 
--- SNIPPETS
+-- LaTeX SNIPPETS
 ls.add_snippets("tex", {
   -- mk: Inline Math
   s({ trig = "mk", snippetType = "autosnippet" },

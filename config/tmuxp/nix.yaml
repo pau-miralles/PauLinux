@@ -16,8 +16,8 @@ windows:
   - focus: 'true'
     shell_command:
     - cd /home/pau/.nixos-config
-    - ff
+    - clear&&ff
   - shell_command:
     - cd /home/pau/.nixos-config/config
-    - yazi
+    - clear&&ls
   window_name: bash
