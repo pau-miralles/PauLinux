@@ -1,23 +1,23 @@
 session_name: nix
 windows:
-- layout: b6fe,124x33,0,0,1
+- focus: 'true'
+  layout: bb83,125x34,0,0,6
   options:
     automatic-rename: false
   panes:
   - focus: 'true'
     shell_command: nvim
   start_directory: /home/pau/.nixos-config
-  window_name: configuration.nix
-- focus: 'true'
-  layout: 50a3,124x33,0,0{55x33,0,0,2,68x33,56,0,3}
+  window_name: nvim
+- layout: c7fe,125x34,0,0{62x34,0,0,7,62x34,63,0,9}
   options:
-    automatic-rename: true
+    automatic-rename: false
   panes:
   - focus: 'true'
     shell_command:
     - cd /home/pau/.nixos-config
-    - clear&&ff
+    - clear&&fastfetch --logo none
   - shell_command:
     - cd /home/pau/.nixos-config/config
-    - clear&&ls
+    - clear
   window_name: bash

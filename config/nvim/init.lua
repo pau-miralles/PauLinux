@@ -91,11 +91,22 @@ vim.keymap.set('n', '<Esc>', '<cmd>noh<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = 'Quit buffer' })
 vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = 'Delete Buffer' })
+vim.keymap.set('n', '<leader>y', '<cmd>silent %y<CR>', { desc = 'Yank Buffer' })
 vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = 'Write buffer' })
 vim.keymap.set('n', '<S-l>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-h>', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set("x", "p", '"_dP', { desc = "Paste without replacing clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
+vim.keymap.set("n", "<leader>sw", "<cmd>set wrap<CR>", { desc = "Enable line wrap" })
+vim.keymap.set("n", "<leader>sn", "<cmd>set nowrap<CR>", { desc = "Disable line wrap" })
+vim.keymap.set("n", "j", "gj")
+vim.keymap.set("n", "k", "gk")
+vim.keymap.set("n", "0", function()
+  return vim.wo.wrap and "g0" or "0"
+end, { expr = true, silent = true })
+vim.keymap.set("n", "$", function()
+  return vim.wo.wrap and "g$" or "$"
+end, { expr = true, silent = true })
 vim.cmd('packadd nvim.undotree')
 vim.keymap.set('n', '<leader>u', '<cmd>Undotree<CR>', { desc = 'Undotree' })
 -- Open terminal
@@ -105,6 +116,7 @@ vim.keymap.set('n', '<leader>t', function()
   vim.cmd('startinsert')
 end, { desc = 'Terminal' })
 
+-- Run project
 vim.keymap.set('n', '<leader>r', function()
   vim.cmd('write')
   local ft = vim.bo.filetype
@@ -132,7 +144,26 @@ vim.keymap.set('n', '<leader>r', function()
   vim.cmd('resize ' .. math.floor(vim.o.lines * 0.7))
   vim.cmd('terminal ' .. cmd)
   vim.cmd('startinsert')
-end, { desc = 'Save and run file (Python, Java, C++)' })
+end, { desc = 'Save and run file' })
+
+-- Force SDL2 applications (like TeXpresso) to run natively in Wayland
+vim.env.SDL_VIDEODRIVER = "wayland"
+-- TeXpresso keymap
+vim.keymap.set('n', '<leader>x', function()
+  -- Search upwards for main.tex starting from the current file's directory
+  local main_tex = vim.fn.findfile('main.tex', '.;')
+
+  if main_tex ~= "" then
+    local abs_main = vim.fn.fnamemodify(main_tex, ':p')
+    vim.cmd('TeXpresso ' .. vim.fn.fnameescape(abs_main))
+  else
+    vim.cmd('TeXpresso %')
+  end
+
+  vim.defer_fn(function()
+    vim.cmd("doautocmd ColorScheme")
+  end, 250)
+end, { desc = 'Start TeXpresso (main.tex or current file)' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
@@ -148,15 +179,14 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   command = [[%s/\s\+$//e]],
 })
 
--- Return to last edit position after opening file
-vim.api.nvim_create_autocmd("BufReadPost", {
-  group = augroup,
+-- LaTeX text styles
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "tex",
   callback = function()
-    local mark = vim.api.nvim_buf_get_mark(0, '"')
-    local lcount = vim.api.nvim_buf_line_count(0)
-    if mark[1] > 0 and mark[1] <= lcount and vim.bo.filetype ~= "commit" then
-      pcall(vim.api.nvim_win_set_cursor, 0, mark)
-    end
+    local opts = { buffer = true, silent = true }
+    vim.keymap.set("x", "<C-b>", "c\\textbf{<C-r>\"}<Esc>", opts)
+    vim.keymap.set("x", "<C-i>", "c\\textit{<C-r>\"}<Esc>", opts)
+    vim.keymap.set("x", "<C-m>", "c\\verb|<C-r>\"|<Esc>", opts)
   end,
 })
 
@@ -168,6 +198,18 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.tabstop = 2
     vim.opt_local.shiftwidth = 2
     vim.opt_local.softtabstop = 2
+  end,
+})
+
+-- Return to last edit position after opening file
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group = augroup,
+  callback = function()
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local lcount = vim.api.nvim_buf_line_count(0)
+    if mark[1] > 0 and mark[1] <= lcount and vim.bo.filetype ~= "commit" then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
   end,
 })
 
@@ -194,7 +236,11 @@ vim.o.updatetime = 250
 vim.api.nvim_create_autocmd("CursorHold", {
   pattern = "*.tex",
   callback = function()
-    pcall(vim.fn["vimtex#view#view"])
+    local check_compiling = "exists('b:vimtex') && has_key(b:vimtex, 'compiler') && has_key(b:vimtex.compiler, 'is_running') ? b:vimtex.compiler.is_running() : 0"
+    local is_compiling = vim.fn.eval(check_compiling)
+    if is_compiling == 1 then
+      pcall(vim.fn["vimtex#view#view"])
+    end
   end,
 })
 
@@ -209,11 +255,18 @@ vim.pack.add({
   "https://github.com/rachartier/tiny-inline-diagnostic.nvim",
   "https://github.com/neovim/nvim-lspconfig",
   "https://github.com/lervag/vimtex",
+  "https://github.com/let-def/texpresso.vim",
   "https://github.com/L3MON4D3/LuaSnip",
+  -- "https://github.com/m4xshen/hardtime.nvim",
+  -- "https://github.com/rcarriga/nvim-notify",
 })
+-- vim.notify = require("notify")
+-- vim.o.termguicolors = true
 
-require("gitsigns").setup()
-require("tiny-inline-diagnostic").setup()
+-- require('hardtime').setup()
+require('gitsigns').setup()
+require('tiny-inline-diagnostic').setup()
+require('mini.icons').setup()
 require('mini.indentscope').setup()
 require('mini.pairs').setup()
 require('mini.map').setup()
@@ -281,6 +334,7 @@ miniclue.setup({
   },
   clues = {
     { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
+    { mode = 'n', keys = '<Leader>s', desc = '+Wrap' },
     { mode = 'n', keys = '<Leader>p', desc = '+Persistence' },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
@@ -387,12 +441,28 @@ vim.keymap.set({"i", "s"}, "<S-Tab>", function()
   end
 end, {silent = true, desc = "LuaSnip jump back"})
 
+-- Stop LuaSnip sessions when leaving insert mode
+vim.api.nvim_create_autocmd("InsertLeave", {
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    if not ls.session.jump_active then
+      while ls.session.current_nodes[buf] do
+        ls.unlink_current()
+      end
+    end
+  end,
+})
+
 -- Other snippets
 ls.add_snippets("java", {
-  s("sout", fmta("System.out.println(<>);", { i(1) })),
+  s("sou", fmta("System.out.println(<>);", { i(1) })),
 })
 
 ls.add_snippets("cpp", {
+  s("cin", fmt("cin >> {};", { i(1) })),
+  s("cou", fmt("cout << {} << '\\n';", { i(1) })),
+  s("\\n", t("'\\n';")),
+
   s("plan", {
     t({
       "#include <bits/stdc++.h>",
@@ -414,15 +484,10 @@ ls.add_snippets("cpp", {
       "    while (t--) {",
       "        solve();",
       "    }",
-      "}",
-      ""
+      "}"
     }),
     i(0),
   }),
-
-  s("cin", fmt("cin >> {};", { i(1) })),
-  s("cou", fmt("cout << {} << '\\n';", { i(1) })),
-  s("\\n", t("'\\n';")),
 })
 
 -- Context Helper: Only trigger certain snippets in math mode
@@ -462,21 +527,26 @@ ls.add_snippets("tex", {
   ),
 
   math_i("//", fmta("\\frac{<>}{<>}<>", { i(1), i(2), i(0) })),
-  math_i("sr", t("^2")),
-  math_i("cb", t("^3")),
+  math_i("sc", t("^2 ")),
+  math_i("cb", t("^3 ")),
   math_i("**", fmta("^{<>}<>", { i(1), i(0) })),
   math_i("__", fmta("_{<>}<>", { i(1), i(0) })),
   math_i("bb", fmta("\\mathbb{<>}<>", { i(1), i(0) })),
-  math_i("ooo", t("\\infty")),
-  math_i("...", t("\\ldots")),
-  math_i(">=", t("\\geqslant")),
-  math_i("<=", t("\\leqslant")),
-  math_i("@a", t("\\alpha")),
-  math_i("@b", t("\\beta")),
-  math_i("@g", t("\\gamma")),
-  math_i("@d", t("\\delta")),
-  math_i("@e", t("\\epsilon")),
-  math_i("@l", t("\\lambda")),
+  math_i("ooo", t("\\infty ")),
+  math_i("...", t("\\ldots ")),
+  math_i("···", t("\\cdots ")),
+  math_i("c·", t("\\cdot ")),
+  math_i("limn", t("\\lim_{n\\to\\infty} ")),
+  math_i("limx", t("\\lim_{x\\to\\infty} ")),
+  math_i("qq", t("\\qquad ")),
+  math_i(">=", t("\\geqslant ")),
+  math_i("<=", t("\\leqslant ")),
+  math_i("@a", t("\\alpha ")),
+  math_i("@b", t("\\beta ")),
+  math_i("@g", t("\\gamma ")),
+  math_i("@d", t("\\delta ")),
+  math_i("@e", t("\\epsilon ")),
+  math_i("@l", t("\\lambda ")),
   -- Auto-subscript: a1 -> a_1
   s({ trig = "([a-zA-Z])(%d)", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
     f(function(_, snip)
@@ -504,9 +574,18 @@ ls.add_snippets("tex", {
   s({ trig = "beg", snippetType = "autosnippet" },
     fmta([[
       \begin{<>}
-        <>
+          <>
       \end{<>}
     ]], { i(1), i(0), rep(1) }),
+    { condition = line_begin }
+  ),
+-- gat: Environment (Triggers only at the beginning of a line)
+  s({ trig = "bga", snippetType = "autosnippet" },
+    fmta([[
+      \begin{gather*}
+          <>
+      \end{gather*}
+    ]], { i(0) }),
     { condition = line_begin }
   ),
 })

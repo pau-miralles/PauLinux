@@ -189,7 +189,7 @@
     cursor.size = 32;
     opacity.desktop = 0.8;
     opacity.popups = 0.8;
-    opacity.terminal = 0.5;
+    opacity.terminal = 0.7;
   };
 
   specialisation.light.configuration = {

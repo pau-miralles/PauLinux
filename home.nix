@@ -23,7 +23,6 @@ in
     gimp
     audacity
     vlc
-    zathura
     handbrake
     mixxx
     # arduino-ide
@@ -67,7 +66,8 @@ in
     jq # Json, for the sway tabs script
     zip
     unzip
-
+    texpresso
+    tectonic
   (texlive.withPackages (ps: [
       ps.scheme-full
       ps.latexmk
@@ -173,6 +173,7 @@ in
       cursor_trail_start_threshold = 0;
       confirm_os_window_close = 0;
       mouse_hide_wait = -1;
+      paste_actions = "no-op";
       "map ctrl+plus" = "change_font_size current +1";
       "map ctrl+minus" = "change_font_size current -1";
     };
@@ -272,6 +273,19 @@ in
     transparentBackground.signColumn = true;
     transparentBackground.numberLine = true;
     plugin = "mini.base16";
+  };
+
+  programs.zathura = {
+    enable = true;
+    options = {
+      selection-clipboard = "clipboard";
+      recolor = true;
+      recolor-keephue = true;
+      recolor-lightcolor = lib.mkForce "#262423";
+      search-hadjust = false;
+      highlight-color = lib.mkForce "rgba(220, 200, 200, 0.10)";
+      highlight-active-color = lib.mkForce "rgba(220, 170, 170, 0.15)";
+    };
   };
 
   programs.bash = {
@@ -397,6 +411,7 @@ in
         user_pref("browser.uidensity", 1);
         user_pref("gfx.webrender.all", true);
         user_pref("widget.wayland.fractional-scale.enabled", true);
+        user_pref("full-screen-api.ignore-widgets", true);
         /* --- Performance, Input & Animations --- */
         user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("apz.overscroll.enabled", false);
@@ -475,7 +490,7 @@ in
         };
         "temperature" = {
           hwmon-path = "/sys/class/hwmon/hwmon6/temp1_input";
-          critical-threshold = 80;
+          critical-threshold = 90;
           format-critical = "⚠{temperatureC}°C";
           format = "{temperatureC}°C";
         };
