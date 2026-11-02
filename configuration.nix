@@ -12,9 +12,7 @@
     loader.timeout = 0;
     consoleLogLevel = 0;
     initrd = {
-      verbose = false;
       kernelModules = [ "amdgpu" ];
-      systemd.enable = true;
     };
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
@@ -170,7 +168,7 @@
   stylix = {
     enable = true;
     targets.gtk.enable = true;
-    image = ./config/wallpaper.jpg;
+    # image = ./config/wallpaper.jpg;
     base16Scheme = ./config/theme/dark.yaml;
     polarity = "dark";
     fonts = {
@@ -187,15 +185,15 @@
     cursor.package = pkgs.posy-cursors;
     cursor.name = "Posy_Cursor";
     cursor.size = 32;
-    opacity.desktop = 0.8;
-    opacity.popups = 0.8;
-    opacity.terminal = 0.7;
+    # opacity.desktop = 0.8;
+    # opacity.popups = 0.8;
+    # opacity.terminal = 0.7;
   };
 
   specialisation.light.configuration = {
     stylix.polarity = lib.mkForce "light";
     stylix.base16Scheme = lib.mkForce ./config/theme/light.yaml;
-    stylix.opacity.terminal = lib.mkForce 0.9;
+    # stylix.opacity.terminal = lib.mkForce 0.9;
   };
   security.sudo.extraRules = [
     {

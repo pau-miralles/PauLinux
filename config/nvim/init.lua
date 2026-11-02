@@ -1,7 +1,7 @@
 -- TRANSPARENCY =====================================
 local function clear_bg()
   local bgs, get_hl, set_hl = {}, vim.api.nvim_get_hl, vim.api.nvim_set_hl
-  for _, g in ipairs({"Normal", "NormalNC", "NormalFloat", "Pmenu", "TelescopeNormal", "SignColumn", "EndOfBuffer"}) do
+  for _, g in ipairs({"NormalFloat", "Pmenu", "TelescopeNormal", "SignColumn", "EndOfBuffer"}) do
     local h = get_hl(0, {name=g, link=false})
     if h.bg then bgs[h.bg] = true end
     if h.ctermbg then bgs[h.ctermbg] = true end
@@ -38,6 +38,7 @@ vim.o.confirm = true         -- Ask to save instead of failing
 vim.o.inccommand = "split"   -- Live substitution preview
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' } -- Must use vim.opt for tables
 vim.o.autochdir = true       -- Change directory to current file's
+vim.o.termguicolors = true
 
 -- Indentation
 vim.o.tabstop = 4            -- Tab width
@@ -99,6 +100,8 @@ vim.keymap.set("x", "p", '"_dP', { desc = "Paste without replacing clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 vim.keymap.set("n", "<leader>sw", "<cmd>set wrap<CR>", { desc = "Enable line wrap" })
 vim.keymap.set("n", "<leader>sn", "<cmd>set nowrap<CR>", { desc = "Disable line wrap" })
+vim.keymap.set("n", "<leader>ss", "[s1z=``", { desc = "Fix previous misspelled word" })
+vim.keymap.set("i", "<C-c>", "<Esc>[s1z=``i", { desc = "Fix previous misspelled word", })
 vim.keymap.set("n", "j", "gj")
 vim.keymap.set("n", "k", "gk")
 vim.keymap.set("n", "0", function()
@@ -162,8 +165,8 @@ vim.keymap.set('n', '<leader>x', function()
 
   vim.defer_fn(function()
     vim.cmd("doautocmd ColorScheme")
-  end, 250)
-end, { desc = 'Start TeXpresso (main.tex or current file)' })
+  end, 50)
+end, { desc = 'Start TeXpresso' })
 
 -- AUTOCOMMANDS & FUNCTIONS ====================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
@@ -261,7 +264,6 @@ vim.pack.add({
   -- "https://github.com/rcarriga/nvim-notify",
 })
 -- vim.notify = require("notify")
--- vim.o.termguicolors = true
 
 -- require('hardtime').setup()
 require('gitsigns').setup()
@@ -334,7 +336,7 @@ miniclue.setup({
   },
   clues = {
     { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
-    { mode = 'n', keys = '<Leader>s', desc = '+Wrap' },
+    { mode = 'n', keys = '<Leader>s', desc = '+Set' },
     { mode = 'n', keys = '<Leader>p', desc = '+Persistence' },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
@@ -529,7 +531,7 @@ ls.add_snippets("tex", {
   math_i("//", fmta("\\frac{<>}{<>}<>", { i(1), i(2), i(0) })),
   math_i("sc", t("^2 ")),
   math_i("cb", t("^3 ")),
-  math_i("**", fmta("^{<>}<>", { i(1), i(0) })),
+  math_i("^^", fmta("^{<>}<>", { i(1), i(0) })),
   math_i("__", fmta("_{<>}<>", { i(1), i(0) })),
   math_i("bb", fmta("\\mathbb{<>}<>", { i(1), i(0) })),
   math_i("ooo", t("\\infty ")),

@@ -7,39 +7,39 @@ set $right l
 
 ### SwayFX
 # animation_duration_ms 100
-# corner_radius 8
+# corner_radius 10
 # Window Blur
-blur enable
-blur_passes 5
-blur_radius 5
-blur_noise 0.03
+# blur enable
+# blur_passes 5
+# blur_radius 5
+# blur_noise 0.03
 
-# Transparency
-for_window [app_id=".*"] opacity 0.85
-for_window [class=".*"] opacity 0.85
-# Exceptions
-for_window [app_id="^(org.pwmt.zathura|texpresso|firefox|org.mixxx.Mixxx|kitty|gimp|mpv|md.Obsidian|libreoffice-.*)$"] opacity 1
-for_window [class="^(vlc|Apache NetBeans IDE.*)$"] opacity 1
+# # Transparency
+# for_window [app_id=".*"] opacity 0.85
+# for_window [class=".*"] opacity 0.85
+# # Exceptions
+# for_window [app_id="^(org.pwmt.zathura|texpresso|firefox|org.mixxx.Mixxx|kitty|gimp|mpv|md.Obsidian|libreoffice-.*)$"] opacity 1
+# for_window [class="^(vlc|Apache NetBeans IDE.*)$"] opacity 1
 for_window [app_id="org.mixxx.Mixxx"] inhibit_idle visible
 for_window [app_id="kitty" title="^waybar$"] floating enable, resize set 1300 850
 # Dimming
-default_dim_inactive 0.15
+# default_dim_inactive 0.15
 
 # Gaps & Borders
-font pango:monospace 3
+font pango:monospace 12
 titlebar_border_thickness 0
-titlebar_padding 0
-default_border pixel 2
-# gaps inner 4
+titlebar_padding 4 0
+default_border pixel 0
+# gaps inner 8
 gaps outer 0
 smart_gaps on
 smart_borders on
 
-layer_effects "waybar" {
-    blur enable;
-    blur_xray disable;
-    blur_ignore_transparent enable;
-}
+# layer_effects "waybar" {
+#     blur enable;
+#     blur_xray disable;
+#     blur_ignore_transparent enable;
+# }
 
 ### Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -48,7 +48,7 @@ output eDP-1 {
   pos 0 0
 }
 output DP-3 pos -400 -1080
-output * bg $HOME/.nixos-config/config/wallpaper.jpg fill
+# output * bg $HOME/.nixos-config/config/wallpaper.jpg fill
 
 ### Idle configuration
 exec swayidle -w \
@@ -74,7 +74,7 @@ seat seat0 xcursor_theme Posy_Cursor 32
 
 ### Key bindings
     bindsym $mod+Return exec kitty -1
-    bindsym $mod+d exec rofi -show drun
+    bindsym $mod+d exec rofi -show drun -theme-str "element-icon { size: 1em; }"
     bindsym $mod+w exec firefox
     bindsym $mod+e exec thunar
     bindsym $mod+q kill
@@ -86,11 +86,9 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+Shift+d exec ~/.nixos-config/config/toggle-dim.sh
     bindsym $mod+g exec rofi-wlsunset
     bindsym $mod+period exec rofi -show emoji
-    bindsym $mod+Shift+t exec toggle-theme
     bindsym XF86AudioMedia exec toggle-theme
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
     # Rotate Display with Ctrl+Alt+Arrows
     bindsym Control+Mod1+Up    output eDP-1 transform normal
     bindsym Control+Mod1+Right output eDP-1 transform 90
@@ -98,6 +96,7 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym Control+Mod1+Left  output eDP-1 transform 270
 
 # Moving around:
+    mouse_warping container
     # Move your focus around
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
@@ -110,23 +109,25 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+Shift+$right move right
 # Workspaces:
     # Switch to workspace
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
+    bindsym $mod+1 workspace number 1:I
+    bindsym $mod+2 workspace number 2:II
+    bindsym $mod+3 workspace number 3:III
+    bindsym $mod+4 workspace number 4:IV
+    bindsym $mod+5 workspace number 5:V
+    bindsym $mod+6 workspace number 6:VI
     # Move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace number 1
-    bindsym $mod+Shift+2 move container to workspace number 2
-    bindsym $mod+Shift+3 move container to workspace number 3
-    bindsym $mod+Shift+4 move container to workspace number 4
-    bindsym $mod+Shift+5 move container to workspace number 5
-    bindsym $mod+Shift+6 move container to workspace number 6
+    bindsym $mod+Shift+1 move container to workspace number 1:I
+    bindsym $mod+Shift+2 move container to workspace number 2:II
+    bindsym $mod+Shift+3 move container to workspace number 3:III
+    bindsym $mod+Shift+4 move container to workspace number 4:IV
+    bindsym $mod+Shift+5 move container to workspace number 5:V
+    bindsym $mod+Shift+6 move container to workspace number 6:VI
 # Layout stuff:
     # Switch the current container between different layout styles
-    bindsym $mod+t exec 'swaymsg "[workspace=$(swaymsg -t get_workspaces | jq -r ".[] | select(.focused).name") tiling] move container to workspace current; layout tabbed"'
-    bindsym $mod+s focus parent; layout toggle split
+    bindsym $mod+c exec $HOME/.nixos-config/config/swaytiles.py cycle
+    bindsym $mod+t exec $HOME/.nixos-config/config/swaytiles.py tabbed
+    bindsym $mod+s exec $HOME/.nixos-config/config/swaytiles.py spiral
+    bindsym $mod+m exec $HOME/.nixos-config/config/swaytiles.py master
     bindsym $mod+f fullscreen
     bindsym $mod+Shift+f floating toggle
     bindsym $mod+space focus mode_toggle
@@ -134,10 +135,10 @@ seat seat0 xcursor_theme Posy_Cursor 32
     bindsym $mod+Shift+minus move scratchpad
     bindsym $mod+minus scratchpad show
 # Resizing containers:
-    bindsym Mod4+Control+$left resize grow width 60px
-    bindsym Mod4+Control+$down resize shrink height 60px
-    bindsym Mod4+Control+$up resize grow height 60px
-    bindsym Mod4+Control+$right resize shrink width 60px
+    bindsym $mod+Control+$left resize grow width 60px
+    bindsym $mod+Control+$down resize shrink height 60px
+    bindsym $mod+Control+$up resize grow height 60px
+    bindsym $mod+Control+$right resize shrink width 60px
 # Utilities:
     # Special keys to adjust volume via PulseAudio
     bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
@@ -162,16 +163,19 @@ seat seat0 xcursor_theme Posy_Cursor 32
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-exec_always autotiling-rs
+exec $HOME/.nixos-config/config/swaytiles.py
 exec_always systemctl --user restart waybar
 exec --no-startup-id bash -c 'sleep 1 && kitty --single-instance --start-as=hidden'
 exec rm -f ~/.local/share/rofi/rofi_calc_history
 exec rm -f ~/ly-session.log
+exec rm -rf ~/Baixades
 exec low-battery-warning
+exec --no-startup-id systemd-run --user --unit=wlsunset-auto --collect wlsunset -l 39.56939 -L 2.65024 -t 5500 -T 6500
 
 include ~/.config/sway-colors
-client.focused          $base0D   $base0D   $base00   $base0D   $base0D
-client.focused_inactive $base01   $base01   $base05   $base01   $base01
-client.unfocused        $base00   $base00   $base05   $base00   $base00
+client.focused          $base03   $base01   $base06   $base03   $base03
+client.focused_inactive $base02   $base00   $base04   $base02   $base02
+client.unfocused        $base00   $base00   $base04   $base00   $base02
 client.urgent           $base08   $base08   $base00   $base08   $base08
-client.placeholder      $base00   $base00   $base05   $base00   $base00
+client.placeholder      $base00   $base00   $base06   $base00   $base00
+output * bg $base00 solid_color

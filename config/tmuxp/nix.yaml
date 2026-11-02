@@ -16,7 +16,7 @@ windows:
   - focus: 'true'
     shell_command:
     - cd /home/pau/.nixos-config
-    - clear&&fastfetch --logo none
+    - fetch
   - shell_command:
     - cd /home/pau/.nixos-config/config
     - clear

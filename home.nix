@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }:
 let
+  inherit (config.lib.formats.rasi) mkLiteral;
   rofi-power = pkgs.writeShellScriptBin "rofi-power" (builtins.readFile ./config/rofi-power.sh);
   rofi-wlsunset = pkgs.writeShellScriptBin "rofi-wlsunset" (builtins.readFile ./config/rofi-wlsunset.sh);
   toggle-theme = pkgs.writeShellScriptBin "toggle-theme" (builtins.readFile ./config/toggle-theme.sh);
@@ -50,7 +51,7 @@ in
     rmpc
     cava
     bottom
-    fastfetch
+    maxfetch
     tty-clock
     live-server
     speedtest-cli
@@ -67,8 +68,7 @@ in
     zip
     unzip
     texpresso
-    tectonic
-  (texlive.withPackages (ps: [
+    (texlive.withPackages (ps: [
       ps.scheme-full
       ps.latexmk
     ]))
@@ -130,7 +130,6 @@ in
   };
 
   xdg.configFile = {
-    "fastfetch".source = ./config/fastfetch;
     "tmuxp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/tmuxp";
     "rmpc/config.ron".source = ./config/rmpc/config.ron;
     "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
@@ -168,9 +167,9 @@ in
   programs.kitty = {
     enable = true;
     settings = {
-      dynamic_background_opacity = true;
-      cursor_trail = 1;
-      cursor_trail_start_threshold = 0;
+      # dynamic_background_opacity = true;
+      # cursor_trail = 1;
+      # cursor_trail_start_threshold = 0;
       confirm_os_window_close = 0;
       mouse_hide_wait = -1;
       paste_actions = "no-op";
@@ -269,9 +268,9 @@ in
   stylix.targets.neovim = {
     enable = true;
     colors.enable = true;
-    transparentBackground.main = true;
-    transparentBackground.signColumn = true;
-    transparentBackground.numberLine = true;
+    # transparentBackground.main = true;
+    # transparentBackground.signColumn = true;
+    # transparentBackground.numberLine = true;
     plugin = "mini.base16";
   };
 
@@ -283,8 +282,8 @@ in
       recolor-keephue = true;
       recolor-lightcolor = lib.mkForce "#262423";
       search-hadjust = false;
-      highlight-color = lib.mkForce "rgba(220, 200, 200, 0.10)";
-      highlight-active-color = lib.mkForce "rgba(220, 170, 170, 0.15)";
+      highlight-color = lib.mkForce "rgba(220, 200, 200, 0.30)";
+      highlight-active-color = lib.mkForce "rgba(220, 170, 170, 0.40)";
     };
   };
 
@@ -302,9 +301,9 @@ in
       v = "nvim";
       a = "tmux new -A -s a";
       printer = "sudo systemctl start cups";
-      ff = "fastfetch --logo small";
+      fetch = "$HOME/.nixos-config/config/fetch.sh";
       clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
-      sync = "cd ~/.nixos-config/ && sudo nixos-rebuild list-generations --flake .#framework && sudo nix-collect-garbage -d && sudo nixos-rebuild switch --flake .#framework && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && git add . && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
       tf = "tmuxp freeze";
     };
@@ -395,16 +394,23 @@ in
       id = 0;
       name = "default";
       extensions.force = true;
-      userChrome = builtins.readFile ./config/firefox/userChrome.css;
-      userContent = builtins.readFile ./config/firefox/userContent.css;
+      userChrome = ''
+        ${builtins.readFile ./config/firefox/FoxOne/userChrome.css}
+        ${builtins.readFile ./config/firefox/userChrome.css}
+      '';
+      userContent = ''
+        ${builtins.readFile ./config/firefox/FoxOne/userContent.css}
+        ${builtins.readFile ./config/firefox/userContent.css}
+      '';
       extraConfig = ''
         ${builtins.readFile ./config/firefox/betterfox.js}
         /* --- Instant New Windows / Pre-loading --- */
         user_pref("browser.startup.preXulSkeletonDocument", true);
         user_pref("browser.newtabpage.enabled", true);
         /* --- SwayFX & Wayland Transparency --- */
-        user_pref("widget.gtk.transparent-windows", true);
+        /* user_pref("widget.gtk.transparent-windows", true); */
         /* --- Stylesheet & Display --- */
+        user_pref("ui.key.menuAccessKeyFocuses", false);
         user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
         user_pref("browser.tabs.drawInTitlebar", true);
         user_pref("browser.compactmode.show", true);
@@ -413,6 +419,7 @@ in
         user_pref("widget.wayland.fractional-scale.enabled", true);
         user_pref("full-screen-api.ignore-widgets", true);
         /* --- Performance, Input & Animations --- */
+        user_pref("ui.prefersReducedMotion", 1);
         user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("apz.overscroll.enabled", false);
         user_pref("browser.quitShortcut.disabled", true);
@@ -448,7 +455,7 @@ in
     enable = true;
     package = pkgs.rofi;
     plugins = [ pkgs.rofi-calc pkgs.rofi-emoji ];
-    extraConfig = {
+    settings = {
       modi = "drun,calc";
       show-icons = true;
       display-drun = " ";
@@ -457,12 +464,22 @@ in
       kb-mode-next = "Shift+Right";
       kb-mode-previous = "Shift+Left";
       dpi = 192;
+      drun-display-format = "{name}";
     };
     theme = {
       "listview" = {
-        lines = 12;
+        lines = 8;
         columns = 1;
         fixed-height = false;
+      };
+      "element" = {
+        padding = mkLiteral "6px";
+      };
+      "element-icon" = {
+        size = mkLiteral "0";
+      };
+      "element-text" = {
+        vertical-align = mkLiteral "0.5";
       };
     };
   };
@@ -475,11 +492,16 @@ in
         layer = "top";
         position = "bottom";
         height = 18;
-        modules-left = [ "battery" "power-profiles-daemon" "temperature" ];
+        modules-left = [ "battery" "power-profiles-daemon" "temperature" "sway/window" ];
         modules-center = [ "sway/workspaces" ];
         modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
         "sway/workspaces" = {
           all-outputs = true;
+          format = "{name}";
+        };
+        "sway/window" = {
+          format = "{title}";
+          max-length = 30;
         };
         "battery" = {
           interval = 60;
