@@ -13,6 +13,11 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    wlctl = {
+      url = "github:aashish-thapa/wlctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs: {
@@ -29,6 +34,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.backupFileExtension = "backup";
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.pau = import ./home.nix;
           }
         ];

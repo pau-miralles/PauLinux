@@ -1,9 +1,8 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   hardware.graphics.enable = true; # OpenGL (required for Wayland)
   programs.sway = {
     enable = true;
-    package = pkgs.swayfx; # Use SwayFX instead of standard Sway
     wrapperFeatures.gtk = true; # Fixes GTK apps in Sway
   };
   environment.systemPackages = with pkgs; [
@@ -15,7 +14,7 @@
     polkit_gnome # Authentication agent
   ];
   fonts.packages = with pkgs; [
-    nerd-fonts.d2coding
+    nerd-fonts.ubuntu-mono
   ];
   xdg.portal = {
     enable = true;

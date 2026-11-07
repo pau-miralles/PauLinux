@@ -2,9 +2,9 @@
   --uc-border-radius: 0px !important;
   --uc-status-panel-spacing: 0px !important;
   --uc-urlbar-min-width: min(20vw, 300px) !important;
-  --uc-urlbar-max-width: min(55vw, 1000px) !important;
-  --uc-active-tab-width: 500px !important;
-  --uc-inactive-tab-width: 500px !important;
+  --uc-urlbar-max-width: min(100vw, 2000px) !important;
+  --uc-active-tab-width: 1000px !important;
+  --uc-inactive-tab-width: 1000px !important;
   --uc-hide-window-buttons: 1 !important;
   --uc-hamburger-width: 0px !important;
   --uc-extensions-button-right: 0 !important;
@@ -27,6 +27,7 @@
 
 #PanelUI-button {
   display: none !important;
+  width: 0px !important;
 }
 #unified-extensions-button {
   margin-top: 0px !important;
@@ -50,8 +51,10 @@
   opacity: 1 !important;
 }
 
-.tabbrowser-tab .tab-close-button {
+.tabbrowser-tab .tab-close-button,
+.tabbrowser-tab:not([pinned]) .tab-close-button {
   display: none !important;
+  width: 0px !important;
 }
 
 

@@ -40,9 +40,11 @@
   };
 
   networking.hostName = "framework"; # Define your hostname.
-  networking.wireless.iwd.enable = true;
+  hardware.wirelessRegulatoryDatabase = true;
+  boot.extraModprobeConfig = ''
+    options cfg80211 ieee80211_regdom="ES"
+  '';
   networking.networkmanager.enable = true; # Enable networking
-  networking.networkmanager.wifi.backend = "iwd";
   systemd.services.NetworkManager-wait-online.enable = false;
 
   time.timeZone = "Europe/Madrid";
@@ -73,6 +75,8 @@
   };
   zramSwap.enable = true;
 
+  services.journald.settings.Journal.SystemMaxUse = "50M";
+
   users.users.pau = { # Define a user account. Don't forget to set a password with ‘passwd’
     isNormalUser = true;
     description = "pau";
@@ -85,14 +89,19 @@
     vim
     wget
   ];
+  environment.defaultPackages = []; # No default packages (perl, nano, rsync, ...)
+  documentation.enable = false;
+  documentation.doc.enable = false;
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
   };
   nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enable Flakes
   # List services that you want to enable:
   services.fwupd.enable = true; # Framework update
-  services.openssh.enable = true; # Enable the OpenSSH daemon.
-  services.gnome.gnome-keyring.enable = true;
+  services.openssh = {
+    enable = true; # Enable the OpenSSH daemon.
+    startWhenNeeded = true;
+  };
   nix.settings.auto-optimise-store = true; # Garbage collecting
   nix.gc = {
     automatic = true;
@@ -107,6 +116,7 @@
     pulse.enable = true;
     jack.enable = true;
   };
+  xdg.sounds.enable = false; # No sound effects
   services.fprintd.enable = false; # No fingerprint
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = false;
@@ -127,15 +137,15 @@
   services.tumbler.enable = true; # Thumbnail support for images
   programs.xfconf.enable = true;  # Required to save Thunar settings
   services.udisks2.enable = true;
-    security.polkit.extraConfig = ''
-      polkit.addRule(function(action, subject) {
-        if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
-             action.id == "org.freedesktop.udisks2.filesystem-mount") &&
-            subject.isInGroup("wheel")) {
-          return polkit.Result.YES;
-        }
-      });
-    '';
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+           action.id == "org.freedesktop.udisks2.filesystem-mount") &&
+          subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   services.kanata = {
     enable = true;
@@ -168,16 +178,15 @@
   stylix = {
     enable = true;
     targets.gtk.enable = true;
-    # image = ./config/wallpaper.jpg;
     base16Scheme = ./config/theme/dark.yaml;
     polarity = "dark";
     fonts = {
       sizes = {
-        terminal = 18;
+        terminal = 17;
         applications = 12;
       };
-      monospace.package = pkgs.nerd-fonts.d2coding;
-      monospace.name = "D2KodingLigature Nerd Font";
+      monospace.package = pkgs.nerd-fonts.ubuntu-mono;
+      monospace.name = "Ubuntu Mono Nerd Font";
       serif = config.stylix.fonts.monospace;
       sansSerif = config.stylix.fonts.monospace;
       emoji = config.stylix.fonts.monospace;

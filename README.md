@@ -1,5 +1,5 @@
 # PauLinux
-Personal **NixOS** setup for Framework 13 AMD, with *SwayFX, Waybar, Stylix, Neovim, etc*
+Personal **NixOS** setup for Framework 13 AMD, with *Sway, Waybar, Stylix, Neovim, etc*
 
 ---
 ### Installation

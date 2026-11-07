@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   inherit (config.lib.formats.rasi) mkLiteral;
   rofi-power = pkgs.writeShellScriptBin "rofi-power" (builtins.readFile ./config/rofi-power.sh);
@@ -23,10 +23,7 @@ in
     libgsf # ODF (LibreOffice) thumbnails
     gimp
     audacity
-    vlc
-    handbrake
     mixxx
-    # arduino-ide
     (pkgs.symlinkJoin {
       name = "netbeans";
       paths = [ pkgs.netbeans ];
@@ -46,22 +43,16 @@ in
     yt-dlp
     eza
     bat
-    ripgrep
     tealdeer
-    rmpc
     cava
     bottom
-    maxfetch
-    tty-clock
     live-server
     speedtest-cli
-    appimage-run
 
     wlsunset
     playerctl # Play/Pause buttons
     pavucontrol # GUI Audio Panel
-    wiremix # TUI Audio Panel
-    impala # TUI Wifi Panel
+    inputs.wlctl.packages.${pkgs.system}.default # TUI Network Manager
     bluetui # TUI Bluetooth Panel
     ffmpegthumbnailer # Video thumbnails
     jq # Json, for the sway tabs script
@@ -92,23 +83,11 @@ in
   ];
   services.mako.enable = true; # Notification daemon
   services.syncthing.enable = true;
+  systemd.user.services.syncthing.Install.WantedBy = lib.mkForce [ ];
   services.cliphist = {
     enable = true;
     allowImages = true;
   };
-  services.udiskie.enable = true; # Automatic mount USB drives
-  services.mpd = {
-    enable = true;
-    musicDirectory = "${config.home.homeDirectory}/Music";
-    extraConfig = ''
-      audio_output {
-        type "pulse"
-        name "PulseAudio"
-      }
-    '';
-    network.listenAddress = "any";
-  };
-  services.mpd-mpris.enable = true;
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
@@ -131,8 +110,6 @@ in
 
   xdg.configFile = {
     "tmuxp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/tmuxp";
-    "rmpc/config.ron".source = ./config/rmpc/config.ron;
-    "rmpc/theme.ron".text = import ./config/rmpc/theme.nix { inherit config; };
     "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
     "sway-colors".text = ''
       set $base00 ${colors.base00}
@@ -164,17 +141,11 @@ in
     '';
   };
 
-  programs.kitty = {
+programs.foot = {
     enable = true;
     settings = {
-      # dynamic_background_opacity = true;
-      # cursor_trail = 1;
-      # cursor_trail_start_threshold = 0;
-      confirm_os_window_close = 0;
-      mouse_hide_wait = -1;
-      paste_actions = "no-op";
-      "map ctrl+plus" = "change_font_size current +1";
-      "map ctrl+minus" = "change_font_size current -1";
+      scrollback.lines = 1000;
+      mouse.hide-when-typing = "yes";
     };
   };
 
@@ -196,8 +167,6 @@ in
       set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[2 q'
       set -g set-clipboard on
       set -g focus-events on
-      unbind r
-      bind r source-file ~/.config/tmux/tmux.conf \; display-message "Tmux config reloaded"
       bind C-l send-keys 'C-l'
       bind - display-popup -E -w 75% -h 75% "tmux new-session -A -s scratchpad"
       bind -n M-f resize-pane -Z
@@ -205,7 +174,7 @@ in
       bind -n M-C-l next-window
 
       # Status Bar (vim-tpipeline)
-      set -g status-style "bg=default,fg=#${config.lib.stylix.colors.base05}"
+      set -g status-style "bg=default,fg=#${config.lib.stylix.colors.base0A}"
       set -g status-justify absolute-centre
       set -g status-left-length 99
       set -g status-right-length 99
@@ -213,9 +182,9 @@ in
       set -g status-right ""
 
       # Stylix styling
-      set -g window-status-style "fg=#${config.lib.stylix.colors.base09}"
+      set -g window-status-style "fg=#${config.lib.stylix.colors.base04}"
       set -g window-status-format "#W"
-      set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base03},bold"
+      set -g window-status-current-style "bg=default,fg=#${config.lib.stylix.colors.base09},bold"
       set -g window-status-current-format "#W"
 
       # Windows
@@ -268,9 +237,6 @@ in
   stylix.targets.neovim = {
     enable = true;
     colors.enable = true;
-    # transparentBackground.main = true;
-    # transparentBackground.signColumn = true;
-    # transparentBackground.numberLine = true;
     plugin = "mini.base16";
   };
 
@@ -291,18 +257,14 @@ in
     enable = true;
     enableCompletion = true;
     shellAliases = {
-      q = "exit";
       ls = "eza --icons --hyperlink";
       ll = "eza -l --header --icons --hyperlink";
       la = "eza -a --icons --hyperlink";
       lt = "eza -T --level=2 --icons --hyperlink";
       ltt = "eza -T --icons --hyperlink";
-      cat = "bat";
       v = "nvim";
       a = "tmux new -A -s a";
-      printer = "sudo systemctl start cups";
       fetch = "$HOME/.nixos-config/config/fetch.sh";
-      clock = "tty-clock -c -C 7 -s -d 1000 -f '%A, %B %d, %Y' -b";
       sync = "cd ~/.nixos-config/ && git add . && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
       tf = "tmuxp freeze";
@@ -407,8 +369,6 @@ in
         /* --- Instant New Windows / Pre-loading --- */
         user_pref("browser.startup.preXulSkeletonDocument", true);
         user_pref("browser.newtabpage.enabled", true);
-        /* --- SwayFX & Wayland Transparency --- */
-        /* user_pref("widget.gtk.transparent-windows", true); */
         /* --- Stylesheet & Display --- */
         user_pref("ui.key.menuAccessKeyFocuses", false);
         user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -465,6 +425,7 @@ in
       kb-mode-previous = "Shift+Left";
       dpi = 192;
       drun-display-format = "{name}";
+      emoji-format = "{name}";
     };
     theme = {
       "listview" = {
@@ -505,37 +466,31 @@ in
         };
         "battery" = {
           interval = 60;
-          format = "{capacity}% ({time}) {icon}";
+          format = "{capacity}% ({time})";
           format-charging = "{capacity}% ({time}) ";
-          format-icons = [ "" "" "" "" "" ];
-          on-click = "/etc/profiles/per-user/pau/bin/kitty --title waybar --override font_size=18 -e /etc/profiles/per-user/pau/bin/btm --battery";
+          on-click = "foot --title=waybar --override=font=monospace:size=20 btm --battery";
         };
         "temperature" = {
           hwmon-path = "/sys/class/hwmon/hwmon6/temp1_input";
           critical-threshold = 90;
-          format-critical = "⚠{temperatureC}°C";
+          format-critical = " {temperatureC}°C";
           format = "{temperatureC}°C";
         };
         "network" = {
-          format-wifi = "{essid} ({signalStrength}%) ";
+          format-wifi = "{essid} ({signalStrength}%)";
           format-ethernet = "󰈀";
           tooltip-format = "{ifname} via {gwaddr}";
           format-linked = "{ifname} (No IP)";
-          format-disconnected = "Disconnected ⚠";
-          on-click = "/etc/profiles/per-user/pau/bin/kitty --title waybar --override font_size=20 -e /etc/profiles/per-user/pau/bin/impala";
+          format-disconnected = "Disconnected";
+          on-click = "foot --title=waybar wlctl";
         };
         "backlight" = {
-          format = "{percent}% {icon}";
-          format-icons = ["" "󰖨" "" ""];
+          format = "{percent}%";
         };
         "pulseaudio" = {
-          format = "{volume}% {icon}";
-          format-bluetooth = "{volume}% {icon}";
-          format-muted = " ";
-          format-icons = {
-              headphone = "";
-              default = ["" ""];
-          };
+          format = "{volume}%";
+          format-bluetooth = "{volume}% ";
+          format-muted = "";
           scroll-step = 1;
           on-click = "/etc/profiles/per-user/pau/bin/pavucontrol";
         };
@@ -544,7 +499,6 @@ in
           tooltip-format = "{profile}";
           tooltip = true;
           format-icons = {
-            default = "";
             performance = "";
             balanced = "";
             power-saver = "󰌪";
@@ -552,7 +506,7 @@ in
         };
         "clock" = {
           interval = 1;
-          format = "{:%d/%m/%y %H:%M:%S}";
+          format = "{:%d-%m-%y %H:%M:%S}";
           tooltip-format = "<tt><small>{calendar}</small></tt>";
           calendar = {
             mode = "year";
@@ -594,7 +548,7 @@ in
       #pulseaudio,
       #backlight,
       #power-profiles-daemon {
-        padding: 0 10px;
+        padding: 0 8px;
       }
     '';
   };

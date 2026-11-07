@@ -1,4 +1,4 @@
--- TRANSPARENCY =====================================
+--========================== TRANSPARENCY ==========================--
 local function clear_bg()
   local bgs, get_hl, set_hl = {}, vim.api.nvim_get_hl, vim.api.nvim_set_hl
   for _, g in ipairs({"NormalFloat", "Pmenu", "TelescopeNormal", "SignColumn", "EndOfBuffer"}) do
@@ -24,7 +24,7 @@ vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {callback=cb})
 vim.api.nvim_create_autocmd("User", {pattern="VeryLazy", callback=cb})
 clear_bg()
 
--- BASIC SETTINGS =====================================
+--========================= BASIC SETTINGS =========================--
 vim.o.number = true          -- Line numbers
 vim.o.relativenumber = true  -- Relative line numbers
 vim.o.cursorline = true      -- Highlight current line
@@ -85,7 +85,7 @@ vim.o.wildmode = "noselect,full"
 vim.opt.wildignore:append({ "*.o", "*.obj", "*.pyc", "*.class", "*.jar" })
 vim.opt.diffopt:append("linematch:60")
 
--- KEY MAPPINGS ====================================
+--========================== KEY MAPPINTS ==========================--
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.keymap.set('n', '<Esc>', '<cmd>noh<CR>')
@@ -168,7 +168,7 @@ vim.keymap.set('n', '<leader>x', function()
   end, 50)
 end, { desc = 'Start TeXpresso' })
 
--- AUTOCOMMANDS & FUNCTIONS ====================================
+--==================== AUTOCOMMANDS & FUNCTIONS ====================--
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -247,7 +247,7 @@ vim.api.nvim_create_autocmd("CursorHold", {
   end,
 })
 
--- PLUGINS (NATIVE) ====================================
+--============================ PLUGINS =============================--
 vim.pack.add({
   "https://github.com/echasnovski/mini.nvim",
   "https://github.com/christoomey/vim-tmux-navigator",
@@ -406,7 +406,7 @@ vim.lsp.enable({
   'texlab',
 })
 
--- VimTeX
+--============================ VimTeX =============================--
 vim.g.vimtex_view_method = 'zathura'
 vim.g.vimtex_compiler_method = 'latexmk'
 vim.g.tex_flavor = 'latex'
