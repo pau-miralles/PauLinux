@@ -3,7 +3,7 @@
   imports =
     [
       ./hardware-configuration.nix # Include the results of the hardware scan.
-      ./sway.nix
+      ./mango.nix
     ];
   boot = { # Bootloader
     tmp.cleanOnBoot = true;
@@ -73,7 +73,13 @@
       rocmPackages.clr.icd
     ];
   };
-  zramSwap.enable = true;
+
+  zramSwap = {
+    enable = true;
+    priority = 100;
+    algorithm = "lz4";
+    memoryPercent = 50;
+  };
 
   services.journald.settings.Journal.SystemMaxUse = "50M";
 
@@ -84,6 +90,16 @@
     packages = with pkgs; [];
   };
   nixpkgs.config.allowUnfree = true;
+
+  nixpkgs.overlays = [
+    (final: prev: {
+      framework-tool-tui = prev.framework-tool-tui.overrideAttrs (old: { # NOTE: without this it gives error now
+        nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.pkg-config ];
+        buildInputs = (old.buildInputs or []) ++ [ final.libgit2 ];
+      });
+    })
+  ];
+
   environment.systemPackages = with pkgs; [ # Packages installed in system profile
     git
     vim
@@ -102,7 +118,7 @@
     enable = true; # Enable the OpenSSH daemon.
     startWhenNeeded = true;
   };
-  nix.settings.auto-optimise-store = true; # Garbage collecting
+  nix.settings.auto-optimise-store = true; # Deduplicate identical files
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -114,7 +130,6 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    jack.enable = true;
   };
   xdg.sounds.enable = false; # No sound effects
   services.fprintd.enable = false; # No fingerprint

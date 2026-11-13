@@ -1,21 +1,20 @@
 { pkgs, ... }:
 {
   hardware.graphics.enable = true; # OpenGL (required for Wayland)
-  programs.sway = {
-    enable = true;
-    wrapperFeatures.gtk = true; # Fixes GTK apps in Sway
-  };
+  programs.mango.enable = true;
+  security.pam.services.waylock = {};
   environment.systemPackages = with pkgs; [
-    libnotify    # To send notifications
-    swaybg       # Wallpapers in Sway
-    wl-clipboard # Clipboard manager backend
-    grim         # Screenshot tool
-    slurp        # Screen area selector
-    polkit_gnome # Authentication agent
+    libnotify     # To send notifications
+    swaybg        # Wallpapers
+    waylock       # Lockscreen
+    wl-clipboard  # Clipboard manager backend
+    grim          # Screenshot tool
+    slurp         # Screen area selector
+    polkit_gnome  # Authentication agent
+    wlr-randr     # Rotate display
+    brightnessctl # Brightness control
   ];
-  fonts.packages = with pkgs; [
-    nerd-fonts.ubuntu-mono
-  ];
+  fonts.packages = with pkgs; [ nerd-fonts.ubuntu-mono ];
   xdg.portal = {
     enable = true;
     wlr.enable = true;

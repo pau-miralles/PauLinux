@@ -24,29 +24,18 @@ in
     gimp
     audacity
     mixxx
-    (pkgs.symlinkJoin {
-      name = "netbeans";
-      paths = [ pkgs.netbeans ];
-      buildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/netbeans \
-          --add-flags "-J-Dawt.useSystemAAFontSettings=on" \
-          --add-flags "-J-Dswing.aatext=true"
-      '';
-    })
+    netbeans
 
     framework-tool-tui
     yazi
     tmuxp
     python3
     ffmpeg
-    yt-dlp
     eza
     bat
     tealdeer
     cava
     bottom
-    live-server
     speedtest-cli
 
     wlsunset
@@ -55,14 +44,11 @@ in
     inputs.wlctl.packages.${pkgs.system}.default # TUI Network Manager
     bluetui # TUI Bluetooth Panel
     ffmpegthumbnailer # Video thumbnails
-    jq # Json, for the sway tabs script
+    jq
     zip
     unzip
     texpresso
-    (texlive.withPackages (ps: [
-      ps.scheme-full
-      ps.latexmk
-    ]))
+    texliveMedium
     xdotool
     gcc
     jdk
@@ -110,25 +96,8 @@ in
 
   xdg.configFile = {
     "tmuxp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/tmuxp";
-    "sway".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/sway";
-    "sway-colors".text = ''
-      set $base00 ${colors.base00}
-      set $base01 ${colors.base01}
-      set $base02 ${colors.base02}
-      set $base03 ${colors.base03}
-      set $base04 ${colors.base04}
-      set $base05 ${colors.base05}
-      set $base06 ${colors.base06}
-      set $base07 ${colors.base07}
-      set $base08 ${colors.base08}
-      set $base09 ${colors.base09}
-      set $base0A ${colors.base0A}
-      set $base0B ${colors.base0B}
-      set $base0C ${colors.base0C}
-      set $base0D ${colors.base0D}
-      set $base0E ${colors.base0E}
-      set $base0F ${colors.base0F}
-    '';
+    "mango".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nixos-config/config/mango";
+    "base00".text = colors.base00;
     "yazi/theme.toml".text = ''
       [tabs]
       sep_inner = { open = "", close = "" }
@@ -366,6 +335,11 @@ programs.foot = {
       '';
       extraConfig = ''
         ${builtins.readFile ./config/firefox/betterfox.js}
+        user_pref("browser.display.document_color_use", 2);
+        user_pref("browser.display.background_color", "${colors.base00}");
+        user_pref("browser.display.foreground_color", "${colors.base07}");
+        user_pref("browser.anchor_color", "${colors.base05}");
+        user_pref("browser.visited_color", "${colors.base05}");
         /* --- Instant New Windows / Pre-loading --- */
         user_pref("browser.startup.preXulSkeletonDocument", true);
         user_pref("browser.newtabpage.enabled", true);
@@ -447,20 +421,33 @@ programs.foot = {
 
   programs.waybar = {
     enable = true;
+    package = inputs.waybar.packages.${pkgs.system}.waybar;
     systemd.enable = false;
     settings = {
       mainBar = {
         layer = "top";
         position = "bottom";
         height = 18;
-        modules-left = [ "battery" "power-profiles-daemon" "temperature" "sway/window" ];
-        modules-center = [ "sway/workspaces" ];
+        modules-left = [ "battery" "power-profiles-daemon" "temperature" "mango/window" ];
+        modules-center = [ "mango/workspaces" ];
         modules-right = [ "network" "backlight" "pulseaudio" "clock" ];
-        "sway/workspaces" = {
-          all-outputs = true;
-          format = "{name}";
+        "mango/workspaces" = {
+          format = "{icon}";
+          hide-empty = true;
+          on-click = "activate";
+          format-icons = {
+            "1" = "I";
+            "2" = "II";
+            "3" = "III";
+            "4" = "IV";
+            "5" = "V";
+            "6" = "VI";
+            "7" = "VII";
+            "8" = "VIII";
+            "9" = "IX";
+          };
         };
-        "sway/window" = {
+        "mango/window" = {
           format = "{title}";
           max-length = 30;
         };
@@ -468,7 +455,7 @@ programs.foot = {
           interval = 60;
           format = "{capacity}% ({time})";
           format-charging = "{capacity}% ({time}) ";
-          on-click = "foot --title=waybar --override=font=monospace:size=20 btm --battery";
+          on-click = "foot --title=bar --override=font=monospace:size=16 btm --battery";
         };
         "temperature" = {
           hwmon-path = "/sys/class/hwmon/hwmon6/temp1_input";
@@ -482,7 +469,7 @@ programs.foot = {
           tooltip-format = "{ifname} via {gwaddr}";
           format-linked = "{ifname} (No IP)";
           format-disconnected = "Disconnected";
-          on-click = "foot --title=waybar wlctl";
+          on-click = "foot --title=bar wlctl";
         };
         "backlight" = {
           format = "{percent}%";
