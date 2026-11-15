@@ -3,10 +3,12 @@
   inputs = {
     # The source of our packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     stylix = {
@@ -14,10 +16,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    waybar.url = "github:Alexays/Waybar";
-
     wlctl = {
       url = "github:aashish-thapa/wlctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    dvr-patched = {
+      url = "git+https://git.sljusard.com/sljusard/dvr-patched-flake.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

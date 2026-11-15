@@ -14,6 +14,7 @@
     initrd = {
       kernelModules = [ "amdgpu" ];
     };
+    kernelModules = [ "ntsync" ]; # For Wires
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
     "quiet"                       # Reduces kernel output
@@ -86,19 +87,12 @@
   users.users.pau = { # Define a user account. Don't forget to set a password with ‘passwd’
     isNormalUser = true;
     description = "pau";
-    extraGroups = [ "networkmanager" "wheel" "uinput" "dialout" ];
+    extraGroups = [ "networkmanager" "wheel" "uinput" "dialout" "audio" ];
     packages = with pkgs; [];
   };
   nixpkgs.config.allowUnfree = true;
 
-  nixpkgs.overlays = [
-    (final: prev: {
-      framework-tool-tui = prev.framework-tool-tui.overrideAttrs (old: { # NOTE: without this it gives error now
-        nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.pkg-config ];
-        buildInputs = (old.buildInputs or []) ++ [ final.libgit2 ];
-      });
-    })
-  ];
+  virtualisation.podman.enable = true; # For Wires
 
   environment.systemPackages = with pkgs; [ # Packages installed in system profile
     git
@@ -130,6 +124,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
   };
   xdg.sounds.enable = false; # No sound effects
   services.fprintd.enable = false; # No fingerprint

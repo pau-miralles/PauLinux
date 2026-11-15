@@ -25,6 +25,9 @@ in
     audacity
     mixxx
     netbeans
+    inputs.dvr-patched.packages.${pkgs.stdenv.hostPlatform.system}.default
+    distrobox # For Wires
+    openmeters
 
     framework-tool-tui
     yazi
@@ -226,15 +229,15 @@ programs.foot = {
     enable = true;
     enableCompletion = true;
     shellAliases = {
-      ls = "eza --icons --hyperlink";
-      ll = "eza -l --header --icons --hyperlink";
-      la = "eza -a --icons --hyperlink";
-      lt = "eza -T --level=2 --icons --hyperlink";
-      ltt = "eza -T --icons --hyperlink";
+      ls = "eza --icons --hyperlink auto";
+      ll = "eza -l --header --icons --hyperlink auto";
+      la = "eza -a --icons --hyperlink auto";
+      lt = "eza -T --level=2 --icons --hyperlink auto";
+      ltt = "eza -T --icons --hyperlink auto";
       v = "nvim";
       a = "tmux new -A -s a";
       fetch = "$HOME/.nixos-config/config/fetch.sh";
-      sync = "cd ~/.nixos-config/ && git add . && nix flake update && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && nix flake update && git add . && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
       tf = "tmuxp freeze";
     };
@@ -421,7 +424,6 @@ programs.foot = {
 
   programs.waybar = {
     enable = true;
-    package = inputs.waybar.packages.${pkgs.system}.waybar;
     systemd.enable = false;
     settings = {
       mainBar = {
