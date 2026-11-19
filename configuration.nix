@@ -11,14 +11,10 @@
     loader.efi.canTouchEfiVariables = true;
     loader.timeout = 0;
     consoleLogLevel = 0;
-    initrd = {
-      kernelModules = [ "amdgpu" ];
-    };
     kernelModules = [ "ntsync" ]; # For Wires
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
     "quiet"                       # Reduces kernel output
-    "loglevel=3"                  # Only show Errors (ignores warnings/info)
     "systemd.show_status=auto"    # ONLY show systemd status if a service fails or is slow
     "rd.systemd.show_status=auto" # Same as above, but for the very start (initrd)
     "rd.udev.log_level=3"         # Keep udev quiet unless it breaks
@@ -50,17 +46,6 @@
 
   time.timeZone = "Europe/Madrid";
   i18n.defaultLocale = "es_ES.UTF-8"; # Internationalisation properties
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "es_ES.UTF-8";
-    LC_IDENTIFICATION = "es_ES.UTF-8";
-    LC_MEASUREMENT = "es_ES.UTF-8";
-    LC_MONETARY = "es_ES.UTF-8";
-    LC_NAME = "es_ES.UTF-8";
-    LC_NUMERIC = "es_ES.UTF-8";
-    LC_PAPER = "es_ES.UTF-8";
-    LC_TELEPHONE = "es_ES.UTF-8";
-    LC_TIME = "es_ES.UTF-8";
-  };
   services.xserver.xkb = { # Configure keymap in X11
     layout = "es";
     variant = "";
@@ -88,7 +73,6 @@
     isNormalUser = true;
     description = "pau";
     extraGroups = [ "networkmanager" "wheel" "uinput" "dialout" "audio" ];
-    packages = with pkgs; [];
   };
   nixpkgs.config.allowUnfree = true;
 
@@ -101,13 +85,11 @@
   ];
   environment.defaultPackages = []; # No default packages (perl, nano, rsync, ...)
   documentation.enable = false;
-  documentation.doc.enable = false;
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
   };
   nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enable Flakes
   # List services that you want to enable:
-  services.fwupd.enable = true; # Framework update
   services.openssh = {
     enable = true; # Enable the OpenSSH daemon.
     startWhenNeeded = true;
@@ -124,7 +106,6 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    jack.enable = true;
   };
   xdg.sounds.enable = false; # No sound effects
   services.fprintd.enable = false; # No fingerprint
@@ -134,12 +115,10 @@
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.gutenprint pkgs.hplip ];
   systemd.services.cups.wantedBy = lib.mkForce [ ];
-  services.power-profiles-daemon.enable = true;
 
   programs.thunar = {
     enable = true;
     plugins = [
-      pkgs.thunar-archive-plugin
       pkgs.thunar-volman
     ];
   };
@@ -187,7 +166,6 @@
 
   stylix = {
     enable = true;
-    targets.gtk.enable = true;
     base16Scheme = ./config/theme/dark.yaml;
     polarity = "dark";
     fonts = {

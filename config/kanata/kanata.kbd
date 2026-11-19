@@ -5,7 +5,7 @@
   log-layer-changes no
 )
 (defsrc
-  esc  tab  q    w    e    r    t    y    u    i    o    p    [    ]    bksl
+  esc  tab  q    w    e    r    t    y    u    i    o    p    [    ]    bksl bspc del
        caps a    s    d    f    g    h    j    k    l    ;    '    ret
        lsft z    x    c    v    b    n    m    ,    .    /    rsft
        lctl lmet lalt           spc            ralt rctl
@@ -88,28 +88,28 @@
 )
 
 (deflayer base
-  caps _      _      _      _      _      _      _      @ch_u  @ch_i  @ch_o  @ch_p   del    _    /
-       @cec   _      _      _      _      _      _      @ch_j  @ch_k  @ch_l  @ch_scl ret    _
+  caps _      _      _      _      _      _      _      @ch_u  @ch_i  @ch_o  @ch_p   del    bspc   /      ] rsft
+       @cec   _      _      _      _      _      _      @ch_j  @ch_k  @ch_l  @ch_scl ret    rsft
        @ch_ls _      @ch_x  @ch_c  _      _      @ch_n  @ch_m  _      _      S-7     @ch_rs
        spc    _      @altbck              @spn          @sym   lsgt
 )
 
 (deflayer navigation
-  _    f1   f2   f3   f4   f5   f6   home pgdn pgup end  _    _    _    _
+  _    f1   f2   f3   f4   f5   f6   home pgdn pgup end  _    _    _    _    _ _
        f7   f8   f9   f10  f11  f12  left down up   rght _    _    @game
        mute vold volu brdn brup _    _    _    _    _    _    _
        _    _    _              _              _    _
 )
 
 (deflayer symbols
-  S-grv S-=   S--   @at   @lcur  @rcur   @pipe   S-0  4    5    6    kp*  _    _    _
+  S-grv S-=   S--   @at   @lcur  @rcur   @pipe   S-0  4    5    6    kp*  _    _    _    _ _
         =     S-1   S-4   @sym_d  @sym_f @hash   0    1    2    3    @cir S-[  @base
         @bksl @til  S-6   @lbra   @rbra  S-5     .    7    8    9    _    _
         @eu   lsgt  S-lsgt               S-/                    _    _
 )
 
 (deflayer game
-  caps _      _      _      _      _      _      _      @ch_u  @ch_i  @ch_o  @ch_p   del    _    /
+  caps _      _      _      _      _      _      _      @ch_u  @ch_i  @ch_o  @ch_p   del    bspc   /      ] _
        @cec   _      _      _      _      _      _      @ch_j  @ch_k  @ch_l  _       _      _
        @ch_ls _      @ch_x  @ch_c  _      _      @ch_n  @ch_m  _      _      S-7     @ch_rs
        _      _      @altbck              spc           @sym   lsgt

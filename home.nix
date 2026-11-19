@@ -10,11 +10,9 @@ in
 {
   home.username = "pau";
   home.homeDirectory = "/home/pau";
-  home.stateVersion = "25.11"; # Keep this the same as your system version
-  programs.home-manager.enable = true; # This makes home-manager manage itself
+  home.stateVersion = "26.05"; # Keep this the same as your system version
   home.sessionVariables = {
     GTK_IM_MODULE = "simple";
-    NIXOS_OZONE_WL = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };
   home.packages = with pkgs; [
@@ -44,15 +42,14 @@ in
     wlsunset
     playerctl # Play/Pause buttons
     pavucontrol # GUI Audio Panel
-    inputs.wlctl.packages.${pkgs.system}.default # TUI Network Manager
+    inputs.wlctl.packages.${pkgs.stdenv.hostPlatform.system}.default # TUI Network Manager
     bluetui # TUI Bluetooth Panel
     ffmpegthumbnailer # Video thumbnails
     jq
     zip
     unzip
     texpresso
-    texliveMedium
-    xdotool
+    texliveFull
     gcc
     jdk
     jdt-language-server
@@ -67,7 +64,6 @@ in
     toggle-theme
     rofi-power
     rofi-wlsunset
-    libnotify
     low-battery-warning
   ];
   services.mako.enable = true; # Notification daemon
@@ -110,6 +106,14 @@ in
       [status]
       sep_left  = { open = "", close = "" }
       sep_right = { open = "", close = "" }
+      [icon]
+      prepend_dirs = [
+        { name = "Downloads",     text = "", fg = "reset" },
+        { name = "notes",         text = "", fg = "magenta" },
+        { name = "Pau",           text = "󰏿", fg = "red" },
+        { name = "progra",        text = "", fg = "green" },
+        { name = "Wires",         text = "󱑽", fg = "yellow" },
+      ]
     '';
   };
 
@@ -135,8 +139,8 @@ programs.foot = {
       open
     ];
     extraConfig = ''
-      set -ga terminal-overrides ",*:RGB"
-      set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[2 q'
+      set -ga terminal-features ",*:RGB"
+      set -ga terminal-features '*:Ss=\E[%p1%d q:Se=\E[2 q'
       set -g set-clipboard on
       set -g focus-events on
       bind C-l send-keys 'C-l'
@@ -162,7 +166,7 @@ programs.foot = {
       # Windows
       bind c new-window -c "#{pane_current_path}"
       set -g renumber-windows on
-      set -g pane-base-index 1
+      set -g base-index 1
       set-window-option -g pane-base-index 1
 
       # Split Windows (Vim Style)
@@ -237,7 +241,7 @@ programs.foot = {
       v = "nvim";
       a = "tmux new -A -s a";
       fetch = "$HOME/.nixos-config/config/fetch.sh";
-      sync = "cd ~/.nixos-config/ && nix flake update && git add . && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage -d && fwupdmgr refresh && fwupdmgr update";
+      sync = "cd ~/.nixos-config/ && nix flake update && git add . && sudo nixos-rebuild switch --flake .#framework && sudo nix-collect-garbage && fwupdmgr refresh && fwupdmgr update";
       btm = "btm --battery";
       tf = "tmuxp freeze";
     };
@@ -250,7 +254,7 @@ programs.foot = {
       # Tmux function:
       tm() {
         if [ -z "$1" ]; then
-          tmux ls 3>/dev/null | bat --style=plain --language=TOML
+          tmux ls | bat --style=plain --language=TOML
           echo .
           eza -T $HOME/.nixos-config/config/tmuxp/ | tail -n +2
         else
@@ -343,21 +347,17 @@ programs.foot = {
         user_pref("browser.display.foreground_color", "${colors.base07}");
         user_pref("browser.anchor_color", "${colors.base05}");
         user_pref("browser.visited_color", "${colors.base05}");
-        /* --- Instant New Windows / Pre-loading --- */
-        user_pref("browser.startup.preXulSkeletonDocument", true);
-        user_pref("browser.newtabpage.enabled", true);
         /* --- Stylesheet & Display --- */
         user_pref("ui.key.menuAccessKeyFocuses", false);
         user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
         user_pref("browser.tabs.drawInTitlebar", true);
         user_pref("browser.compactmode.show", true);
         user_pref("browser.uidensity", 1);
-        user_pref("gfx.webrender.all", true);
         user_pref("widget.wayland.fractional-scale.enabled", true);
         user_pref("full-screen-api.ignore-widgets", true);
         /* --- Performance, Input & Animations --- */
+        user_pref("browser.startup.preXulSkeletonDocument", true);
         user_pref("ui.prefersReducedMotion", 1);
-        user_pref("media.rdd-ffmpeg.enabled", true);
         user_pref("apz.overscroll.enabled", false);
         user_pref("browser.quitShortcut.disabled", true);
         user_pref("browser.gesture.swipe.left", "");
@@ -481,7 +481,7 @@ programs.foot = {
           format-bluetooth = "{volume}% ";
           format-muted = "";
           scroll-step = 1;
-          on-click = "/etc/profiles/per-user/pau/bin/pavucontrol";
+          on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
         };
         "power-profiles-daemon" = {
           format = "{icon}";

@@ -85,7 +85,7 @@ vim.o.wildmode = "noselect,full"
 vim.opt.wildignore:append({ "*.o", "*.obj", "*.pyc", "*.class", "*.jar" })
 vim.opt.diffopt:append("linematch:60")
 
---========================== KEY MAPPINTS ==========================--
+--========================== KEY MAPPINGS ==========================--
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.keymap.set('n', '<Esc>', '<cmd>noh<CR>')
@@ -260,12 +260,12 @@ vim.pack.add({
   "https://github.com/lervag/vimtex",
   "https://github.com/let-def/texpresso.vim",
   "https://github.com/L3MON4D3/LuaSnip",
-  -- "https://github.com/m4xshen/hardtime.nvim",
-  -- "https://github.com/rcarriga/nvim-notify",
+  "https://github.com/m4xshen/hardtime.nvim",
+  "https://github.com/rcarriga/nvim-notify",
 })
--- vim.notify = require("notify")
+vim.notify = require("notify")
 
--- require('hardtime').setup()
+require('hardtime').setup()
 require('gitsigns').setup()
 require('tiny-inline-diagnostic').setup()
 require('mini.icons').setup()
@@ -534,10 +534,10 @@ ls.add_snippets("tex", {
   math_i("^^", fmta("^{<>}<>", { i(1), i(0) })),
   math_i("__", fmta("_{<>}<>", { i(1), i(0) })),
   math_i("bb", fmta("\\mathbb{<>}<>", { i(1), i(0) })),
+  math_i("mc", fmta("\\mathcal{<>}<>", { i(1), i(0) })),
   math_i("ooo", t("\\infty ")),
-  math_i("...", t("\\ldots ")),
-  math_i("···", t("\\cdots ")),
-  math_i("c·", t("\\cdot ")),
+  math_i("...", t("\\dots ")),
+  math_i("·", t("\\cdot ")),
   math_i("limn", t("\\lim_{n\\to\\infty} ")),
   math_i("limx", t("\\lim_{x\\to\\infty} ")),
   math_i("qq", t("\\qquad ")),
@@ -549,6 +549,7 @@ ls.add_snippets("tex", {
   math_i("@d", t("\\delta ")),
   math_i("@e", t("\\epsilon ")),
   math_i("@l", t("\\lambda ")),
+  math_i("@p", t("\\varphi: ")),
   -- Auto-subscript: a1 -> a_1
   s({ trig = "([a-zA-Z])(%d)", trigEngine = "pattern", snippetType = "autosnippet", wordTrig = false },
     f(function(_, snip)

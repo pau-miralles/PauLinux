@@ -1,20 +1,18 @@
 { pkgs, ... }:
 {
-  hardware.graphics.enable = true; # OpenGL (required for Wayland)
   programs.mango.enable = true;
   security.pam.services.waylock = {};
   environment.systemPackages = with pkgs; [
     libnotify     # To send notifications
     swaybg        # Wallpapers
+    swayidle      # Auto suspend
     waylock       # Lockscreen
     wl-clipboard  # Clipboard manager backend
     grim          # Screenshot tool
     slurp         # Screen area selector
-    polkit_gnome  # Authentication agent
     wlr-randr     # Rotate display
     brightnessctl # Brightness control
   ];
-  fonts.packages = with pkgs; [ nerd-fonts.ubuntu-mono ];
   xdg.portal = {
     enable = true;
     wlr.enable = true;
